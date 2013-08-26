@@ -1,0 +1,362 @@
+<?php
+/*
+Planning Biblio, Plugin Congés Version 1.0.1
+Licence GNU/GPL (version 2 et au dela)
+Voir les fichiers README.txt et COPYING.txt
+Copyright (C) 2013 - Jérôme Combes
+
+Fichier : plugins/conges/class.conges.php
+Création : 24 juillet 2013
+Dernière modification : 14 août 2013
+Auteur : Jérôme Combes, jerome@planningbilbio.fr
+
+Description :
+Fichier regroupant les fonctions utiles à la gestion des congés
+Inclus dans les autres fichiers PHP du dossier plugins/conges
+*/
+
+// pas de $version=acces direct aux pages de ce dossier => redirection vers la page index.php
+if(!$version){
+  header("Location: ../../index.php");
+}
+
+require_once "plugins/planningHebdo/class.planningHebdo.php";
+require_once "joursFeries/class.joursFeries.php";
+require_once "personnel/class.personnel.php";
+
+class conges{
+  public $agent=null;
+  public $debut=null;
+  public $elements=array();
+  public $error=false;
+  public $fin=null;
+  public $heures=null;
+  public $heures2=null;
+  public $id=null;
+  public $message=null;
+  public $minutes=null;
+  public $perso_id=null;
+  public $valide=null;
+
+  public function conges(){
+  }
+
+  public function add($data){
+    $data['debit']=isset($data['dedit'])?$data['dedit']:"credit";
+    $data['hre_debut']=$data['hre_debut']?$data['hre_debut']:"00:00:00";
+    $data['hre_fin']=$data['hre_fin']?$data['hre_fin']:"23:59:59";
+    $data['heures']=$data['heures'].".".$data['minutes'];
+
+    $insert=array("debut"=>$data['debut']." ".$data['hre_debut'], "fin"=>$data['fin']." ".$data['hre_fin'],
+      "commentaires"=>$data['commentaires'],"heures"=>$data['heures'],"debit"=>$data['debit'],"perso_id"=>$data['perso_id']);
+    $db=new db();
+    $db->insert2("conges",$insert);
+  }
+
+  public function calculCredit($debut,$hre_debut,$fin,$hre_fin,$perso_id){
+    // Calcul du nombre d'heures correspondant aux congés demandés
+    $current=$debut;
+    $difference=0;
+    // Pour chaque date
+    while($current<=$fin){
+
+      // On ignore les jours de fermeture
+      $j=new joursFeries();
+      $j->fetchByDate($current);
+      if(!empty($j->elements)){
+	foreach($j->elements as $elem){
+	  if($elem['fermeture']){
+	    $current=date("Y-m-d",strtotime("+1 day",strtotime($current)));
+	    continue 2;
+	  }
+	}
+      }
+
+      // On consulte le planning de présence de l'agent
+      $p=new planningHebdo();
+      $p->perso_id=$perso_id;
+      $p->debut=$current;
+      $p->fin=$current;
+      $p->valide=true;
+      $p->fetch();
+      // Si le planning n'est pas validé pour l'une des dates, on affiche un message d'erreur et on arrête le calcul
+      if(empty($p->elements)){
+	$this->error=true;
+	$this->message="Impossible de déterminer le nombre d'heures correspondant aux congés demandés.";
+	break;
+      }
+
+      // Sinon, on calcule les heures d'absence
+      $d=new datePl($current);
+      $semaine=$d->semaine3;
+      $jour=$d->position?$d->position:7;
+      $jour=$jour+(($semaine-1)*7)-1;
+      $temps=$p->elements[0]['temps'][$jour];
+      $temps[0]=strtotime($temps[0]);
+      $temps[1]=strtotime($temps[1]);
+      $temps[2]=strtotime($temps[2]);
+      $temps[3]=strtotime($temps[3]);
+      $debutConges=$current==$debut?$hre_debut:"00:00:00";
+      $finConges=$current==$fin?$hre_fin:"23:59:59";
+      $debutConges=strtotime($debutConges);
+      $finConges=strtotime($finConges);
+
+
+      // S'il y a une pause le midi
+      if($temps[1]){
+	// calcul du temps du matin
+	$debutConges1=$debutConges>$temps[0]?$debutConges:$temps[0];
+	$finConges1=$finConges<$temps[1]?$finConges:$temps[1];
+	if($finConges1>$debutConges1){
+	  $difference+=$finConges1-$debutConges1;
+	}
+	// calcul du temps de l'après-midi
+	$debutConges2=$debutConges>$temps[2]?$debutConges:$temps[2];
+	$finConges2=$finConges<$temps[3]?$finConges:$temps[3];
+	if($finConges2>$debutConges2){
+	  $difference+=$finConges2-$debutConges2;
+	}
+	
+      }
+      // S'il n'y a pas de pause le midi, calcul du temps de la journée
+      else{
+	$debutConges=$debutConges>$temps[0]?$debutConges:$temps[0];
+	$finConges=$finConges<$temps[3]?$finConges:$temps[3];
+	if($finConges>$debutConges){
+	  $difference+=$finConges-$debutConges;
+	}
+
+      }
+      $current=date("Y-m-d",strtotime("+1 day",strtotime($current)));
+    }
+    $this->minutes=$difference/60;
+    $this->heures=number_format($difference/3600, 2, '.', ' ');
+    $this->heures2=str_replace(array(".00",".25",".50",".75"),array("h00","h15","h30","h45"),$this->heures);
+  }
+
+
+
+
+
+
+  public function fetch(){
+    // Filtre de recherche
+    $filter="1";
+
+    // Perso_id
+    if($this->perso_id){
+      $filter.=" AND `perso_id`='{$this->perso_id}'";
+    }
+
+    // Date, debut, fin
+    $debut=$this->debut;
+    $fin=$this->fin;
+    $date=date("Y-m-d");
+    if($debut){
+      $fin=$fin?$fin:$date;
+      $filter.=" AND `debut`<='$fin' AND `fin`>='$debut'";
+    }
+    else{
+      $filter.=" AND `fin`>='$date'";
+    }
+
+
+    // Recherche des agents actifs seulement
+    $perso_ids=array(0);
+    $p=new personnel();
+    $p->fetch("nom");
+    foreach($p->elements as $elem){
+      $perso_ids[]=$elem['id'];
+    }
+
+    // Recherche avec le nom de l'agent
+    if($this->agent){
+      $perso_ids=array(0);
+      $p=new personnel();
+      $p->fetch("nom",null,$this->agent);
+      foreach($p->elements as $elem){
+	$perso_ids[]=$elem['id'];
+      }
+    }
+
+    // Filtre pour agents actifs seulement et recherche avec nom de l'agent
+    $perso_ids=join(",",$perso_ids);
+    $filter.=" AND `perso_id` IN ($perso_ids)";
+
+    // Valide
+    if($this->valide){
+      $filter.=" AND `valide`<>0";
+    }
+  
+    // Filtre avec ID, si ID, les autres filtres sont effacés
+    if($this->id){
+      $filter="`id`='{$this->id}'";
+    }
+
+    $db=new db();
+    $db->select("conges","*",$filter,"ORDER BY debut,fin,saisie");
+    if($db->result){
+      $this->elements=$db->result;
+    }
+  }
+
+
+
+
+
+
+
+
+
+
+  public function fetchCredit(){
+    if(!$this->perso_id){
+      $this->elements=array("credit"=>null,"reliquat"=>null,"anticipation"=>null,"recupSamedi"=>null);
+    }
+    else{
+      $db=new db();
+      $db->select("personnel","congesCredit,congesReliquat,congesAnticipation,recupSamedi","`id`='{$this->perso_id}'");
+      if($db->result){
+	$this->elements=array("credit"=>$db->result[0]['congesCredit'],"reliquat"=>$db->result[0]['congesReliquat'],"anticipation"=>$db->result[0]['congesAnticipation'],"recupSamedi"=>$db->result[0]['recupSamedi']);
+      }
+    }
+  }
+
+  public function getResponsables($debut=null,$fin=null,$perso_id){
+    $responsables=array();
+    $droitsConges=array();
+    //	Si plusieurs sites et agents autorisés à travailler sur plusieurs sites, vérifions dans l'emploi du temps quels sont les sites concernés par le conges
+    if($GLOBALS['config']['Multisites-nombre']>1 and $GLOBALS['config']['Multisites-agentsMultisites']){
+      $db=new db();
+      $db->select("personnel","temps","id='$perso_id'");
+      $temps=unserialize($db->result[0]['temps']);
+      $date=$debut;
+      while($date<=$fin){
+	// Vérifions le numéro de la semaine de façon à contrôler le bon planning de présence hebdomadaire
+	$d=new datePl($date);
+	$jour=$d->position?$d->position:7;
+	$semaine=$d->semaine3;
+	// Récupération du numéro du site concerné par la date courante
+	$site=$temps[$jour-1+($semaine*7)-7][4];
+	// Ajout du numéro du droit correspondant à la gestion des congés de ce site
+	if(!in_array("30".$site,$droitsConges) and $site){
+	  $droitsConges[]="30".$site;
+	}
+	$date=date("Y-m-d",strtotime("+1 day",strtotime($date)));
+      }
+      // Si les jours de conges ne concernent aucun site, on ajoute les responsables des 2 sites par sécurité
+      if(empty($droitsConges)){
+	$droitsConges=array(301,302);
+      }
+    }
+    //	Si plusieurs sites et agents non autorisés à travailler sur plusieurs sites, vérifions dans les infos générales quels sont les sites concernés par le conges
+    elseif($GLOBALS['config']['Multisites-nombre']>1 and !$GLOBALS['config']['Multisites-agentsMultisites']){
+      $db=new db();
+      $db->select("personnel","site","id='$perso_id'");
+      $site=$db->result[0]['site'];
+      $droitsConges=array("30".$site);
+    }
+    // Si un seul site, le droit de gestion des conges est 2
+    else{
+      $droitsConges[]=2;
+    }
+
+    $db=new db();
+    $db->select("personnel");
+    foreach($db->result as $elem){
+      $d=unserialize($elem['droits']);
+      foreach($droitsConges as $elem2){
+	if(in_array($elem2,$d) and !in_array($elem,$responsables)){
+	  $responsables[]=$elem;
+	}
+      }
+    }
+    $this->responsables=$responsables;
+  }
+
+  public function update($data){
+    $data['debit']=isset($data['debit'])?$data['debit']:"credit";
+    $data['hre_debut']=$data['hre_debut']?$data['hre_debut']:"00:00:00";
+    $data['hre_fin']=$data['hre_fin']?$data['hre_fin']:"23:59:59";
+    $data['heures']=$data['heures'].".".$data['minutes'];
+
+    $update=array("debut"=>$data['debut']." ".$data['hre_debut'], "fin"=>$data['fin']." ".$data['hre_fin'],
+      "commentaires"=>$data['commentaires'],"heures"=>$data['heures'],"debit"=>$data['debit'],
+      "perso_id"=>$data['perso_id'],"modif"=>$_SESSION['login_id'],"modification"=>date("Y-m-d H:i:s"));
+    
+    if($data['valide']=="1"){
+      $update["valide"]=$_SESSION['login_id'];
+      $update["validation"]=date("Y-m-d H:i:s");
+    }
+
+    $db=new db();
+    $db->update2("conges",$update,array("id"=>$data['id']));
+  
+    // En cas de validation, on débite les crédits dans la fiche de l'agent et on barre l'agent s'il est déjà placé dans le planning
+    if($data['valide']=="1" and !$db->error){
+      // On débite les crédits dans la fiche de l'agent
+      // Recherche des crédits actuels
+      $p=new personnel();
+      $p->fetchById($data['perso_id']);
+      $credit=$p->elements[0]['congesCredit'];
+      $reliquat=$p->elements[0]['congesReliquat'];
+      $recuperation=$p->elements[0]['recupSamedi'];
+      $heures=$data['heures'];
+
+      // Calcul du reliquat après décompte
+      $reste=0;
+      $reliquat=$reliquat-$heures;
+      if($reliquat<0){
+	$reste=-$reliquat;
+	$reliquat=0;
+      }
+      $reste2=0;
+      // Calcul du crédit de récupération
+      if($data["debit"]=="recuperation"){
+	$recuperation=$recuperation-$reste;
+	if($recuperation<0){
+	  $reste2=-$recuperation;
+	  $recuperation=0;
+	}
+      }
+      // Calcul du crédit de congés
+      else if($data["debit"]=="credit"){
+	$credit=$credit-$reste;
+	if($credit<0){
+	  $reste2=-$credit;
+	  $credit=0;
+	}
+      }
+      // Si après tous les débits, il reste des heures, on débit le crédit restant
+      if($reste2){
+	if($data["debit"]=="recuperation"){
+	  $credit=$credit-$reste2;
+	}
+	else if($data["debit"]=="credit"){
+	  $recuperation=$recuperation-$reste2;
+	}
+      }
+
+      $updateCredits=array("congesCredit"=>$credit,"congesReliquat"=>$reliquat,"recupSamedi"=>$recuperation);
+
+      $db=new db();
+      $db->update2("personnel",$updateCredits,array("id"=>$data["perso_id"]));
+
+
+      // On barre l'agent s'il est déjà placé dans le planning
+      $debut_sql=$data['debut']." ".$data['hre_debut'];
+      $fin_sql=$data['fin']." ".$data['hre_fin'];
+      $req="UPDATE `{$GLOBALS['dbprefix']}pl_poste` SET `absent`='2' WHERE
+	((CONCAT(`date`,' ',`debut`) < '$fin_sql' AND CONCAT(`date`,' ',`debut`) >= '$debut_sql')
+	OR (CONCAT(`date`,' ',`fin`) > '$debut_sql' AND CONCAT(`date`,' ',`fin`) <= '$fin_sql'))
+	AND `perso_id`='{$data['perso_id']}'";
+
+      $db=new db();
+      $db->query($req);
+    }
+
+  }
+
+
+}
+?>
