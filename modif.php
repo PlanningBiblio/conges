@@ -1,13 +1,13 @@
 <?php
 /*
-Planning Biblio, Plugin Congés Version 1.0.1
+Planning Biblio, Plugin Congés Version 1.1
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.txt et COPYING.txt
 Copyright (C) 2013 - Jérôme Combes
 
 Fichier : plugins/conges/modif.php
 Création : 1er août 2013
-Dernière modification : 13 août 2013
+Dernière modification : 26 août 2013
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -51,6 +51,7 @@ if(isset($_GET['confirm'])){
   $hre_debut=$_GET['hre_debut']?$_GET['hre_debut']:"00:00:00";
   $hre_fin=$_GET['hre_fin']?$_GET['hre_fin']:"23:59:59";
   $commentaires=htmlentities($_GET['commentaires'],ENT_QUOTES|ENT_IGNORE,"UTF-8",false);
+  $refus=isset($_GET['refus'])?htmlentities($_GET['refus'],ENT_QUOTES|ENT_IGNORE,"UTF-8",false):null;
 
   // Récupération des adresses e-mails de l'agent et des responsables pour m'envoi des alertes
   $c=new conges();
@@ -71,15 +72,25 @@ if(isset($_GET['confirm'])){
   $c=new conges();
   $c->update($_GET);
 
-  $message="Modification de congés: <br/>$prenom $nom<br/>Début : ".dateFr($debut);
+  switch($_GET['valide']){
+    case 0 : $sujet="Modification de congés";	break;
+    case 1 : $sujet="Validation de congés";	break;
+    case -1 : $sujet="Refus de congés";	break;
+  }
+
+  $message="$sujet : <br/>$prenom $nom<br/>Début : ".dateFr($debut);
   if($hre_debut!="00:00:00")
     $message.=" ".heure3($hre_debut);
   $message.="<br/>Fin : ".dateFr($fin);
   if($hre_fin!="23:59:59")
     $message.=" ".heure3($hre_fin);
   if($commentaires)
-    $message.="Commentaire :<br/>$commentaires<br/>";
-  sendmail("Modification de congés",$message,$destinataires);
+    $message.="<br/><br/>Commentaires :<br/>$commentaires<br/>";
+  if($refus and $_GET['valide']<0){
+    $message.="<br/>Motif du refus :<br/>$refus<br/>";
+  }
+
+  sendmail($sujet,$message,$destinataires);
   if($menu=="off"){
     echo "<script type=text/JavaScript>parent.document.location.reload(false);</script>\n";
     echo "<script type=text/JavaScript>popup_closed();</script>\n";
@@ -94,6 +105,9 @@ if(isset($_GET['confirm'])){
 
 else{	// Formulaire
   $valide=$data['valide']>0?true:false;
+  $selectAccept[0]=$data['valide']>0?"selected='selected'":null;
+  $selectAccept[1]=$data['valide']<0?"selected='selected'":null;
+  $displayRefus=$data['valide']>=0?"display:none;":null;
   $perso_id=$data['perso_id'];
   $debut=substr($data['debut'],0,10);
   $fin=substr($data['fin'],0,10);
@@ -247,6 +261,24 @@ EOD;
   echo "</td><td style='padding-top:15px;'>\n";
   echo "<textarea name='commentaires' cols='16' rows='5' style='width:100%;'>{$data['commentaires']}</textarea>\n";
   echo "</td></tr><tr><td>&nbsp;\n";
+  echo "<tr><td>Validation</td>\n";
+  if($admin and !$valide){
+    echo <<<EOD
+    <td><select name='valide' onchange='afficheRefus(this);'>
+      <option value='0'>&nbsp;</option>
+      <option value='1' {$selectAccept[0]}>Accept&eacute;</option>
+      <option value='-1' {$selectAccept[1]}>Refus&eacute;</option>
+      </select></td>
+EOD;
+    }
+    else{
+      echo "<td>Validé</td>";
+    }
+    echo "</tr>\n";
+    echo "<tr id='tr_refus' style='vertical-align:top;$displayRefus'><td>Motif du refus :</td>\n";
+      echo "<td><textarea name='refus' cols='16' rows='5' style='width:100%;'>{$data['refus']}</textarea></td></tr>\n";
+    echo "<tr><td>&nbsp;</td></tr>\n";
+
   echo "</td></tr><tr><td colspan='2'>\n";
   if($menu=="off"){
     echo "<input type='button' value='Annuler' onclick='popup_closed();' />";
@@ -257,9 +289,6 @@ EOD;
 
   if(!$valide){
     echo "<input type='submit' value='Enregistrer les modifications' style='margin-left:20px;'/>\n";
-    if($admin){
-      echo "<input type='button' value='Valider la demande de congé' style='margin-left:20px;' onclick='valideConges();'/>\n";
-    }
   }
 
   echo "</td></tr></table>\n";

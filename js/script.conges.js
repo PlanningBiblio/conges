@@ -1,17 +1,26 @@
 /*
-Planning Biblio, Plugin Congés Version 1.0.1
+Planning Biblio, Plugin Congés Version 1.1
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.txt et COPYING.txt
 Copyright (C) 2013 - Jérôme Combes
 
 Fichier : plugins/conges/js/script.conges.js
 Création : 2 août 2013
-Dernière modification : 13 août 2013
+Dernière modification : 26 août 2013
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
 Fichier regroupant les fonctions JavaScript utiles à la gestion des congés
 */
+
+function afficheRefus(me){
+  if(me.value=="-1"){
+    document.getElementById("tr_refus").style.display="";
+  }
+  else{
+    document.getElementById("tr_refus").style.display="none";
+  }
+}
 
 function calculCredit(){
   debut=document.form.elements["debut"].value;

@@ -1,13 +1,13 @@
 <?php
 /*
-Planning Biblio, Plugin Congés Version 1.0.1
+Planning Biblio, Plugin Congés Version 1.1
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.txt et COPYING.txt
 Copyright (C) 2013 - Jérôme Combes
 
 Fichier : plugins/conges/class.conges.php
 Création : 24 juillet 2013
-Dernière modification : 14 août 2013
+Dernière modification : 26 août 2013
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -42,6 +42,7 @@ class conges{
   }
 
   public function add($data){
+    $data['fin']=$data['fin']?$data['fin']:$data['debut'];
     $data['debit']=isset($data['dedit'])?$data['dedit']:"credit";
     $data['hre_debut']=$data['hre_debut']?$data['hre_debut']:"00:00:00";
     $data['hre_fin']=$data['hre_fin']?$data['hre_fin']:"23:59:59";
@@ -279,13 +280,15 @@ class conges{
     $data['hre_debut']=$data['hre_debut']?$data['hre_debut']:"00:00:00";
     $data['hre_fin']=$data['hre_fin']?$data['hre_fin']:"23:59:59";
     $data['heures']=$data['heures'].".".$data['minutes'];
+    $data['commentaires']=htmlentities($data['commentaires'],ENT_QUOTES|ENT_IGNORE,"UTF-8",false);
+    $data['refus']=htmlentities($data['refus'],ENT_QUOTES|ENT_IGNORE,"UTF-8",false);
 
     $update=array("debut"=>$data['debut']." ".$data['hre_debut'], "fin"=>$data['fin']." ".$data['hre_fin'],
-      "commentaires"=>$data['commentaires'],"heures"=>$data['heures'],"debit"=>$data['debit'],
+      "commentaires"=>$data['commentaires'],"refus"=>$data['refus'],"heures"=>$data['heures'],"debit"=>$data['debit'],
       "perso_id"=>$data['perso_id'],"modif"=>$_SESSION['login_id'],"modification"=>date("Y-m-d H:i:s"));
     
-    if($data['valide']=="1"){
-      $update["valide"]=$_SESSION['login_id'];
+    if($data['valide']){
+      $update["valide"]=$data['valide']*$_SESSION['login_id']; // login_id positif si accepté, négatif si refusé
       $update["validation"]=date("Y-m-d H:i:s");
     }
 

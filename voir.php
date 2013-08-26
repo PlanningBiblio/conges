@@ -1,6 +1,6 @@
 <?php
 /*
-Planning Biblio, Plugin Congés Version 1.0.1
+Planning Biblio, Plugin Congés Version 1.1
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.txt et COPYING.txt
 Copyright (C) 2013 - Jérôme Combes
@@ -63,7 +63,10 @@ foreach($c->elements as $elem){
   $debut=str_replace("00h00","",dateFr($elem['debut'],true));
   $fin=str_replace("23h59","",dateFr($elem['fin'],true));
   $validation="<b>N'est pas validé</b>";
-  if($elem['valide']){
+  if($elem['valide']<0){
+    $validation="<font style='color:red;font-weight:bold;'>Refus&eacute;, ".nom(-$elem['valide']).", ".dateFr($elem['validation'],true)."</font>";
+  }
+  elseif($elem['valide']){
     $validation=nom($elem['valide']).", ".dateFr($elem['validation'],true);
   }
   $nom=$admin?"<td>".nom($elem['perso_id'])."</td>":null;
