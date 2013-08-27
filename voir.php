@@ -1,13 +1,13 @@
 <?php
 /*
-Planning Biblio, Plugin Congés Version 1.1
+Planning Biblio, Plugin Congés Version 1.2
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.txt et COPYING.txt
 Copyright (C) 2013 - Jérôme Combes
 
 Fichier : plugins/conges/voir.php
 Création : 24 juillet 2013
-Dernière modification : 1er août 2013
+Dernière modification : 26 août 2013
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -62,7 +62,7 @@ $class="tr1";
 foreach($c->elements as $elem){
   $debut=str_replace("00h00","",dateFr($elem['debut'],true));
   $fin=str_replace("23h59","",dateFr($elem['fin'],true));
-  $validation="<b>N'est pas validé</b>";
+  $validation="<b>En attente</b>";
   if($elem['valide']<0){
     $validation="<font style='color:red;font-weight:bold;'>Refus&eacute;, ".nom(-$elem['valide']).", ".dateFr($elem['validation'],true)."</font>";
   }

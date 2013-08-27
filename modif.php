@@ -1,13 +1,13 @@
 <?php
 /*
-Planning Biblio, Plugin Congés Version 1.1
+Planning Biblio, Plugin Congés Version 1.2
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.txt et COPYING.txt
 Copyright (C) 2013 - Jérôme Combes
 
 Fichier : plugins/conges/modif.php
 Création : 1er août 2013
-Dernière modification : 26 août 2013
+Dernière modification : 27 août 2013
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -22,7 +22,6 @@ require_once "personnel/class.personnel.php";
 // Initialisation des variables
 $id=$_GET['id'];
 $menu=isset($_GET['menu'])?$_GET['menu']:null;
-$perso_id=isset($_GET['perso_id'])?$_GET['perso_id']:null;
 $debut=isset($_GET['debut'])?$_GET['debut']:null;
 $fin=isset($_GET['fin'])?$_GET['fin']:null;
 $quartDHeure=$config['heuresPrecision']=="quart d&apos;heure"?true:false;
@@ -31,9 +30,21 @@ $quartDHeure=$config['heuresPrecision']=="quart d&apos;heure"?true:false;
 $c=new conges();
 $c->id=$id;
 $c->fetch();
+if(!array_key_exists(0,$c->elements)){
+  echo "<h3>Congés</h3>\n";
+  echo "<div id='acces_refuse'>Accès refusé</div>\n";
+  include "include/footer.php";
+  exit;
+}
 $data=$c->elements[0];
 
 $perso_id=isset($_GET['perso_id'])?$_GET['perso_id']:$data['perso_id'];
+if(!in_array(2,$droits) and $perso_id!=$_SESSION['login_id']){
+  echo "<h3>Congés</h3>\n";
+  echo "<div id='acces_refuse'>Accès refusé</div>\n";
+  include "include/footer.php";
+  exit;
+}
 
 if($config['Multisites-nombre']>1 and $config['Multisites-agentsMultisites']==0){
   $p=new personnel();
@@ -272,7 +283,15 @@ EOD;
 EOD;
     }
     else{
-      echo "<td>Validé</td>";
+      if($data['valide']<0){
+	echo "<td>Refusé</td>";
+      }
+      elseif($data['valide']>0){
+	echo "<td>Validé</td>";
+      }
+      else{
+	echo "<td>En attente</td>";
+      }
     }
     echo "</tr>\n";
     echo "<tr id='tr_refus' style='vertical-align:top;$displayRefus'><td>Motif du refus :</td>\n";
@@ -287,7 +306,7 @@ EOD;
     echo "<input type='button' value='Annuler' onclick='document.location.href=\"index.php?page=plugins/conges/voir.php\";' />";
   }
 
-  if(!$valide){
+  if((!$valide and $admin) or $data['valide']==0){
     echo "<input type='submit' value='Enregistrer les modifications' style='margin-left:20px;'/>\n";
   }
 

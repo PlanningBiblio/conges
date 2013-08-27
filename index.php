@@ -1,13 +1,13 @@
 <?php
 /*
-Planning Biblio, Plugin Congés Version 1.1
+Planning Biblio, Plugin Congés Version 1.2
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.txt et COPYING.txt
 Copyright (C) 2013 - Jérôme Combes
 
 Fichier : plugins/conges/index.php
 Création : 24 juillet 2013
-Dernière modification : 24 juillet 2013
+Dernière modification : 27 août 2013
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -45,7 +45,7 @@ if($db->result){
     if($admin){
       echo "<a href='index.php?page=plugins/conges/infos.php&amp;id={$elem['id']}'><img src='img/modif.png' border='0' alt='modifier' /></a>&nbsp;";
     }
-    echo "Du ".dateFr($elem['debut'])." au ".dateFr($elem['fin'])." : {$elem['texte']}<br/>\n";
+    echo "Du ".dateFr($elem['debut'])." au ".dateFr($elem['fin'])." : <br/>".str_replace("\n","<br/>",$elem['texte'])."<br/><br/>\n";
   }	
 }
 ?>

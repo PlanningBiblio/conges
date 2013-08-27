@@ -1,6 +1,6 @@
 <?php
 /*
-Planning Biblio, Plugin Congés Version 1.1
+Planning Biblio, Plugin Congés Version 1.2
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.txt et COPYING.txt
 Copyright (C) 2013 - Jérôme Combes
@@ -238,10 +238,13 @@ class conges{
 	$jour=$d->position?$d->position:7;
 	$semaine=$d->semaine3;
 	// Récupération du numéro du site concerné par la date courante
-	$site=$temps[$jour-1+($semaine*7)-7][4];
-	// Ajout du numéro du droit correspondant à la gestion des congés de ce site
-	if(!in_array("30".$site,$droitsConges) and $site){
-	  $droitsConges[]="30".$site;
+	$offset=$jour-1+($semaine*7)-7;
+	if(array_key_exists($offset,$temps)){
+	  $site=$temps[$offset][4];
+	  // Ajout du numéro du droit correspondant à la gestion des congés de ce site
+	  if(!in_array("30".$site,$droitsConges) and $site){
+	    $droitsConges[]="30".$site;
+	  }
 	}
 	$date=date("Y-m-d",strtotime("+1 day",strtotime($date)));
       }
@@ -290,6 +293,9 @@ class conges{
     if($data['valide']){
       $update["valide"]=$data['valide']*$_SESSION['login_id']; // login_id positif si accepté, négatif si refusé
       $update["validation"]=date("Y-m-d H:i:s");
+    }
+    else{
+      $update['valide']=0;
     }
 
     $db=new db();

@@ -1,13 +1,13 @@
 <?php
 /*
-Planning Biblio, Plugin Congés Version 1.1
+Planning Biblio, Plugin Congés Version 1.2
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.txt et COPYING.txt
 Copyright (C) 2013 - Jérôme Combes
 
 Fichier : plugins/conges/enregistrer.php
 Création : 24 juillet 2013
-Dernière modification : 13 août 2013
+Dernière modification : 27 août 2013
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -21,7 +21,10 @@ require_once "personnel/class.personnel.php";
 
 // Initialisation des variables
 $menu=isset($_GET['menu'])?$_GET['menu']:null;
-$perso_id=isset($_GET['perso_id'])?$_GET['perso_id']:null;
+$perso_id=isset($_GET['perso_id'])?$_GET['perso_id']:$_SESSION['login_id'];
+if(!in_array(2,$droits)){
+  $perso_id=$_SESSION['login_id'];
+}
 $debut=isset($_GET['debut'])?$_GET['debut']:null;
 $fin=isset($_GET['fin'])?$_GET['fin']:null;
 $quartDHeure=$config['heuresPrecision']=="quart d&apos;heure"?true:false;
@@ -110,7 +113,7 @@ else{	// Formulaire
   if(in_array(2,$droits)){
     $db_perso=new db();
     $db_perso->query("select * from {$dbprefix}personnel where actif='Actif' order by nom,prenom;");
-    echo "<select name='perso_id'>\n";
+    echo "<select name='perso_id' onchange='document.location.href=\"index.php?page=plugins/conges/enregistrer.php&perso_id=\"+this.value;'>\n";
     foreach($db_perso->result as $elem){
       if($perso_id==$elem['id']){
 	echo "<option value='".$elem['id']."' selected='selected'>".$elem['nom']." ".$elem['prenom']."</option>\n";
@@ -229,7 +232,7 @@ $db->query("SELECT * FROM `{$dbprefix}conges_infos` WHERE `fin`>='$date' ORDER B
 if($db->result){
   echo "<b>Informations sur les congés :</b><br/><br/>\n";
   foreach($db->result as $elem){
-    echo "Du ".dateFr($elem['debut'])." au ".dateFr($elem['fin'])." : {$elem['texte']}<br/>\n";
+    echo "Du ".dateFr($elem['debut'])." au ".dateFr($elem['fin'])." :<br/>".str_replace("\n","<br/>",$elem['texte'])."<br/><br/>\n";
   }
 }
 ?>
