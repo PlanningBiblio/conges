@@ -6,7 +6,7 @@ Copyright (C) 2013 - Jérôme Combes
 
 Fichier : plugins/conges/js/script.conges.js
 Création : 2 août 2013
-Dernière modification : 26 août 2013
+Dernière modification : 29 août 2013
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -106,6 +106,15 @@ function calculRestes(){
   document.getElementById("reliquat4").innerHTML=heure4(reliquat);
   document.getElementById("recup4").innerHTML=heure4(recuperation);
   document.getElementById("credit4").innerHTML=heure4(credit);
+}
+
+function recuperation(date){
+  heures=$("#heures_"+date).val();
+  recup=file("index.php?page=plugins/conges/ajax.recup.php&date="+date+"&heures="+heures);
+  msg=recup.split("###");
+  if(msg[1]=="OK"){
+    $("#td_"+date).html("<b>Demande de récupération enregistrée.</b>");
+  }
 }
 
 function valideConges(){

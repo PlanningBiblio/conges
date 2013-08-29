@@ -7,7 +7,7 @@ Copyright (C) 2013 - Jérôme Combes
 
 Fichier : plugins/conges/class.conges.php
 Création : 24 juillet 2013
-Dernière modification : 26 août 2013
+Dernière modification : 29 août 2013
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -36,6 +36,7 @@ class conges{
   public $message=null;
   public $minutes=null;
   public $perso_id=null;
+  public $samedis=array();
   public $valide=null;
 
   public function conges(){
@@ -136,7 +137,39 @@ class conges{
   }
 
 
+  public function enregistreRecup($date,$heures){
+    // Enregistrement de la demande de récupération
+    $perso_id=$_SESSION['login_id'];
+    $db=new db();
+    $db->delete("recuperations","`perso_id`='$perso_id' AND `date`='$date'");
+    $db=new db();
+    $db->insert2("recuperations",array("perso_id"=>$perso_id,"date"=>$date,"heures"=>$heures,"etat"=>"Demande"));
 
+
+    // Envoi d'un e-mail à l'agent et aux responsables
+    $destinaires=array();
+    $p=new personnel();
+    $p->fetchById($perso_id);
+    $nom=$p->elements[0]['nom'];
+    $prenom=$p->elements[0]['prenom'];
+    $mail=$p->elements[0]['mail'];
+    if(verifmail($mail)){
+      $destinataires[]=$mail;
+    }
+    $this->getResponsables($date,$date,$perso_id);
+    $responsables=$this->responsables;
+    foreach($responsables as $elem){
+      if(verifmail($elem['mail']) and !in_array($elem['mail'],$destinataires)){
+	$destinataires[]=$elem['mail'];
+      }
+    }
+    if(!empty($destinataires)){
+      $destinataires=join(";",$destinataires);
+      $sujet="Nouvelle demande de récupération";
+      $message="Nouvelle demande de récupération<br/>$prenom $nom a fait une nouvelle demande de récupération";
+      sendmail($sujet,$message,$destinataires);
+    }
+  }
 
 
 
@@ -276,6 +309,42 @@ class conges{
       }
     }
     $this->responsables=$responsables;
+  }
+
+  public function getSaturday(){
+    // Liste des samedis des 2 derniers mois
+    $perso_id=isset($this->perso_id)?$this->perso_id:$_SESSION['login_id'];
+    $samedis=array();
+    $current=date("Y-m-d");
+    while($current>date("Y-m-d",strtotime("-2 month",time()))){
+      $d=new datePl($current);
+      if($d->position==6){
+	$samedis[$current]=array("date"=>$current,"heures"=>0,"recup"=>null);
+      }
+      $current=date("Y-m-d",strtotime("-1 day",strtotime($current)));
+    }
+
+    // Pour chaque samedi
+    foreach($samedis as $samedi){
+      // Vérifions si l'agent a travaillé et récupérons les heures correspondantes
+      $db=new db();
+      $db->select("pl_poste","*","date='{$samedi['date']}' AND perso_id='$perso_id' AND absent='0'");
+      $heures=0;
+      if($db->result){
+	foreach($db->result as $elem){
+	  $heures+=diff_heures($elem['debut'],$elem['fin'],"decimal");
+	}
+      }
+      $samedis[$samedi['date']]['heures']=number_format($heures, 2, '.', ' ');
+
+      // Vérifions si une demande de récupération à déjà été faite
+      $db=new db();
+      $db->select("recuperations","*","date='{$samedi['date']}' AND perso_id='$perso_id'");
+      if($db->result){
+	$samedis[$samedi['date']]['recup']=$db->result[0]['etat'];
+      }
+    }
+  $this->samedis=$samedis;
   }
 
   public function update($data){
