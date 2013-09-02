@@ -1,6 +1,6 @@
 <?php
 /*
-Planning Biblio, Plugin Congés Version 1.2
+Planning Biblio, Plugin Congés Version 1.3
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.txt et COPYING.txt
 Copyright (C) 2013 - Jérôme Combes
@@ -32,9 +32,9 @@ $samedis=$c->samedis;
 
 <p>Vérifiez le nombre d'heures et cliquez sur "Récupérer"</p>
 <form name='form' method='get' action='#'>
-<table cellspacing='0' style='text-align:center;'>
+<table class='tableauStandard'>
 <tr class='th'>
-  <td style='width:250px;'>Date</td><td style='padding-left:10px;width:350px;'>Heures</td></tr>
+  <td>Date</td><td>Heures</td></tr>
 <?php
 $class="tr1";
 foreach($samedis as $samedi){
@@ -49,7 +49,6 @@ foreach($samedis as $samedi){
   }
   else{
     echo "<td id='td_{$samedi['date']}'>";
-//     echo "<input type='text' value='".heure4($samedi['heures'])."' style='text-align:center;' id='heures_{$samedi['date']}'/>\n";
     echo "<select id='heures_{$samedi['date']}' name='heures_{$samedi['date']}' style='text-align:center;' >\n";
     echo "<option value=''>&nbsp;</option>\n";
     for($i=0;$i<17;$i++){
@@ -72,4 +71,3 @@ foreach($samedis as $samedi){
 ?>
 </table>
 </form>
-

@@ -1,13 +1,13 @@
 <?php
 /*
-Planning Biblio, Plugin Congés Version 1.2
+Planning Biblio, Plugin Congés Version 1.3
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.txt et COPYING.txt
 Copyright (C) 2013 - Jérôme Combes
 
 Fichier : plugins/conges/voir.php
 Création : 24 juillet 2013
-Dernière modification : 26 août 2013
+Dernière modification : 29 août 2013
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -50,8 +50,9 @@ echo <<<EOD
 &nbsp;&nbsp;<input type='submit' value='OK' />
 &nbsp;&nbsp;<input type='button' value='Effacer' onclick='location.href="index.php?page=plugins/conges/voir.php"' />
 </form>
-<table border='0' cellspacing='0' style='width:100%;margin-top:20px;'>
-<tr class='th' style='vertical-align:top;text-align:center;'><td>&nbsp;</td><td>Début</td><td>Fin</td>
+<br/>
+<table class='tableauStandard'>
+<tr class='th'><td>&nbsp;</td><td>Début</td><td>Fin</td>
 EOD;
 if($admin){
   echo "<td>Nom</td>";
@@ -72,7 +73,7 @@ foreach($c->elements as $elem){
   $nom=$admin?"<td>".nom($elem['perso_id'])."</td>":null;
   $class=$class=="tr1"?"tr2":"tr1";
   echo <<<EOD
-    <tr class='$class' style='text-align:center;'>
+    <tr class='$class'>
       <td><a href='index.php?page=plugins/conges/modif.php&amp;id={$elem['id']}'/>
       <img src='img/modif.png' alt='Voir' border='0'/></a></td>
       <td>$debut</td><td>$fin</td>$nom<td>{$elem['commentaires']}</td><td>$validation</td>
@@ -80,8 +81,5 @@ foreach($c->elements as $elem){
 EOD;
 }
 
-echo <<<EOD
-</table>
-EOD;
-
 ?>
+</table>

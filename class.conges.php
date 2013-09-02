@@ -1,13 +1,13 @@
 <?php
 /*
-Planning Biblio, Plugin Congés Version 1.2
+Planning Biblio, Plugin Congés Version 1.3
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.txt et COPYING.txt
 Copyright (C) 2013 - Jérôme Combes
 
 Fichier : plugins/conges/class.conges.php
 Création : 24 juillet 2013
-Dernière modification : 29 août 2013
+Dernière modification : 2 septembre 2013
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -19,13 +19,14 @@ Inclus dans les autres fichiers PHP du dossier plugins/conges
 if(!$version){
   header("Location: ../../index.php");
 }
-
-require_once "plugins/planningHebdo/class.planningHebdo.php";
-require_once "joursFeries/class.joursFeries.php";
-require_once "personnel/class.personnel.php";
+$path=strpos($_SERVER['REQUEST_URI'],"page=")?null:"../../";
+require_once "{$path}plugins/planningHebdo/class.planningHebdo.php";
+require_once "{$path}joursFeries/class.joursFeries.php";
+require_once "{$path}personnel/class.personnel.php";
 
 class conges{
   public $agent=null;
+  public $admin=false;
   public $debut=null;
   public $elements=array();
   public $error=false;
@@ -36,6 +37,7 @@ class conges{
   public $message=null;
   public $minutes=null;
   public $perso_id=null;
+  public $recupId=null;
   public $samedis=array();
   public $valide=null;
 
@@ -147,7 +149,7 @@ class conges{
 
 
     // Envoi d'un e-mail à l'agent et aux responsables
-    $destinaires=array();
+    $destinataires=array();
     $p=new personnel();
     $p->fetchById($perso_id);
     $nom=$p->elements[0]['nom'];
@@ -253,6 +255,26 @@ class conges{
       if($db->result){
 	$this->elements=array("credit"=>$db->result[0]['congesCredit'],"reliquat"=>$db->result[0]['congesReliquat'],"anticipation"=>$db->result[0]['congesAnticipation'],"recupSamedi"=>$db->result[0]['recupSamedi']);
       }
+    }
+  }
+
+  public function getRecup(){
+    $debut=$this->debut?$this->debut:date("Y-m-d",strtotime("-2 month",time()));
+    $fin=$this->fin?$this->fin:date("Y-m-d");
+
+    $filter="`date` BETWEEN '$debut' AND '$fin'";
+    if(!$this->admin){
+      $filter.=" AND perso_id='{$_SESSION['login_id']}'";
+    }
+
+    if($this->recupId){
+      $filter="id='{$this->recupId}'";
+    }
+
+    $db=new db();
+    $db->select("recuperations","*",$filter);
+    if($db->result){
+      $this->elements=$db->result;
     }
   }
 

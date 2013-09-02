@@ -1,6 +1,6 @@
 <?php
 /*
-Planning Biblio, Plugin Conges Version 1.0
+Planning Biblio, Plugin Conges Version 1.0.1
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.txt et COPYING.txt
 Copyright (C) 2013 - Jérôme Combes
