@@ -1,0 +1,8 @@
+***	Version 1.3	(Jérôme Combes, Septembre 2013)		***
+-Améliorations :
+Ajoute la gestion des récupérations des samedis
+
+***	Version 1.2	(Jérôme Combes, Août 2013)		***
+-Améliorations :
+Ajoute la possibilité de refuser les congés avec le motif du refus
+Ajoute la gestion des messages d'informations pour les congés
