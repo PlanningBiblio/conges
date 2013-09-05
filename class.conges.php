@@ -7,7 +7,7 @@ Copyright (C) 2013 - Jérôme Combes
 
 Fichier : plugins/conges/class.conges.php
 Création : 24 juillet 2013
-Dernière modification : 4 septembre 2013
+Dernière modification : 5 septembre 2013
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -20,7 +20,7 @@ if(!$version){
   header("Location: ../../index.php");
 }
 
-$path=(strpos($_SERVER['REQUEST_URI'],"page=") or array_key_exists("page",$_POST))?null:"../../";
+$path=substr($_SERVER['SCRIPT_NAME'],-9)=="index.php"?null:"../../";
 require_once "{$path}plugins/planningHebdo/class.planningHebdo.php";
 require_once "{$path}joursFeries/class.joursFeries.php";
 require_once "{$path}personnel/class.personnel.php";
