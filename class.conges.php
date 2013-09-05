@@ -7,7 +7,7 @@ Copyright (C) 2013 - Jérôme Combes
 
 Fichier : plugins/conges/class.conges.php
 Création : 24 juillet 2013
-Dernière modification : 2 septembre 2013
+Dernière modification : 4 septembre 2013
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -19,7 +19,8 @@ Inclus dans les autres fichiers PHP du dossier plugins/conges
 if(!$version){
   header("Location: ../../index.php");
 }
-$path=strpos($_SERVER['REQUEST_URI'],"page=")?null:"../../";
+
+$path=(strpos($_SERVER['REQUEST_URI'],"page=") or array_key_exists("page",$_POST))?null:"../../";
 require_once "{$path}plugins/planningHebdo/class.planningHebdo.php";
 require_once "{$path}joursFeries/class.joursFeries.php";
 require_once "{$path}personnel/class.personnel.php";
@@ -237,14 +238,6 @@ class conges{
   }
 
 
-
-
-
-
-
-
-
-
   public function fetchCredit(){
     if(!$this->perso_id){
       $this->elements=array("credit"=>null,"reliquat"=>null,"anticipation"=>null,"recupSamedi"=>null);
@@ -267,12 +260,35 @@ class conges{
       $filter.=" AND perso_id='{$_SESSION['login_id']}'";
     }
 
+    // Recherche des agents actifs seulement
+    $perso_ids=array(0);
+    $p=new personnel();
+    $p->fetch("nom");
+    foreach($p->elements as $elem){
+      $perso_ids[]=$elem['id'];
+    }
+
+    // Recherche avec le nom de l'agent
+    if($this->agent){
+      $perso_ids=array(0);
+      $p=new personnel();
+      $p->fetch("nom",null,$this->agent);
+      foreach($p->elements as $elem){
+	$perso_ids[]=$elem['id'];
+      }
+    }
+
+    // Filtre pour agents actifs seulement et recherche avec nom de l'agent
+    $perso_ids=join(",",$perso_ids);
+    $filter.=" AND `perso_id` IN ($perso_ids)";
+
+    // Si recupId, le filtre est réinitialisé
     if($this->recupId){
       $filter="id='{$this->recupId}'";
     }
 
     $db=new db();
-    $db->select("recuperations","*",$filter);
+    $db->select("recuperations","*",$filter,"order by date,saisie");
     if($db->result){
       $this->elements=$db->result;
     }
@@ -364,6 +380,8 @@ class conges{
       $db->select("recuperations","*","date='{$samedi['date']}' AND perso_id='$perso_id'");
       if($db->result){
 	$samedis[$samedi['date']]['recup']=$db->result[0]['etat'];
+	$samedis[$samedi['date']]['valide']=$db->result[0]['valide'];
+	$samedis[$samedi['date']]['heures_validees']=$db->result[0]['heures'];
       }
     }
   $this->samedis=$samedis;

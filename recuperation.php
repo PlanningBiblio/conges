@@ -7,7 +7,7 @@ Copyright (C) 2013 - Jérôme Combes
 
 Fichier : plugins/conges/recuperation.php
 Création : 27 août 2013
-Dernière modification : 29 août 2013
+Dernière modification : 4 septembre 2013
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -41,8 +41,16 @@ foreach($samedis as $samedi){
   $class=$class=="tr1"?"tr2":"tr1";
   echo "<tr class='$class'><td>".dateAlpha($samedi['date'])."</td>";
 
-  if($samedi['recup']){
-    echo "<td><b>Demande de récupération enregistrée.</b></td>\n";
+  if(isset($samedi['valide'])){
+    if($samedi['valide']==0){
+      echo "<td><b>Demande de récupération enregistrée.</b></td>\n";
+    }
+    elseif($samedi['valide']>0){
+      echo "<td><b>Demande validée (".heure4($samedi['heures_validees']).").</b></td>\n";
+    }
+    elseif($samedi['valide']<0){
+      echo "<td><b>Demande refusée.</b></td>\n";
+    }
   }
   elseif($samedi['heures']==0){
     echo "<td>Vous n'avez pas travaillé ce samedi.</td>\n";

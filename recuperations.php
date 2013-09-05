@@ -7,7 +7,7 @@ Copyright (C) 2013 - Jérôme Combes
 
 Fichier : plugins/conges/recuperations.php
 Création : 27 août 2013
-Dernière modification : 30 août 2013
+Dernière modification : 4 septembre 2013
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -17,10 +17,17 @@ Fichier permettant de voir les demandes de récupération
 include_once "class.conges.php";
 
 // Initialisation des variables
+$agent=isset($_GET['agent'])?$_GET['agent']:null;
+$tri=isset($_GET['tri'])?$_GET['tri']:"`debut`,`fin`,`nom`,`prenom`";
+$debut=isset($_GET['debut'])?$_GET['debut']:null;
+$fin=isset($_GET['fin'])?$_GET['fin']:null;
 $admin=in_array(2,$droits)?true:false;
 
 $c=new conges();
 $c->admin=$admin;
+$c->debut=$debut;
+$c->fin=$fin;
+$c->agent=$agent;
 $c->getRecup();
 $recup=$c->elements;
 
@@ -42,6 +49,19 @@ if(isset($_GET['message'])){
 echo <<<EOD
 <h3>Récupérations des samedis</h3>
 
+<form name='form' method='get' action='index.php'>
+<input type='hidden' name='page' value='plugins/conges/recuperations.php' />
+Début : <input type='text' name='debut' value='$debut' />&nbsp;<img src='img/calendrier.gif' onclick='calendrier("debut");' alt='calendrier' />
+&nbsp;&nbsp;Fin : <input type='text' name='fin' value='$fin' />&nbsp;<img src='img/calendrier.gif' onclick='calendrier("fin");' alt='calendrier' />
+EOD;
+if($admin){
+  echo "&nbsp;&nbsp;Agent : <input type='text' name='agent' value='$agent' />\n";
+}
+echo <<<EOD
+&nbsp;&nbsp;<input type='submit' value='OK' />
+&nbsp;&nbsp;<input type='button' value='Effacer' onclick='location.href="index.php?page=plugins/conges/recuperations.php"' />
+</form>
+<br/>
 <table class='tableauStandard'>
 <tr class='th'><td>&nbsp;</td><td>Date</td><td>Agent</td><td>Heures</td><td>Validation</td></tr>
 EOD;
@@ -53,7 +73,7 @@ foreach($recup as $elem){
     $validation=nom($elem['valide']).", ".dateFr($elem['validation'],true);
   }
   elseif($elem['valide']<0){
-    $validation="Refusé, ".nom(-$elem['valide']).", ".dateFr($elem['validation']);
+    $validation="<font style='color:red;font-weight:bold;'>Refus&eacute;, ".nom(-$elem['valide']).", ".dateFr($elem['validation'],true)."</font>";
   }
 
   echo "<tr class='$class'>";
