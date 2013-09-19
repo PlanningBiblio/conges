@@ -23,6 +23,7 @@ $debut=isset($_GET['debut'])?$_GET['debut']:null;
 $fin=isset($_GET['fin'])?$_GET['fin']:null;
 $admin=in_array(2,$droits)?true:false;
 
+// Recherche des demandes de récupérations enregistrées
 $c=new conges();
 $c->admin=$admin;
 $c->debut=$debut;
@@ -47,8 +48,10 @@ if(isset($_GET['message'])){
 
 // Affichage
 echo <<<EOD
-<h3>Récupérations des samedis</h3>
+<h3>Récupérations</h3>
 
+<div id='liste'>
+<h4>Liste des demandes de récupération</h4>
 <form name='form' method='get' action='index.php'>
 <input type='hidden' name='page' value='plugins/conges/recuperations.php' />
 Début : <input type='text' name='debut' value='$debut' />&nbsp;<img src='img/calendrier.gif' onclick='calendrier("debut");' alt='calendrier' />
@@ -61,7 +64,6 @@ echo <<<EOD
 &nbsp;&nbsp;<input type='submit' value='OK' />
 &nbsp;&nbsp;<input type='button' value='Effacer' onclick='location.href="index.php?page=plugins/conges/recuperations.php"' />
 </form>
-<br/>
 <table class='tableauStandard'>
 <tr class='th'><td>&nbsp;</td><td>Date</td><td>Agent</td><td>Heures</td><td>Validation</td></tr>
 EOD;
@@ -81,5 +83,36 @@ foreach($recup as $elem){
   echo "<td>".dateFr($elem['date'])."</td><td>".nom($elem['perso_id'])."</td><td>".heure4($elem['heures'])."</td><td>$validation</td></tr>\n";
 }
 
-?>
+echo <<<EOD
 </table>
+</div> <!-- liste -->
+
+<div id='demande' style='margin-top:50px;'>
+<h4>Nouvelle demande de récupération</h4>
+<p>Veuillez sélectionner le jour concerné par votre demande et le nombre d'heures à récuperer.</p>
+<form name='form1' method='post' action='index.php' onsubmit='return verifRecup()'>
+<input type='hidden' name='page' value='plugins/conges/recuperation.php' />
+<table class='tableauFiches'>
+<tr><td>Date</td>
+  <td><input type='text' name='date' />
+  <img src='img/calendrier.gif' onclick='calendrier("date","form1");' alt='calendrier' />
+  </td>
+  <td class='tdValidation' rowspan='2'><input type='submit' value='Valider' /></tr>
+<tr><td>Heures</td>
+  <td><select id='heures' name='heures' style='text-align:center;' >
+    <option value=''>&nbsp;</option>
+EOD;
+    for($i=0;$i<17;$i++){
+      echo "<option value='{$i}.00' >{$i}h00</option>\n";
+      echo "<option value='{$i}.25' >{$i}h15</option>\n";
+      echo "<option value='{$i}.50' >{$i}h30</option>\n";
+      echo "<option value='{$i}.75' >{$i}h45</option>\n";
+    }
+echo <<<EOD
+    </select>
+</td></tr>
+</table>
+</form>
+</div> <!-- Demande -->
+EOD;
+?>

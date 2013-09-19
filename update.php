@@ -7,7 +7,7 @@ Copyright (C) 2013 - Jérôme Combes
 
 Fichier : plugins/conges/update.php
 Création : 26 août 2013
-Dernière modification : 30 août 2013
+Dernière modification : 19 septembre 2013
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -30,6 +30,8 @@ $sql=array();
 
 // Modification de la table conges
 
+// Modification du 30 août 2013
+/*
 // Motif de refus des congés
 $sql[]="ALTER TABLE `{$dbprefix}conges` ADD `refus` TEXT;";
 
@@ -45,7 +47,11 @@ $sql[]="INSERT INTO `{$dbprefix}menu` (`niveau1`,`niveau2`,`titre`,`url`) VALUES
 
 // Création de la table récupérations
 $sql[]="CREATE TABLE `{$dbprefix}recuperations` (`id` INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY, `perso_id` INT(11) NOT NULL, `date` DATE NULL, `heures` FLOAT(5), `etat` VARCHAR(20), `commentaires` TEXT, `saisie` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, `modif` INT(11) NOT NULL DEFAULT '0',`modification` TIMESTAMP, `valide` INT(11) NOT NULL DEFAULT '0',`validation` TIMESTAMP,`refus` TEXT);";
+*/
 
+// Modification du 19 septembre 2013
+$sql[]="DELETE FROM `{$dbprefix}menu` WHERE `url`='plugins/conges/recuperation.php';";
+$sql[]="UPDATE `{$dbprefix}menu` SET `titre`='R&eacute;cup&eacute;rations' WHERE `url`='plugins/conges/recuperations.php';";
 
 ?>
 <!-- Entête HTML -->

@@ -7,7 +7,7 @@ Copyright (C) 2013 - Jérôme Combes
 
 Fichier : plugins/conges/recuperation_modif.php
 Création : 29 août 2013
-Dernière modification : 30 août 2013
+Dernière modification : 19 septembre 2013
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -46,17 +46,6 @@ $select6=$recup['valide']<0?"selected='selected'":null;
 $validation=$select5?"Accepté":($select6?"Refusé":"En attente");
 $displayRefus=$recup['valide']<0?"":"none";
 
-// Calcul des heures à partir du planning de service
-$heuresCalculees=0;
-$db=new db();
-$db->select("pl_poste","*","date='$date' AND perso_id='$perso_id' AND absent='0'");
-if($db->result){
-  foreach($db->result as $elem){
-    $heuresCalculees+=diff_heures($elem['debut'],$elem['fin'],"decimal");
-  }
-}
-$heuresCalculees=heure4($heuresCalculees);
-
 // Affichage
 echo <<<EOD
 <h3>Récupérations des samedis</h3>
@@ -86,7 +75,6 @@ if(!$valide){
 else{
   echo "<td>".heure4($recup['heures'])."</td>\n";
 }
-echo "<tr><td>Heures calculées : </td><td>$heuresCalculees</td></td></tr>\n";
 if(!$valide and $admin){
   echo <<<EOD
   <tr><td>Validation : </td>

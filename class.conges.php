@@ -7,7 +7,7 @@ Copyright (C) 2013 - Jérôme Combes
 
 Fichier : plugins/conges/class.conges.php
 Création : 24 juillet 2013
-Dernière modification : 5 septembre 2013
+Dernière modification : 19 septembre 2013
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -252,8 +252,8 @@ class conges{
   }
 
   public function getRecup(){
-    $debut=$this->debut?$this->debut:date("Y-m-d",strtotime("-2 month",time()));
-    $fin=$this->fin?$this->fin:date("Y-m-d");
+    $debut=$this->debut?$this->debut:date("Y-m-d",strtotime("-1 month",time()));
+    $fin=$this->fin?$this->fin:date("Y-m-d",strtotime("+1 year",time()));
 
     $filter="`date` BETWEEN '$debut' AND '$fin'";
     if(!$this->admin){
