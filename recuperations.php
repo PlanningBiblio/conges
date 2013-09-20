@@ -7,7 +7,7 @@ Copyright (C) 2013 - Jérôme Combes
 
 Fichier : plugins/conges/recuperations.php
 Création : 27 août 2013
-Dernière modification : 4 septembre 2013
+Dernière modification : 20 septembre 2013
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -35,6 +35,8 @@ $recup=$c->elements;
 // Notifications
 if(isset($_GET['message'])){
   switch($_GET['message']){
+    case "Demande-OK" : $message="Votre demande a été enregistrée"; $class="MessageOK";	break;
+    case "Demande-Erreur" : $message="Une erreur est survenue lors de l'enregitrement de votre demande."; $class="MessageErreur"; break;
     case "OK" : $message="Vos modifications ont été enregistrées"; $class="MessageOK";	break;
     case "Erreur" : $message="Une erreur est survenue lors de la validation de vos modifications."; $class="MessageErreur"; break;
     case "Refus" : $message="Accès refusé."; $class="MessageErreur";	break;
@@ -87,32 +89,78 @@ echo <<<EOD
 </table>
 </div> <!-- liste -->
 
-<div id='demande' style='margin-top:50px;'>
-<h4>Nouvelle demande de récupération</h4>
-<p>Veuillez sélectionner le jour concerné par votre demande et le nombre d'heures à récuperer.</p>
-<form name='form1' method='post' action='index.php' onsubmit='return verifRecup()'>
-<input type='hidden' name='page' value='plugins/conges/recuperation.php' />
-<table class='tableauFiches'>
-<tr><td>Date</td>
-  <td><input type='text' name='date' />
-  <img src='img/calendrier.gif' onclick='calendrier("date","form1");' alt='calendrier' />
-  </td>
-  <td class='tdValidation' rowspan='2'><input type='submit' value='Valider' /></tr>
-<tr><td>Heures</td>
-  <td><select id='heures' name='heures' style='text-align:center;' >
-    <option value=''>&nbsp;</option>
+<br/><button id='dialog-button'>Nouvelle demande</button>
+
+<div id="dialog-form" title="Nouvelle demande">
+  <p class="validateTips">Veuillez sélectionner le jour concerné par votre demande et le nombre d'heures à récuperer.</p>
+  <form>
+  <fieldset>
+    <table class='tableauFiches'>
+    <tr><td><label for="date">Date</label></td>
+    <td><input type="text" name="date" id="date" class="text ui-widget-content ui-corner-all datepicker"/></td></tr>
+    <tr><td><label for="heures">Heures</label></td>
+    <td><select id='heures' name='heures' style='text-align:center;'>
+      <option value=''>&nbsp;</option>
 EOD;
-    for($i=0;$i<17;$i++){
-      echo "<option value='{$i}.00' >{$i}h00</option>\n";
-      echo "<option value='{$i}.25' >{$i}h15</option>\n";
-      echo "<option value='{$i}.50' >{$i}h30</option>\n";
-      echo "<option value='{$i}.75' >{$i}h45</option>\n";
-    }
-echo <<<EOD
-    </select>
-</td></tr>
-</table>
-</form>
-</div> <!-- Demande -->
+      for($i=0;$i<17;$i++){
+	echo "<option value='{$i}.00' >{$i}h00</option>\n";
+	echo "<option value='{$i}.25' >{$i}h15</option>\n";
+	echo "<option value='{$i}.50' >{$i}h30</option>\n";
+	echo "<option value='{$i}.75' >{$i}h45</option>\n";
+      }
+    echo <<<EOD
+      </select></td></tr>
+    </table>
+  </fieldset>
+  </form>
+</div>
 EOD;
 ?>
+<script type='text/JavaScript'>
+$(function() {
+  var date = $( "#date" ),
+    heures = $( "#heures" ),
+    allFields = $( [] ).add( date ).add( heures );
+
+  $( "#dialog-form" ).dialog({
+    autoOpen: false,
+    height: 380,
+    width: 460,
+    modal: true,
+    buttons: {
+      "Enregistrer": function() {
+	var bValid = true;
+	allFields.removeClass( "ui-state-error" );
+ 	bValid = bValid && checkRegexp( date, /^[0-9]{4}-[0-9]{2}-[0-9]{2}/i, "La date doit être au format AAAA-MM-JJ" );
+	bValid = bValid && checkLength( heures, "heures", 4, 5 );
+
+	if ( bValid ) {
+	  if(verifRecup()){
+	    $( this ).dialog( "close" );
+	  }
+	}
+      },
+
+      Annuler: function() {
+	$( this ).dialog( "close" );
+      }
+    },
+
+    close: function() {
+      allFields.val( "" ).removeClass( "ui-state-error" );
+    }
+  });
+
+  $( "#dialog-button" )
+    .button()
+    .click(function() {
+      $( "#dialog-form" ).dialog( "open" );
+    });
+
+  $( "#dialog-button" ).removeClass();
+
+  $( ".datepicker" ).datepicker();
+  $( ".datepicker" ).datepicker("option", "dateFormat", "yy-mm-dd");
+
+});
+</script>

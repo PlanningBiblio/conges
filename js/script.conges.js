@@ -6,7 +6,7 @@ Copyright (C) 2013 - Jérôme Combes
 
 Fichier : plugins/conges/js/script.conges.js
 Création : 2 août 2013
-Dernière modification : 19 septembre 2013
+Dernière modification : 20 septembre 2013
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -123,12 +123,13 @@ function valideConges(){
 }
 
 function verifRecup(){
-  date=document.forms['form1'].elements['date'].value;
-  heures=document.forms['form1'].elements['heures'].value;
-  f=file("plugins/conges/ajax.verifRecup.php?date="+date+"&heures="+heures);
+  var date = $("#date"), heures = $("#heures");
+
+  f=file("plugins/conges/ajax.verifRecup.php?date="+date.val()+"&heures="+heures.val());
   tmp=f.split("###");
   if(tmp[1]=="Demande"){
-    alert("Une demande de récupération est déjà enregistrée pour le "+dateFr(date));
+    date.addClass( "ui-state-error" );
+    updateTips( "Une demande a déjà été enregistrée pour le "+dateFr(date.val())+"." );
     return false;
   }
   else{
@@ -136,3 +137,37 @@ function verifRecup(){
     return false;
   }
 }
+
+
+// Dialog, récupérations
+
+function updateTips( t ) {
+  var tips=$( ".validateTips" );
+  tips
+    .text( t )
+    .addClass( "ui-state-highlight" );
+  setTimeout(function() {
+    tips.removeClass( "ui-state-highlight", 1500 );
+  }, 500 );
+}
+
+function checkLength( o, n, min, max ) {
+  if ( o.val().length > max || o.val().length < min ) {
+    o.addClass( "ui-state-error" );
+    updateTips( "Veuillez sélectionner le nombre d'heures.");
+  return false;
+  } else {
+    return true;
+  }
+}
+
+function checkRegexp( o, regexp, n ) {
+  if ( !( regexp.test( o.val() ) ) ) {
+    o.addClass( "ui-state-error" );
+    updateTips( n );
+    return false;
+  } else {
+    return true;
+  }
+}
+
