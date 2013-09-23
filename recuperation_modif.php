@@ -7,7 +7,7 @@ Copyright (C) 2013 - Jérôme Combes
 
 Fichier : plugins/conges/recuperation_modif.php
 Création : 29 août 2013
-Dernière modification : 19 septembre 2013
+Dernière modification : 23 septembre 2013
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -70,11 +70,19 @@ if(!$valide){
       echo "<option value='{$i}.50' $select3>{$i}h30</option>\n";
       echo "<option value='{$i}.75' $select4>{$i}h45</option>\n";
     }
-    echo "</select></td>\n";
+    echo "</select></td></tr>\n";
 }
 else{
-  echo "<td>".heure4($recup['heures'])."</td>\n";
+  echo "<td>".heure4($recup['heures'])."</td></tr>\n";
 }
+echo "<tr><td>Commentaires : </td>";
+if(!$valide){
+  echo "<td><textarea name='commentaires'>{$recup['commentaires']}</textarea></td>\n";
+}
+else{
+  echo "<td>".str_replace("\n","<br/>",$recup['commentaires'])."</td>\n";
+}
+
 if(!$valide and $admin){
   echo <<<EOD
   <tr><td>Validation : </td>

@@ -6,7 +6,7 @@ Copyright (C) 2013 - Jérôme Combes
 
 Fichier : plugins/conges/js/script.conges.js
 Création : 2 août 2013
-Dernière modification : 20 septembre 2013
+Dernière modification : 23 septembre 2013
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -123,13 +123,17 @@ function valideConges(){
 }
 
 function verifRecup(){
-  var date = $("#date"), heures = $("#heures");
+  var date = $("#date"),
+    heures = $("#heures").val(),
+    commentaires = $("#commentaires").val();
+  var perso_id=$("#agent").val();
 
-  f=file("plugins/conges/ajax.verifRecup.php?date="+date.val()+"&heures="+heures.val());
+  f=file("plugins/conges/ajax.verifRecup.php?date="+date.val()+"&heures="+heures+"&perso_id="+perso_id+"&commentaires="+commentaires);
+alert(f);
   tmp=f.split("###");
   if(tmp[1]=="Demande"){
     date.addClass( "ui-state-error" );
-    updateTips( "Une demande a déjà été enregistrée pour le "+dateFr(date.val())+"." );
+    updateTips( "Une demande a déjà été enregistrée pour le "+date.val()+"." );
     return false;
   }
   else{

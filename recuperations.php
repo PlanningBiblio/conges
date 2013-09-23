@@ -7,7 +7,7 @@ Copyright (C) 2013 - Jérôme Combes
 
 Fichier : plugins/conges/recuperations.php
 Création : 27 août 2013
-Dernière modification : 20 septembre 2013
+Dernière modification : 23 septembre 2013
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -15,6 +15,7 @@ Fichier permettant de voir les demandes de récupération
 */
 
 include_once "class.conges.php";
+include_once "personnel/class.personnel.php";
 
 // Initialisation des variables
 $agent=isset($_GET['agent'])?$_GET['agent']:null;
@@ -32,6 +33,11 @@ $c->agent=$agent;
 $c->getRecup();
 $recup=$c->elements;
 
+// Recherche de tous les agents pour le menu déroulant des admins
+$p=new personnel();
+$p->fetch();
+$agents=$p->elements;
+
 // Notifications
 if(isset($_GET['message'])){
   switch($_GET['message']){
@@ -46,7 +52,6 @@ if(isset($_GET['message'])){
     echo "<script type='text/JavaScript'>setTimeout(\"document.getElementById('information').style.display='none'\",3000);</script>\n";
   }
 }
-
 
 // Affichage
 echo <<<EOD
@@ -67,8 +72,13 @@ echo <<<EOD
 &nbsp;&nbsp;<input type='button' value='Effacer' onclick='location.href="index.php?page=plugins/conges/recuperations.php"' />
 </form>
 <table class='tableauStandard'>
-<tr class='th'><td>&nbsp;</td><td>Date</td><td>Agent</td><td>Heures</td><td>Validation</td></tr>
+<tr class='th'><td>&nbsp;</td>
 EOD;
+if($admin){
+  echo "<td>Agent</td>";
+}
+echo "<td>Date</td><td>Heures</td><td>Commentaires</td><td>Validation</td></tr>\n";
+
 $class="tr1";
 foreach($recup as $elem){
   $class=$class=="tr1"?"tr2":"tr1";
@@ -82,7 +92,11 @@ foreach($recup as $elem){
 
   echo "<tr class='$class'>";
   echo "<td><a href='index.php?page=plugins/conges/recuperation_modif.php&amp;id={$elem['id']}'><img src='img/modif.png' alt='Modifier' /></a></td>\n";
-  echo "<td>".dateFr($elem['date'])."</td><td>".nom($elem['perso_id'])."</td><td>".heure4($elem['heures'])."</td><td>$validation</td></tr>\n";
+  if($admin){
+    echo "<td>".nom($elem['perso_id'])."</td>";
+  }
+  echo "<td>".dateFr($elem['date'])."</td><td>".heure4($elem['heures'])."</td>";
+  echo "<td>".str_replace("\n","<br/>",$elem['commentaires'])."</td><td>$validation</td></tr>\n";
 }
 
 echo <<<EOD
@@ -96,26 +110,43 @@ echo <<<EOD
   <form>
   <fieldset>
     <table class='tableauFiches'>
+EOD;
+if($admin){
+  echo <<<EOD
+    <tr><td><label for="agent">Agent</label></td>
+    <td><select id='agent' name='agent' style='text-align:center;'>
+      <option value=''>&nbsp;</option>
+EOD;
+  foreach($agents as $elem){
+    $selected=$elem['id']==$_SESSION['login_id']?"selected='selected'":null;
+    echo "<option value='{$elem['id']}' $selected >".nom($elem['id'])."</option>\n";
+  }
+  echo "</select></td></tr>\n";
+}
+echo <<<EOD
     <tr><td><label for="date">Date</label></td>
     <td><input type="text" name="date" id="date" class="text ui-widget-content ui-corner-all datepicker"/></td></tr>
     <tr><td><label for="heures">Heures</label></td>
     <td><select id='heures' name='heures' style='text-align:center;'>
       <option value=''>&nbsp;</option>
 EOD;
-      for($i=0;$i<17;$i++){
-	echo "<option value='{$i}.00' >{$i}h00</option>\n";
-	echo "<option value='{$i}.25' >{$i}h15</option>\n";
-	echo "<option value='{$i}.50' >{$i}h30</option>\n";
-	echo "<option value='{$i}.75' >{$i}h45</option>\n";
-      }
-    echo <<<EOD
+    for($i=0;$i<17;$i++){
+      echo "<option value='{$i}.00' >{$i}h00</option>\n";
+      echo "<option value='{$i}.25' >{$i}h15</option>\n";
+      echo "<option value='{$i}.50' >{$i}h30</option>\n";
+      echo "<option value='{$i}.75' >{$i}h45</option>\n";
+    }
+echo <<<EOD
       </select></td></tr>
+      <tr><td><label for="commentaires">Commentaires</label></td>
+      <td><textarea name="commentaires" id="commentaires" ></textarea></td></tr>
     </table>
   </fieldset>
   </form>
 </div>
 EOD;
 ?>
+
 <script type='text/JavaScript'>
 $(function() {
   var date = $( "#date" ),
@@ -124,14 +155,14 @@ $(function() {
 
   $( "#dialog-form" ).dialog({
     autoOpen: false,
-    height: 380,
-    width: 460,
+    height: 500,
+    width: 580,
     modal: true,
     buttons: {
       "Enregistrer": function() {
 	var bValid = true;
 	allFields.removeClass( "ui-state-error" );
- 	bValid = bValid && checkRegexp( date, /^[0-9]{4}-[0-9]{2}-[0-9]{2}/i, "La date doit être au format AAAA-MM-JJ" );
+ 	bValid = bValid && checkRegexp( date, /^[0-9]{2}\/[0-9]{2}\/[0-9]{4}/i, "La date doit être au format JJ/MM/AAAA" );
 	bValid = bValid && checkLength( heures, "heures", 4, 5 );
 
 	if ( bValid ) {
@@ -154,13 +185,18 @@ $(function() {
   $( "#dialog-button" )
     .button()
     .click(function() {
+      date.datepicker("disable");
       $( "#dialog-form" ).dialog( "open" );
+      date.datepicker("enable");
+      return false;
     });
 
+  // Supprime la class du bouton car ne correspond pas au style général
   $( "#dialog-button" ).removeClass();
 
+  // Champ date
   $( ".datepicker" ).datepicker();
-  $( ".datepicker" ).datepicker("option", "dateFormat", "yy-mm-dd");
+  $( ".datepicker" ).datepicker("option", "dateFormat", "dd/mm/yy");
 
 });
 </script>

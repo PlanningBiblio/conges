@@ -7,7 +7,7 @@ Copyright (C) 2013 - Jérôme Combes
 
 Fichier : plugins/conges/recuperation_valide.php
 Création : 30 août 2013
-Dernière modification : 2 septembre 2013
+Dernière modification : 23 septembre 2013
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -15,10 +15,10 @@ Fichier permettant de modifier et valider les demandes de récupérations des sa
 */
 
 session_start();
-ini_set('display_errors',1);
+ini_set('display_errors',0);
 ini_set('error_reporting',E_ERROR | E_WARNING | E_PARSE | E_NOTICE);
 
-$version="1.2";
+$version="1.3.2";
 include "../../include/config.php";
 include "../../include/function.php";
 include "class.conges.php";
@@ -41,7 +41,7 @@ if(!$admin and $perso_id!=$_SESSION['login_id']){
 }
 
 // Modification des heures
-$update=array("heures"=>$_POST['heures'],"modif"=>$_SESSION['login_id'],"modification"=>date("Y-m-d H:i:s"));
+$update=array("heures"=>$_POST['heures'],"commentaires"=>$_POST['commentaires'],"modif"=>$_SESSION['login_id'],"modification"=>date("Y-m-d H:i:s"));
 
 // Modification des heures  et validation par l'administrateur
 if(isset($_POST['validation']) and $admin){
@@ -101,8 +101,6 @@ if(isset($update)){
     sendmail($sujet,$message,$destinataires);
   }
 }
-
-
 
 header("Location: ../../index.php?page=plugins/conges/recuperations.php&message=$msg");
 ?>
