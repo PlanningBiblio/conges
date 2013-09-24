@@ -1,4 +1,8 @@
-***	Version 1.3	(Jérôme Combes, 5 Septembre 2013)		***
+***	Version 1.3.2	(Jérôme Combes, 24 Septembre 2013)		***
+- Améliorations :
+Gestion plus souple des récupérations, toutes les dates peuvent être récupérée, plus de contrôle des heures
+
+***	Version 1.3.1	(Jérôme Combes, 5 Septembre 2013)		***
 -Améliorations :
 Amélioration de l'affichage des récupérations des samedis
 Ajout des champs de recherche debut,fin et agent dans la liste des récupérations
