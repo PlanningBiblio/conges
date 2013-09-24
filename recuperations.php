@@ -7,7 +7,7 @@ Copyright (C) 2013 - Jérôme Combes
 
 Fichier : plugins/conges/recuperations.php
 Création : 27 août 2013
-Dernière modification : 23 septembre 2013
+Dernière modification : 24 septembre 2013
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -20,8 +20,12 @@ include_once "personnel/class.personnel.php";
 // Initialisation des variables
 $agent=isset($_GET['agent'])?$_GET['agent']:null;
 $tri=isset($_GET['tri'])?$_GET['tri']:"`debut`,`fin`,`nom`,`prenom`";
-$debut=isset($_GET['debut'])?$_GET['debut']:null;
-$fin=isset($_GET['fin'])?$_GET['fin']:null;
+$debut=isset($_GET['debut'])?$_GET['debut']:(isset($_SESSION['recup_debut'])?$_SESSION['recup_debut']:null);
+$fin=isset($_GET['fin'])?$_GET['fin']:(isset($_SESSION['recup_fin'])?$_SESSION['recup_fin']:null);
+$agent=isset($_GET['agent'])?$_GET['agent']:(isset($_SESSION['recup_agent'])?$_SESSION['recup_agent']:null);
+$_SESSION['recup_debut']=$debut;
+$_SESSION['recup_fin']=$fin;
+$_SESSION['recup_agent']=$agent;
 $admin=in_array(2,$droits)?true:false;
 
 // Recherche des demandes de récupérations enregistrées
@@ -68,8 +72,8 @@ if($admin){
   echo "&nbsp;&nbsp;Agent : <input type='text' name='agent' value='$agent' />\n";
 }
 echo <<<EOD
-&nbsp;&nbsp;<input type='submit' value='OK' />
-&nbsp;&nbsp;<input type='button' value='Effacer' onclick='location.href="index.php?page=plugins/conges/recuperations.php"' />
+&nbsp;&nbsp;<input type='submit' value='OK' id='button-OK' />
+&nbsp;&nbsp;<input type='button' value='Effacer' id='button-Effacer' onclick='location.href="index.php?page=plugins/conges/recuperations.php"' />
 </form>
 <table class='tableauStandard'>
 <tr class='th'><td>&nbsp;</td>
@@ -106,7 +110,7 @@ echo <<<EOD
 <br/><button id='dialog-button'>Nouvelle demande</button>
 
 <div id="dialog-form" title="Nouvelle demande">
-  <p class="validateTips">Veuillez sélectionner le jour concerné par votre demande et le nombre d'heures à récuperer.</p>
+  <p class="validateTips">Veuillez sélectionner le jour concerné par votre demande et le nombre d'heures à récuperer et un saisir un commentaire.</p>
   <form>
   <fieldset>
     <table class='tableauFiches'>
@@ -138,7 +142,7 @@ EOD;
     }
 echo <<<EOD
       </select></td></tr>
-      <tr><td><label for="commentaires">Commentaires</label></td>
+      <tr><td><label for="commentaires">Commentaire</label></td>
       <td><textarea name="commentaires" id="commentaires" ></textarea></td></tr>
     </table>
   </fieldset>
@@ -155,15 +159,17 @@ $(function() {
 
   $( "#dialog-form" ).dialog({
     autoOpen: false,
-    height: 500,
-    width: 580,
+    height: 420,
+    width: 460,
     modal: true,
     buttons: {
       "Enregistrer": function() {
+	var limitJours=7;
 	var bValid = true;
 	allFields.removeClass( "ui-state-error" );
  	bValid = bValid && checkRegexp( date, /^[0-9]{2}\/[0-9]{2}\/[0-9]{4}/i, "La date doit être au format JJ/MM/AAAA" );
 	bValid = bValid && checkLength( heures, "heures", 4, 5 );
+	bValid = bValid && checkDateAge( date, limitJours, "La demande de récupération doit être effectuée dans les "+limitJours+" jours");
 
 	if ( bValid ) {
 	  if(verifRecup()){
@@ -190,9 +196,6 @@ $(function() {
       date.datepicker("enable");
       return false;
     });
-
-  // Supprime la class du bouton car ne correspond pas au style général
-  $( "#dialog-button" ).removeClass();
 
   // Champ date
   $( ".datepicker" ).datepicker();

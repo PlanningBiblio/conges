@@ -6,7 +6,7 @@ Copyright (C) 2013 - Jérôme Combes
 
 Fichier : plugins/conges/js/script.conges.js
 Création : 2 août 2013
-Dernière modification : 23 septembre 2013
+Dernière modification : 24 septembre 2013
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -129,7 +129,6 @@ function verifRecup(){
   var perso_id=$("#agent").val();
 
   f=file("plugins/conges/ajax.verifRecup.php?date="+date.val()+"&heures="+heures+"&perso_id="+perso_id+"&commentaires="+commentaires);
-alert(f);
   tmp=f.split("###");
   if(tmp[1]=="Demande"){
     date.addClass( "ui-state-error" );
@@ -167,6 +166,24 @@ function checkLength( o, n, min, max ) {
 
 function checkRegexp( o, regexp, n ) {
   if ( !( regexp.test( o.val() ) ) ) {
+    o.addClass( "ui-state-error" );
+    updateTips( n );
+    return false;
+  } else {
+    return true;
+  }
+}
+
+function checkDateAge( o, limit, n ) {
+  // Calcul de la différence entre aujourd'hui et la date demandée
+  var today=new Date();
+  var d=new Date();
+  tmp=o.val().split("/");
+  d.setDate(parseInt(tmp[0]));
+  d.setMonth(parseInt(tmp[1])-1);
+  d.setFullYear(parseInt(tmp[2]));
+  diff=dateDiff(d,today);
+  if(diff.day>limit){
     o.addClass( "ui-state-error" );
     updateTips( n );
     return false;
