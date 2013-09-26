@@ -7,7 +7,7 @@ Copyright (C) 2013 - Jérôme Combes
 
 Fichier : plugins/conges/update.php
 Création : 26 août 2013
-Dernière modification : 19 septembre 2013
+Dernière modification : 25 septembre 2013
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -50,8 +50,15 @@ $sql[]="CREATE TABLE `{$dbprefix}recuperations` (`id` INT(11) NOT NULL AUTO_INCR
 */
 
 // Modification du 19 septembre 2013
+/*
 $sql[]="DELETE FROM `{$dbprefix}menu` WHERE `url`='plugins/conges/recuperation.php';";
 $sql[]="UPDATE `{$dbprefix}menu` SET `titre`='R&eacute;cup&eacute;rations' WHERE `url`='plugins/conges/recuperations.php';";
+*/
+
+// Modification du 25 septembre 2013
+$sql[]="ALTER TABLE `{$dbprefix}conges` ADD `solde_prec` FLOAT(10), ADD `solde_actuel` FLOAT(10);";
+$sql[]="ALTER TABLE `{$dbprefix}recuperations` ADD `solde_prec` FLOAT(10), ADD `solde_actuel` FLOAT(10);";
+$sql[]="ALTER TABLE `{$dbprefix}conges` ADD `recup_prec` FLOAT(10), ADD `recup_actuel` FLOAT(10), ADD `reliquat_prec` FLOAT(10), ADD `reliquat_actuel` FLOAT(10);";
 
 ?>
 <!-- Entête HTML -->

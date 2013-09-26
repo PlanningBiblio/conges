@@ -7,7 +7,7 @@ Copyright (C) 2013 - Jérôme Combes
 
 Fichier : plugins/conges/index.php
 Création : 24 juillet 2013
-Dernière modification : 29 août 2013
+Dernière modification : 25 septembre 2013
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -26,8 +26,7 @@ require_once "class.conges.php";
 <ul style='margin-top:0px;'>
 <li><a href='index.php?page=plugins/conges/voir.php'>Liste des congés</a></li>
 <li><a href='index.php?page=plugins/conges/enregistrer.php'>Poser des congés</a></li>
-<li><a href='index.php?page=plugins/conges/recuperation.php'>Demander une récupération</a></li>
-<li><a href='index.php?page=plugins/conges/recuperations.php'>Liste des demandes de récupération	</a></li>
+<li><a href='index.php?page=plugins/conges/recuperations.php'>R&eacute;cup&eacute;rations</a></li>
 <li><a href='index.php?page=plugins/conges/infos.php'>Informations</a></li>
 <?php
 $admin=in_array(2,$droits)?true:false;

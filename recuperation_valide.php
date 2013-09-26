@@ -7,7 +7,7 @@ Copyright (C) 2013 - Jérôme Combes
 
 Fichier : plugins/conges/recuperation_valide.php
 Création : 30 août 2013
-Dernière modification : 23 septembre 2013
+Dernière modification : 25 septembre 2013
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -61,9 +61,13 @@ if(isset($update)){
   if(isset($update['valide']) and $update['valide']>0){
     $db=new db();
     $db->select("personnel","recupSamedi","id='$perso_id'");
-    $recupSamedi=$db->result[0]['recupSamedi']+$update['heures'];
+    $solde_prec=$db->result[0]['recupSamedi'];
+    $recupSamedi=$solde_prec+$update['heures'];
     $db=new db();
     $db->update2("personnel",array("recupSamedi"=>$recupSamedi),array("id"=>$perso_id));
+    $db=new db();
+    $db->update2("recuperations",array("solde_prec"=>$solde_prec,"solde_actuel"=>$recupSamedi),array("id"=>$id));
+    
   }
   // Envoi d'un e-mail à l'agent et aux responsables
   $destinataires=array();

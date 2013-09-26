@@ -7,7 +7,7 @@ Copyright (C) 2013 - Jérôme Combes
 
 Fichier : plugins/conges/class.conges.php
 Création : 24 juillet 2013
-Dernière modification : 19 septembre 2013
+Dernière modification : 25 septembre 2013
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -47,7 +47,7 @@ class conges{
 
   public function add($data){
     $data['fin']=$data['fin']?$data['fin']:$data['debut'];
-    $data['debit']=isset($data['dedit'])?$data['dedit']:"credit";
+    $data['debit']=isset($data['debit'])?$data['debit']:"credit";
     $data['hre_debut']=$data['hre_debut']?$data['hre_debut']:"00:00:00";
     $data['hre_fin']=$data['hre_fin']?$data['hre_fin']:"23:59:59";
     $data['heures']=$data['heures'].".".$data['minutes'];
@@ -254,8 +254,13 @@ class conges{
   public function getRecup(){
     $debut=$this->debut?$this->debut:date("Y-m-d",strtotime("-1 month",time()));
     $fin=$this->fin?$this->fin:date("Y-m-d",strtotime("+1 year",time()));
-
     $filter="`date` BETWEEN '$debut' AND '$fin'";
+
+    // Recherche avec l'id de l'agent
+    if($this->admin and $this->perso_id){
+      $filter.=" AND `perso_id`='{$this->perso_id}'";
+    }
+
     if(!$this->admin){
       $filter.=" AND perso_id='{$_SESSION['login_id']}'";
     }
@@ -420,6 +425,9 @@ class conges{
       $reliquat=$p->elements[0]['congesReliquat'];
       $recuperation=$p->elements[0]['recupSamedi'];
       $heures=$data['heures'];
+      
+      // Mise à jour des compteurs dans la table conges
+      $updateConges=array("solde_prec"=>$credit, "recup_prec"=>$recuperation, "reliquat_prec"=>$reliquat);
 
       // Calcul du reliquat après décompte
       $reste=0;
@@ -455,11 +463,15 @@ class conges{
 	}
       }
 
+      // Mise à jour des compteurs dans la table personnel
       $updateCredits=array("congesCredit"=>$credit,"congesReliquat"=>$reliquat,"recupSamedi"=>$recuperation);
-
       $db=new db();
       $db->update2("personnel",$updateCredits,array("id"=>$data["perso_id"]));
 
+      // Mise à jour des compteurs dans la table conges
+      $updateConges=array_merge($updateConges,array("solde_actuel"=>$credit,"reliquat_actuel"=>$reliquat,"recup_actuel"=>$recuperation));
+      $db=new db();
+      $db->update2("conges",$updateConges,array("id"=>$data['id']));
 
       // On barre l'agent s'il est déjà placé dans le planning
       $debut_sql=$data['debut']." ".$data['hre_debut'];

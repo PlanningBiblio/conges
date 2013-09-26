@@ -7,7 +7,7 @@ Copyright (C) 2013 - Jérôme Combes
 
 Fichier : plugins/conges/recuperations.php
 Création : 27 août 2013
-Dernière modification : 24 septembre 2013
+Dernière modification : 25 septembre 2013
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -18,14 +18,25 @@ include_once "class.conges.php";
 include_once "personnel/class.personnel.php";
 
 // Initialisation des variables
+$admin=in_array(2,$droits)?true:false;
 $agent=isset($_GET['agent'])?$_GET['agent']:null;
 $tri=isset($_GET['tri'])?$_GET['tri']:"`debut`,`fin`,`nom`,`prenom`";
-$debut=isset($_GET['debut'])?$_GET['debut']:(isset($_SESSION['recup_debut'])?$_SESSION['recup_debut']:null);
-$fin=isset($_GET['fin'])?$_GET['fin']:(isset($_SESSION['recup_fin'])?$_SESSION['recup_fin']:null);
-$agent=isset($_GET['agent'])?$_GET['agent']:(isset($_SESSION['recup_agent'])?$_SESSION['recup_agent']:null);
-$_SESSION['recup_debut']=$debut;
-$_SESSION['recup_fin']=$fin;
-$_SESSION['recup_agent']=$agent;
+$annee=isset($_GET['annee'])?$_GET['annee']:(isset($_SESSION['oups']['recup_annee'])?$_SESSION['oups']['recup_annee']:(date("m")<9?date("Y")-1:date("Y")));
+if($admin){
+  $perso_id=isset($_GET['perso_id'])?$_GET['perso_id']:(isset($_SESSION['oups']['recup_perso_id'])?$_SESSION['oups']['recup_perso_id']:$_SESSION['login_id']);
+}
+else{
+  $perso_id=$_SESSION['login_id'];
+}
+if(isset($_GET['reset'])){
+  $annee=date("m")<9?date("Y")-1:date("Y");
+  $perso_id=$_SESSION['login_id'];
+}
+$_SESSION['oups']['recup_annee']=$annee;
+$_SESSION['oups']['recup_perso_id']=$perso_id;
+
+$debut=$annee."-09-01";
+$fin=($annee+1)."-08-31";
 $admin=in_array(2,$droits)?true:false;
 
 // Recherche des demandes de récupérations enregistrées
@@ -33,14 +44,24 @@ $c=new conges();
 $c->admin=$admin;
 $c->debut=$debut;
 $c->fin=$fin;
-$c->agent=$agent;
+if($perso_id!=0){
+  $c->perso_id=$perso_id;
+}
 $c->getRecup();
 $recup=$c->elements;
 
-// Recherche de tous les agents pour le menu déroulant des admins
-$p=new personnel();
-$p->fetch();
-$agents=$p->elements;
+// Recherche des agents
+if($admin){
+  $p=new personnel();
+  $p->fetch();
+  $agents=$p->elements;
+}
+
+// Années universitaires
+$annees=array();
+for($d=date("Y")+2;$d>date("Y")-11;$d--){
+  $annees[]=array($d,$d."-".($d+1));
+}
 
 // Notifications
 if(isset($_GET['message'])){
@@ -65,15 +86,28 @@ echo <<<EOD
 <h4>Liste des demandes de récupération</h4>
 <form name='form' method='get' action='index.php'>
 <input type='hidden' name='page' value='plugins/conges/recuperations.php' />
-Début : <input type='text' name='debut' value='$debut' />&nbsp;<img src='img/calendrier.gif' onclick='calendrier("debut");' alt='calendrier' />
-&nbsp;&nbsp;Fin : <input type='text' name='fin' value='$fin' />&nbsp;<img src='img/calendrier.gif' onclick='calendrier("fin");' alt='calendrier' />
+Ann&eacute;e : <select name='annee'>
 EOD;
+foreach($annees as $elem){
+  $selected=$annee==$elem[0]?"selected='selected'":null;
+  echo "<option value='{$elem[0]}' $selected >{$elem[1]}</option>";
+}
+echo "</select>\n";
+
 if($admin){
-  echo "&nbsp;&nbsp;Agent : <input type='text' name='agent' value='$agent' />\n";
+  echo "&nbsp;&nbsp;Agent : ";
+  echo "<select name='perso_id'>";
+  $selected=$perso_id==0?"selected='selected'":null;
+  echo "<option value='0' $selected >Tous</option>";
+  foreach($agents as $agent){
+    $selected=$agent['id']==$perso_id?"selected='selected'":null;
+    echo "<option value='{$agent['id']}' $selected >{$agent['nom']} {$agent['prenom']}</option>";
+  }
+  echo "</select>\n";
 }
 echo <<<EOD
 &nbsp;&nbsp;<input type='submit' value='OK' id='button-OK' />
-&nbsp;&nbsp;<input type='button' value='Effacer' id='button-Effacer' onclick='location.href="index.php?page=plugins/conges/recuperations.php"' />
+&nbsp;&nbsp;<input type='button' value='Reset' id='button-Effacer' onclick='location.href="index.php?page=plugins/conges/recuperations.php&reset"' />
 </form>
 <table class='tableauStandard'>
 <tr class='th'><td>&nbsp;</td>
@@ -81,14 +115,19 @@ EOD;
 if($admin){
   echo "<td>Agent</td>";
 }
-echo "<td>Date</td><td>Heures</td><td>Commentaires</td><td>Validation</td></tr>\n";
+echo "<td>Date</td><td>Heures</td><td>Commentaires</td><td>Validation</td><td>Crédits</td></tr>\n";
 
 $class="tr1";
 foreach($recup as $elem){
   $class=$class=="tr1"?"tr2":"tr1";
   $validation="En attente";
+  $credits=null;
   if($elem['valide']>0){
     $validation=nom($elem['valide']).", ".dateFr($elem['validation'],true);
+    if($elem['solde_prec']!=null and $elem['solde_actuel']!=null){
+      $credits=heure4($elem['solde_prec'])." &rarr; ".heure4($elem['solde_actuel']);
+    }
+
   }
   elseif($elem['valide']<0){
     $validation="<font style='color:red;font-weight:bold;'>Refus&eacute;, ".nom(-$elem['valide']).", ".dateFr($elem['validation'],true)."</font>";
@@ -100,7 +139,7 @@ foreach($recup as $elem){
     echo "<td>".nom($elem['perso_id'])."</td>";
   }
   echo "<td>".dateFr($elem['date'])."</td><td>".heure4($elem['heures'])."</td>";
-  echo "<td>".str_replace("\n","<br/>",$elem['commentaires'])."</td><td>$validation</td></tr>\n";
+  echo "<td>".str_replace("\n","<br/>",$elem['commentaires'])."</td><td>$validation</td><td>$credits</td></tr>\n";
 }
 
 echo <<<EOD
@@ -159,8 +198,8 @@ $(function() {
 
   $( "#dialog-form" ).dialog({
     autoOpen: false,
-    height: 420,
-    width: 460,
+    height: 450,
+    width: 480,
     modal: true,
     buttons: {
       "Enregistrer": function() {
