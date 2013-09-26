@@ -7,7 +7,7 @@ Copyright (C) 2013 - Jérôme Combes
 
 Fichier : plugins/conges/class.conges.php
 Création : 24 juillet 2013
-Dernière modification : 25 septembre 2013
+Dernière modification : 26 septembre 2013
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -346,8 +346,10 @@ class conges{
     foreach($db->result as $elem){
       $d=unserialize($elem['droits']);
       foreach($droitsConges as $elem2){
-	if(in_array($elem2,$d) and !in_array($elem,$responsables)){
-	  $responsables[]=$elem;
+	if(is_array($d)){
+	  if(in_array($elem2,$d) and !in_array($elem,$responsables)){
+	    $responsables[]=$elem;
+	  }
 	}
       }
     }
@@ -390,6 +392,17 @@ class conges{
       }
     }
   $this->samedis=$samedis;
+  }
+
+  public function suppression_agents($liste){
+    $db=new db();
+    $db->update2("personnel",
+      array("congesCredit"=>null,"congesReliquat"=>null,"congesAnticipation"=>null,"congesAnnuel"=>null,"recupSamedi"=>null),
+      "id IN ($liste)");
+    $db=new db();
+    $db->delete("conges","perso_id IN ($liste)");
+    $db=new db();
+    $db->delete("recuperations","perso_id IN ($liste)");
   }
 
   public function update($data){
