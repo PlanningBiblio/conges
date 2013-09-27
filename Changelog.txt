@@ -1,3 +1,8 @@
+***	Version 1.3.3	(Jérôme Combes, 27 Septembre 2013)		***
+- Améliorations :
+Affiche les débits et crédits des compteurs dans les listes de récupérations et congés
+Supprime les informations sur les congés et récupérations lors de la suppression des agents
+
 ***	Version 1.3.2	(Jérôme Combes, 24 Septembre 2013)		***
 - Améliorations :
 Gestion plus souple des récupérations, toutes les dates peuvent être récupérée, plus de contrôle des heures
