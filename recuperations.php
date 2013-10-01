@@ -7,7 +7,7 @@ Copyright (C) 2013 - Jérôme Combes
 
 Fichier : plugins/conges/recuperations.php
 Création : 27 août 2013
-Dernière modification : 25 septembre 2013
+Dernière modification : 27 septembre 2013
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -79,12 +79,13 @@ if(isset($_GET['message'])){
 }
 
 // Affichage
+echo "<h3 class='print_only'>Liste des congés de ".nom($perso_id,"prenom nom").", année $annee-".($annee+1)."</h3>\n";
 echo <<<EOD
-<h3>Récupérations</h3>
+<h3 class='noprint'>Récupérations</h3>
 
 <div id='liste'>
-<h4>Liste des demandes de récupération</h4>
-<form name='form' method='get' action='index.php'>
+<h4 class='noprint'>Liste des demandes de récupération</h4>
+<form name='form' method='get' action='index.php' class='noprint'>
 <input type='hidden' name='page' value='plugins/conges/recuperations.php' />
 Ann&eacute;e : <select name='annee'>
 EOD;
@@ -146,9 +147,11 @@ echo <<<EOD
 </table>
 </div> <!-- liste -->
 
+<div class='noprint'>
 <br/><button id='dialog-button'>Nouvelle demande</button>
+</div>
 
-<div id="dialog-form" title="Nouvelle demande">
+<div id="dialog-form" title="Nouvelle demande" class='noprint'>
   <p class="validateTips">Veuillez sélectionner le jour concerné par votre demande et le nombre d'heures à récuperer et un saisir un commentaire.</p>
   <form>
   <fieldset>

@@ -7,7 +7,7 @@ Copyright (C) 2013 - Jérôme Combes
 
 Fichier : plugins/conges/voir.php
 Création : 24 juillet 2013
-Dernière modification : 25 septembre 2013
+Dernière modification : 27 septembre 2013
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -62,9 +62,10 @@ for($d=date("Y")+2;$d>date("Y")-11;$d--){
 }
 
 // Affichage du tableau
+echo "<h3 class='print_only'>Liste des congés de ".nom($perso_id,"prenom nom").", année $annee-".($annee+1)."</h3>\n";
 echo <<<EOD
-<h3>Liste des congés</h3>
-<form name='form' method='get' action='index.php'>
+<h3 class='noprint'>Liste des congés</h3>
+<form name='form' method='get' action='index.php' class='noprint'>
 <input type='hidden' name='page' value='plugins/conges/voir.php' />
 Ann&eacute;e : <select name='annee'>
 EOD;
