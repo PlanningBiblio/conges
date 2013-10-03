@@ -1,13 +1,13 @@
 <?php
 /*
-Planning Biblio, Plugin Congés Version 1.3.3
+Planning Biblio, Plugin Congés Version 1.3.4
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.txt et COPYING.txt
 Copyright (C) 2013 - Jérôme Combes
 
 Fichier : plugins/conges/modif.php
 Création : 1er août 2013
-Dernière modification : 27 août 2013
+Dernière modification : 3 octobre 2013
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -164,6 +164,7 @@ else{	// Formulaire
   echo "<input type='hidden' name='reliquat' value='$reliquat' />\n";
   echo "<input type='hidden' name='recuperation' value='$recuperation' />\n";
   echo "<input type='hidden' name='credit' value='$credit' />\n";
+  echo "<input type='hidden' name='anticipation' value='$anticipation' />\n";
   echo "<input type='hidden' name='id' value='$id' />\n";
   echo "<input type='hidden' name='valide' value='0' />\n";
   echo "<table border='0'>\n";
@@ -257,14 +258,19 @@ EOD;
     <option value='recuperation' $selectRecup >Le crédit de récupérations</option>
     <option value='credit' $selectCredit >Le crédit de congés de l'année en cours</option>
     </select></td></tr>
-  <tr><td colspan='2'>
-    <table border='0'>
-      <tr><td style='width:298px;'>Reliquat : </td><td style='width:130px;'>$reliquat2</td><td>(après débit : <font id='reliquat4'>$reliquat2</font>)</td></tr>
-      <tr><td>Crédit de récupérations : </td><td>$recuperation2</td><td><font id='recup3'>(après débit : <font id='recup4'>$recuperation2</font>)</font></td></tr>
-      <tr><td>Crédit de congés : </td><td>$credit2</td><td><font id='credit3'>(après débit : <font id='credit4'>$credit2</font>)</font></td></tr>
-    </table>
-  </td></tr>
 EOD;
+  if(!$valide){
+    echo <<<EOD
+    <tr><td colspan='2'>
+      <table border='0'>
+	<tr><td style='width:298px;'>Reliquat : </td><td style='width:130px;'>$reliquat2</td><td>(après débit : <font id='reliquat4'>$reliquat2</font>)</td></tr>
+	<tr><td>Crédit de récupérations : </td><td>$recuperation2</td><td><font id='recup3'>(après débit : <font id='recup4'>$recuperation2</font>)</font></td></tr>
+	<tr><td>Crédit de congés: </td><td>$credit2</td><td><font id='credit3'>(après débit : <font id='credit4'>$credit2</font>)</font></td></tr>
+	<tr><td>Congés par anticipation : </td><td>$anticipation2</td><td><font id='anticipation3'>(après débit : <font id='anticipation4'>$anticipation2</font>)</font></td></tr>
+      </table>
+    </td></tr>
+EOD;
+  }
 
 
   echo "<tr valign='top'><td style='padding-top:15px;'>\n";

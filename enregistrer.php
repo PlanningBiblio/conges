@@ -1,13 +1,13 @@
 <?php
 /*
-Planning Biblio, Plugin Congés Version 1.3.3
+Planning Biblio, Plugin Congés Version 1.3.4
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.txt et COPYING.txt
 Copyright (C) 2013 - Jérôme Combes
 
 Fichier : plugins/conges/enregistrer.php
 Création : 24 juillet 2013
-Dernière modification : 27 août 2013
+Dernière modification : 3 octobre 2013
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -106,6 +106,7 @@ else{	// Formulaire
   echo "<input type='hidden' name='reliquat' value='$reliquat' />\n";
   echo "<input type='hidden' name='recuperation' value='$recuperation' />\n";
   echo "<input type='hidden' name='credit' value='$credit' />\n";
+  echo "<input type='hidden' name='anticipation' value='$anticipation' />\n";
   echo "<table border='0'>\n";
   echo "<tr><td style='width:300px;'>\n";
   echo "Nom, prénom : \n";
@@ -200,6 +201,7 @@ EOD;
       <tr><td style='width:298px;'>Reliquat : </td><td style='width:130px;'>$reliquat2</td><td>(après débit : <font id='reliquat4'>$reliquat2</font>)</td></tr>
       <tr><td>Crédit de récupérations : </td><td>$recuperation2</td><td><font id='recup3'>(après débit : <font id='recup4'>$recuperation2</font>)</font></td></tr>
       <tr><td>Crédit de congés : </td><td>$credit2</td><td><font id='credit3'>(après débit : <font id='credit4'>$credit2</font>)</font></td></tr>
+      <tr><td>Congés par anticipation : </td><td>$anticipation2</td><td><font id='anticipation3'>(après débit : <font id='anticipation4'>$anticipation2</font>)</font></td></tr>
     </table>
   </td></tr>
 EOD;

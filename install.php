@@ -1,13 +1,13 @@
 <?php
 /*
-Planning Biblio, Plugin Congés Version 1.3.3
+Planning Biblio, Plugin Congés Version 1.3.4
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.txt et COPYING.txt
 Copyright (C) 2013 - Jérôme Combes
 
 Fichier : plugins/conges/install.php
 Création : 24 juillet 2013
-Dernière modification : 25 septembre 2013
+Dernière modification : 3 octobre 2013
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -35,13 +35,12 @@ $sql[]="INSERT INTO `{$dbprefix}acces` (`nom`,`groupe_id`,`page`) VALUES ('Cong�
 $sql[]="INSERT INTO `{$dbprefix}acces` (`nom`,`groupe_id`,`page`) VALUES ('Congés - Modifier','100','plugins/conges/modif.php');";
 $sql[]="INSERT INTO `{$dbprefix}acces` (`nom`,`groupe_id`,`page`) VALUES ('Congés - CalculCredit','100','plugins/conges/ajax.calculCredit.php');";
 $sql[]="INSERT INTO `{$dbprefix}acces` (`nom`,`groupe_id`,`groupe`,`page`) VALUES ('Congés - Infos','2','Gestion des congés','plugins/conges/infos.php');";
-$sql[]="INSERT INTO `{$dbprefix}acces` (`nom`,`groupe_id`,`page`) VALUES ('Congés - r&eacute;cuperation','100','plugins/conges/recuperation.php');";
 $sql[]="INSERT INTO `{$dbprefix}acces` (`nom`,`groupe_id`,`page`) VALUES ('Congés - r&eacute;cuperations','100','plugins/conges/recuperations.php');";
 $sql[]="INSERT INTO `{$dbprefix}acces` (`nom`,`groupe_id`,`page`) VALUES ('Congés - Enregistre r&eacute;cup&eacute;ration','100','plugins/conges/ajax.recup.php');";
 $sql[]="INSERT INTO `{$dbprefix}acces` (`nom`,`groupe_id`,`page`) VALUES ('Congés - R&eacute;cup&eacute;ration','100','plugins/conges/recuperation_modif.php');";
 
 // Création de la table conges
-$sql[]="CREATE TABLE `{$dbprefix}conges` (`id` INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY, `perso_id` INT(11) NOT NULL, `debut` DATETIME NOT NULL, `fin` DATETIME NOT NULL, `commentaires` TEXT, `refus` TEXT, `heures` VARCHAR(20), `debit` VARCHAR(20), `saisie` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, `modif` INT(11) NOT NULL DEFAULT '0',`modification` TIMESTAMP, `valide` INT(11) NOT NULL DEFAULT '0',`validation` TIMESTAMP,`solde_prec` FLOAT(10), `solde_actuel` FLOAT(10)),`recup_prec` FLOAT(10), `recup_actuel` FLOAT(10)),`reliquat_prec` FLOAT(10), `reliquat_actuel` FLOAT(10));";
+$sql[]="CREATE TABLE `{$dbprefix}conges` (`id` INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY, `perso_id` INT(11) NOT NULL, `debut` DATETIME NOT NULL, `fin` DATETIME NOT NULL, `commentaires` TEXT, `refus` TEXT, `heures` VARCHAR(20), `debit` VARCHAR(20), `saisie` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, `modif` INT(11) NOT NULL DEFAULT '0',`modification` TIMESTAMP, `valide` INT(11) NOT NULL DEFAULT '0',`validation` TIMESTAMP,`solde_prec` FLOAT(10), `solde_actuel` FLOAT(10)),`recup_prec` FLOAT(10), `recup_actuel` FLOAT(10)),`reliquat_prec` FLOAT(10), `reliquat_actuel` FLOAT(10), `anticipation_prec` FLOAT(10), `anticipation_actuel` FLOAT(10));";
 
 // Création de la table conges_infos
 $sql[]="CREATE TABLE `{$dbprefix}conges_infos` (`id` INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY, `debut` DATE NULL, `fin` DATE NULL, `texte` TEXT NULL, `saisie` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP);";
@@ -57,9 +56,9 @@ $sql[]="INSERT INTO `{$dbprefix}menu` (`niveau1`,`niveau2`,`titre`,`url`) VALUES
 $sql[]="INSERT INTO `{$dbprefix}menu` (`niveau1`,`niveau2`,`titre`,`url`) VALUES (15,30,'Informations','plugins/conges/infos.php');";
 
 // Modification de la table personnel
-$sql[]="ALTER TABLE `{$dbprefix}personnel` ADD `congesCredit` VARCHAR(10), ADD `congesReliquat` VARCHAR(10), ADD `congesAnticipation` VARCHAR(10);";
-$sql[]="ALTER TABLE `{$dbprefix}personnel` ADD `recupSamedi` VARCHAR(10);";
-$sql[]="ALTER TABLE `{$dbprefix}personnel` ADD `congesAnnuel` VARCHAR(10);";
+$sql[]="ALTER TABLE `{$dbprefix}personnel` ADD `congesCredit` FLOAT(10), ADD `congesReliquat` FLOAT(10), ADD `congesAnticipation` FLOAT(10);";
+$sql[]="ALTER TABLE `{$dbprefix}personnel` ADD `recupSamedi` FLOAT(10);";
+$sql[]="ALTER TABLE `{$dbprefix}personnel` ADD `congesAnnuel` FLOAT(10);";
 
 // Ajout des taches planifiées
 $sql[]="INSERT INTO `{$dbprefix}cron` (m,h,dom,mon,dow,command,comments) VALUES (0,0,1,1,'*','plugins/conges/cron.jan1.php','Cron Congés 1er Janvier');";

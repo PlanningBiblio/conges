@@ -1,13 +1,13 @@
 <?php
 /*
-Planning Biblio, Plugin Congés Version 1.3.3
+Planning Biblio, Plugin Congés Version 1.3.4
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.txt et COPYING.txt
 Copyright (C) 2013 - Jérôme Combes
 
 Fichier : plugins/conges/class.conges.php
 Création : 24 juillet 2013
-Dernière modification : 26 septembre 2013
+Dernière modification : 3 octobre 2013
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -437,10 +437,11 @@ class conges{
       $credit=$p->elements[0]['congesCredit'];
       $reliquat=$p->elements[0]['congesReliquat'];
       $recuperation=$p->elements[0]['recupSamedi'];
+      $anticipation=$p->elements[0]['congesAnticipation'];
       $heures=$data['heures'];
       
       // Mise à jour des compteurs dans la table conges
-      $updateConges=array("solde_prec"=>$credit, "recup_prec"=>$recuperation, "reliquat_prec"=>$reliquat);
+      $updateConges=array("solde_prec"=>$credit, "recup_prec"=>$recuperation, "reliquat_prec"=>$reliquat, "anticipation_prec"=>$anticipation);
 
       // Calcul du reliquat après décompte
       $reste=0;
@@ -467,22 +468,35 @@ class conges{
 	}
       }
       // Si après tous les débits, il reste des heures, on débit le crédit restant
+      $reste3=0;
       if($reste2){
 	if($data["debit"]=="recuperation"){
 	  $credit=$credit-$reste2;
+	  if($credit<0){
+	    $reste3=-$credit;
+	    $credit=0;
+	  }
 	}
 	else if($data["debit"]=="credit"){
 	  $recuperation=$recuperation-$reste2;
+	  if($recuperation<0){
+	    $reste3=-$recuperation;
+	    $recuperation=0;
+	  }
 	}
       }
 
+      if($reste3){
+	$anticipation=floatval($anticipation)+$reste3;
+      }
+
       // Mise à jour des compteurs dans la table personnel
-      $updateCredits=array("congesCredit"=>$credit,"congesReliquat"=>$reliquat,"recupSamedi"=>$recuperation);
+      $updateCredits=array("congesCredit"=>$credit,"congesReliquat"=>$reliquat,"recupSamedi"=>$recuperation,"congesAnticipation"=>$anticipation);
       $db=new db();
       $db->update2("personnel",$updateCredits,array("id"=>$data["perso_id"]));
 
       // Mise à jour des compteurs dans la table conges
-      $updateConges=array_merge($updateConges,array("solde_actuel"=>$credit,"reliquat_actuel"=>$reliquat,"recup_actuel"=>$recuperation));
+      $updateConges=array_merge($updateConges,array("solde_actuel"=>$credit,"reliquat_actuel"=>$reliquat,"recup_actuel"=>$recuperation,"anticipation_actuel"=>$anticipation));
       $db=new db();
       $db->update2("conges",$updateConges,array("id"=>$data['id']));
 

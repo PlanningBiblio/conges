@@ -1,13 +1,13 @@
 <?php
 /*
-Planning Biblio, Plugin Congés Version 1.3.3
+Planning Biblio, Plugin Congés Version 1.3.4
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.txt et COPYING.txt
 Copyright (C) 2013 - Jérôme Combes
 
 Fichier : plugins/conges/voir.php
 Création : 24 juillet 2013
-Dernière modification : 27 septembre 2013
+Dernière modification : 3 octobre 2013
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -97,7 +97,7 @@ EOD;
 if($admin){
   echo "<td>Nom</td>";
 }
-echo "<td>Validation</td><td>Crédits</td><td>Reliquat</td><td>Récupérations</td></tr>\n";
+echo "<td>Validation</td><td>Crédits</td><td>Reliquat</td><td>Récupérations</td><td>Anticipation</td></tr>\n";
 
 $class="tr1";
 foreach($c->elements as $elem){
@@ -107,6 +107,8 @@ foreach($c->elements as $elem){
   $credits=null;
   $recuperations=null;
   $reliquat=null;
+  $anticipation=null;
+
   if($elem['valide']<0){
     $validation="<font style='color:red;font-weight:bold;'>Refus&eacute;, ".nom(-$elem['valide']).", ".dateFr($elem['validation'],true)."</font>";
   }
@@ -121,6 +123,9 @@ foreach($c->elements as $elem){
     if($elem['reliquat_prec']!=null and $elem['reliquat_actuel']!=null){
       $reliquat=heure4($elem['reliquat_prec'])." &rarr; ".heure4($elem['reliquat_actuel']);
     }
+    if($elem['anticipation_prec']!=null and $elem['anticipation_actuel']!=null){
+      $anticipation=heure4($elem['anticipation_prec'])." &rarr; ".heure4($elem['anticipation_actuel']);
+    }
   }
   $nom=$admin?"<td>".nom($elem['perso_id'])."</td>":null;
   $class=$class=="tr1"?"tr2":"tr1";
@@ -128,7 +133,7 @@ foreach($c->elements as $elem){
     <tr class='$class'>
       <td><a href='index.php?page=plugins/conges/modif.php&amp;id={$elem['id']}'/>
       <img src='img/modif.png' alt='Voir' border='0'/></a></td>
-      <td>$debut</td><td>$fin</td>$nom<td>$validation</td><td>$credits</td><td>$reliquat</td><td>$recuperations</td>
+      <td>$debut</td><td>$fin</td>$nom<td>$validation</td><td>$credits</td><td>$reliquat</td><td>$recuperations</td><td>$anticipation</td>
       </tr>
 EOD;
 }

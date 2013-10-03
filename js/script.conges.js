@@ -1,12 +1,12 @@
 /*
-Planning Biblio, Plugin Congés Version 1.3.3
+Planning Biblio, Plugin Congés Version 1.3.4
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.txt et COPYING.txt
 Copyright (C) 2013 - Jérôme Combes
 
 Fichier : plugins/conges/js/script.conges.js
 Création : 2 août 2013
-Dernière modification : 24 septembre 2013
+Dernière modification : 3 octobre 2013
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -64,6 +64,8 @@ function calculRestes(){
   reliquat=document.form.elements["reliquat"].value;
   recuperation=document.form.elements["recuperation"].value;
   credit=document.form.elements["credit"].value;
+  anticipation=document.form.elements["anticipation"].value;
+  debit=document.form.elements["debit"].value
 
   // Calcul du reliquat après décompte
   reste=0;
@@ -75,7 +77,7 @@ function calculRestes(){
 
   reste2=0;
   // Calcul du crédit de récupération
-  if(document.form.elements["debit"].value=="recuperation"){
+  if(debit=="recuperation"){
     recuperation=recuperation-reste;
     if(recuperation<0){
       reste2=-recuperation;
@@ -84,7 +86,7 @@ function calculRestes(){
   }
   
   // Calcul du crédit de congés
-  else if(document.form.elements["debit"].value=="credit"){
+  else if(debit=="credit"){
     credit=credit-reste;
     if(credit<0){
       reste2=-credit;
@@ -93,19 +95,33 @@ function calculRestes(){
   }
   
   // Si après tous les débits, il reste des heures, on débit le crédit restant
+  reste3=0;
   if(reste2){
-    if(document.form.elements["debit"].value=="recuperation"){
+    if(debit=="recuperation"){
       credit=credit-reste2;
+      if(credit<0){
+	reste3=-credit;
+	credit=0;
+      }
     }
-    else if(document.form.elements["debit"].value=="credit"){
+    else if(debit=="credit"){
       recuperation=recuperation-reste2;
+      if(recuperation<0){
+	reste3=-recuperation;
+	recuperation=0;
+      }
     }
+  }
+  
+  if(reste3){
+    anticipation=parseFloat(anticipation)+reste3;
   }
   
   // Affichage
   document.getElementById("reliquat4").innerHTML=heure4(reliquat);
   document.getElementById("recup4").innerHTML=heure4(recuperation);
   document.getElementById("credit4").innerHTML=heure4(credit);
+  document.getElementById("anticipation4").innerHTML=heure4(anticipation);
 }
 
 function recuperation(date){

@@ -1,13 +1,13 @@
 <?php
 /*
-Planning Biblio, Plugin Congés Version 1.3.3
+Planning Biblio, Plugin Congés Version 1.3.4
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.txt et COPYING.txt
 Copyright (C) 2013 - Jérôme Combes
 
 Fichier : plugins/conges/update.php
 Création : 26 août 2013
-Dernière modification : 25 septembre 2013
+Dernière modification : 3 octobre 2013
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -56,9 +56,16 @@ $sql[]="UPDATE `{$dbprefix}menu` SET `titre`='R&eacute;cup&eacute;rations' WHERE
 */
 
 // Modification du 25 septembre 2013
-$sql[]="ALTER TABLE `{$dbprefix}conges` ADD `solde_prec` FLOAT(10), ADD `solde_actuel` FLOAT(10);";
-$sql[]="ALTER TABLE `{$dbprefix}recuperations` ADD `solde_prec` FLOAT(10), ADD `solde_actuel` FLOAT(10);";
-$sql[]="ALTER TABLE `{$dbprefix}conges` ADD `recup_prec` FLOAT(10), ADD `recup_actuel` FLOAT(10), ADD `reliquat_prec` FLOAT(10), ADD `reliquat_actuel` FLOAT(10);";
+// $sql[]="ALTER TABLE `{$dbprefix}conges` ADD `solde_prec` FLOAT(10), ADD `solde_actuel` FLOAT(10);";
+// $sql[]="ALTER TABLE `{$dbprefix}recuperations` ADD `solde_prec` FLOAT(10), ADD `solde_actuel` FLOAT(10);";
+// $sql[]="ALTER TABLE `{$dbprefix}conges` ADD `recup_prec` FLOAT(10), ADD `recup_actuel` FLOAT(10), ADD `reliquat_prec` FLOAT(10), ADD `reliquat_actuel` FLOAT(10);";
+
+// Modification du 3 octobre 2013
+$sql[]="ALTER TABLE `{$dbprefix}conges` ADD `anticipation_prec` FLOAT(10), ADD `anticipation_actuel` FLOAT(10);";
+$sql[]="ALTER TABLE `{$dbprefix}personnel` CHANGE `congesCredit` `congesCredit` FLOAT(10), CHANGE `congesReliquat` `congesReliquat` FLOAT(10), CHANGE `congesAnticipation` `congesAnticipation` FLOAT(10);";
+$sql[]="ALTER TABLE `{$dbprefix}personnel` CHANGE `recupSamedi` `recupSamedi` FLOAT(10);";
+$sql[]="ALTER TABLE `{$dbprefix}personnel` CHANGE `congesAnnuel` `congesAnnuel` FLOAT(10);";
+$sql[]="DELETE FROM `{$dbprefix}acces` WHERE `page`='plugins/conges/recuperation.php';";
 
 ?>
 <!-- Entête HTML -->

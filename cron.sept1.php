@@ -7,7 +7,7 @@ Copyright (C) 2013 - Jérôme Combes
 
 Fichier : plugins/conges/cron.sept1.php
 Création : 13 août 2013
-Dernière modification : 13 août 2013
+Dernière modification : 3 octobre 2013
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -20,7 +20,9 @@ require_once "class.conges.php";
 $db=new db();
 $db->update("personnel","congesReliquat=congesCredit");
 $db=new db();
-$db->update("personnel","congesCredit=congesAnnuel");
-$db=new db();
 $db->update("personnel","recupSamedi='0.00'");
+$db=new db();
+$db->update("personnel","congesCredit=(congesAnnuel-congesAnticipation)");
+$db=new db();
+$db->update("personnel","congesAnticipation=0.00");
 ?>
