@@ -7,7 +7,7 @@ Copyright (C) 2013 - Jérôme Combes
 
 Fichier : plugins/conges/modif.php
 Création : 1er août 2013
-Dernière modification : 3 octobre 2013
+Dernière modification : 4 octobre 2013
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -55,7 +55,9 @@ if($config['Multisites-nombre']>1 and $config['Multisites-agentsMultisites']==0)
 else{
   $droitsConges=2;
 }
-$admin=in_array($droitsConges,$droits)?true:false;
+$admin=in_array(7,$droits)?true:false;
+$admin=in_array(2,$droits)?true:$admin;
+$adminN2=in_array($droitsConges,$droits)?true:false;
 
 if(isset($_GET['confirm'])){
   $fin=$fin?$fin:$debut;
@@ -84,11 +86,17 @@ if(isset($_GET['confirm'])){
   $c->update($_GET);
 
   switch($_GET['valide']){
+    // Modification sans validation
     case 0 : $sujet="Modification de congés";	break;
+    // Validations Niveau 2
     case 1 : $sujet="Validation de congés";	break;
     case -1 : $sujet="Refus de congés";	break;
+    // Validations Niveau 1
+    case 2 : $sujet="Congés en attente de validation hiérarchique";	break;
+    case -2 : $sujet="Congés en attente de validation hiérarchique";	break;
   }
 
+  // Envoi d'une notification par email
   $message="$sujet : <br/>$prenom $nom<br/>Début : ".dateFr($debut);
   if($hre_debut!="00:00:00")
     $message.=" ".heure3($hre_debut);
@@ -97,7 +105,7 @@ if(isset($_GET['confirm'])){
     $message.=" ".heure3($hre_fin);
   if($commentaires)
     $message.="<br/><br/>Commentaires :<br/>$commentaires<br/>";
-  if($refus and $_GET['valide']<0){
+  if($refus and $_GET['valide']==-1){
     $message.="<br/>Motif du refus :<br/>$refus<br/>";
   }
 
@@ -118,7 +126,10 @@ else{	// Formulaire
   $valide=$data['valide']>0?true:false;
   $selectAccept[0]=$data['valide']>0?"selected='selected'":null;
   $selectAccept[1]=$data['valide']<0?"selected='selected'":null;
+  $selectAccept[2]=($data['valideN1']>0 and $data['valide']==0)?"selected='selected'":null;
+  $selectAccept[3]=($data['valideN1']<0 and $data['valide']==0)?"selected='selected'":null;
   $displayRefus=$data['valide']>=0?"display:none;":null;
+  $displayRefus=($data['valideN1']<0 and $admin)?null:$displayRefus;
   $perso_id=$data['perso_id'];
   $debut=substr($data['debut'],0,10);
   $fin=substr($data['fin'],0,10);
@@ -153,8 +164,6 @@ else{	// Formulaire
   $recuperation=number_format($p->elements[0]['recupSamedi'], 2, '.', ' ');
   $recuperation2=heure4($recuperation);
 
-
-
   // Affichage du formulaire
   echo "<h3>Congés</h3>\n";
   echo "<form name='form' action='index.php' method='get' >\n";
@@ -171,7 +180,7 @@ else{	// Formulaire
   echo "<tr><td style='width:300px;'>\n";
   echo "Nom, prénom : \n";
   echo "</td><td>\n";
-  if(in_array(2,$droits)){
+  if($admin){
     $db_perso=new db();
     $db_perso->query("select * from {$dbprefix}personnel where actif='Actif' order by nom,prenom;");
     echo "<select name='perso_id'>\n";
@@ -272,37 +281,44 @@ EOD;
 EOD;
   }
 
-
   echo "<tr valign='top'><td style='padding-top:15px;'>\n";
   echo "Commentaires : \n";
   echo "</td><td style='padding-top:15px;'>\n";
   echo "<textarea name='commentaires' cols='16' rows='5' style='width:100%;'>{$data['commentaires']}</textarea>\n";
   echo "</td></tr><tr><td>&nbsp;\n";
+
   echo "<tr><td>Validation</td>\n";
-  if($admin and !$valide){
-    echo <<<EOD
-    <td><select name='valide' onchange='afficheRefus(this);'>
-      <option value='0'>&nbsp;</option>
-      <option value='1' {$selectAccept[0]}>Accept&eacute;</option>
-      <option value='-1' {$selectAccept[1]}>Refus&eacute;</option>
-      </select></td>
-EOD;
+  // Affichage de l'état de validation dans un menu déroulant si l'agent a le droit de le modifié et si le congé n'est pas validé
+  if(($adminN2 and !$valide) or ($admin and $data['valide']==0)){
+    echo "<td><select name='valide' style='width:100%;' onchange='afficheRefus(this);'>\n";
+    echo "<option value='0'>&nbsp;</option>\n";
+    if($adminN2){
+      echo "<option value='1' {$selectAccept[0]}>Accept&eacute;</option>\n";
+      echo "<option value='-1' {$selectAccept[1]}>Refus&eacute;</option>\n";
+    }
+    echo "<option value='2' {$selectAccept[2]}>Accept&eacute; (En attente de validation hi&eacute;rarchique)</option>\n";
+    echo "<option value='-2' {$selectAccept[3]}>Refus&eacute; (En attente de validation hi&eacute;rarchique)</option>\n";
+    echo "</select></td>\n";
+    }
+  // Affichage simple de l'état de validation si l'agent n'a pas le droit de le modifié ou si le congé est validé
+  else{
+    if($data['valide']<0){
+      echo "<td>Refusé</td>";
+    }
+    elseif($data['valide']>0){
+      echo "<td>Validé</td>";
+    }
+    elseif($data['valideN1']){
+      echo "<td>En attente de validation hi&eacute;rarchique</td>";
     }
     else{
-      if($data['valide']<0){
-	echo "<td>Refusé</td>";
-      }
-      elseif($data['valide']>0){
-	echo "<td>Validé</td>";
-      }
-      else{
-	echo "<td>En attente</td>";
-      }
+      echo "<td>Demand&eacute;</td>";
     }
-    echo "</tr>\n";
-    echo "<tr id='tr_refus' style='vertical-align:top;$displayRefus'><td>Motif du refus :</td>\n";
-      echo "<td><textarea name='refus' cols='16' rows='5' style='width:100%;'>{$data['refus']}</textarea></td></tr>\n";
-    echo "<tr><td>&nbsp;</td></tr>\n";
+  }
+  echo "</tr>\n";
+  echo "<tr id='tr_refus' style='vertical-align:top;$displayRefus'><td>Motif du refus :</td>\n";
+    echo "<td><textarea name='refus' cols='16' rows='5' style='width:100%;'>{$data['refus']}</textarea></td></tr>\n";
+  echo "<tr><td>&nbsp;</td></tr>\n";
 
   echo "</td></tr><tr><td colspan='2'>\n";
   if($menu=="off"){
@@ -312,13 +328,12 @@ EOD;
     echo "<input type='button' value='Annuler' onclick='document.location.href=\"index.php?page=plugins/conges/voir.php\";' />";
   }
 
-  if((!$valide and $admin) or $data['valide']==0){
+  if((!$valide and $admin) or ($data['valide']==0 and $data['valideN1']==0)){
     echo "<input type='submit' value='Enregistrer les modifications' style='margin-left:20px;'/>\n";
   }
 
   echo "</td></tr></table>\n";
   echo "</form>\n";
-
 
   // Calcul des crédits restant au chargement de la page
   echo "<script type='text/JavaScript'>calculRestes();</script>\n";

@@ -20,7 +20,10 @@ require_once "class.conges.php";
 require_once "personnel/class.personnel.php";
 
 // Initialisation des variables
-$admin=in_array(2,$droits)?true:false;
+// Gestion des congés niveaux 1 et 2
+$admin=in_array(7,$droits)?true:false;
+$admin=in_array(2,$droits)?true:$admin;
+
 $tri=isset($_GET['tri'])?$_GET['tri']:"`debut`,`fin`,`nom`,`prenom`";
 $annee=isset($_GET['annee'])?$_GET['annee']:(isset($_SESSION['oups']['conges_annee'])?$_SESSION['oups']['conges_annee']:(date("m")<9?date("Y")-1:date("Y")));
 if($admin){
@@ -103,7 +106,7 @@ $class="tr1";
 foreach($c->elements as $elem){
   $debut=str_replace("00h00","",dateFr($elem['debut'],true));
   $fin=str_replace("23h59","",dateFr($elem['fin'],true));
-  $validation="<b>En attente</b>";
+  $validation="<b>Demand&eacute;</b>";
   $credits=null;
   $recuperations=null;
   $reliquat=null;
@@ -127,6 +130,10 @@ foreach($c->elements as $elem){
       $anticipation=heure4($elem['anticipation_prec'])." &rarr; ".heure4($elem['anticipation_actuel']);
     }
   }
+  elseif($elem['valideN1']){
+    $validation="<font style='font-weight:bold;'>En attente de validation hi&eacute;rarchique,<br/>".dateFr($elem['validationN1'],true)."</font>";
+  }
+
   $nom=$admin?"<td>".nom($elem['perso_id'])."</td>":null;
   $class=$class=="tr1"?"tr2":"tr1";
   echo <<<EOD

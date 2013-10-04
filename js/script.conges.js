@@ -14,7 +14,7 @@ Fichier regroupant les fonctions JavaScript utiles à la gestion des congés
 */
 
 function afficheRefus(me){
-  if(me.value=="-1"){
+  if(me.value=="-1" || me.value=="-2"){
     document.getElementById("tr_refus").style.display="";
   }
   else{

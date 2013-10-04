@@ -55,17 +55,22 @@ $sql[]="DELETE FROM `{$dbprefix}menu` WHERE `url`='plugins/conges/recuperation.p
 $sql[]="UPDATE `{$dbprefix}menu` SET `titre`='R&eacute;cup&eacute;rations' WHERE `url`='plugins/conges/recuperations.php';";
 */
 
-// Modification du 25 septembre 2013
+// Modification du 25 septembre 2013, version 1.3.4
 // $sql[]="ALTER TABLE `{$dbprefix}conges` ADD `solde_prec` FLOAT(10), ADD `solde_actuel` FLOAT(10);";
 // $sql[]="ALTER TABLE `{$dbprefix}recuperations` ADD `solde_prec` FLOAT(10), ADD `solde_actuel` FLOAT(10);";
 // $sql[]="ALTER TABLE `{$dbprefix}conges` ADD `recup_prec` FLOAT(10), ADD `recup_actuel` FLOAT(10), ADD `reliquat_prec` FLOAT(10), ADD `reliquat_actuel` FLOAT(10);";
 
 // Modification du 3 octobre 2013
-$sql[]="ALTER TABLE `{$dbprefix}conges` ADD `anticipation_prec` FLOAT(10), ADD `anticipation_actuel` FLOAT(10);";
-$sql[]="ALTER TABLE `{$dbprefix}personnel` CHANGE `congesCredit` `congesCredit` FLOAT(10), CHANGE `congesReliquat` `congesReliquat` FLOAT(10), CHANGE `congesAnticipation` `congesAnticipation` FLOAT(10);";
-$sql[]="ALTER TABLE `{$dbprefix}personnel` CHANGE `recupSamedi` `recupSamedi` FLOAT(10);";
-$sql[]="ALTER TABLE `{$dbprefix}personnel` CHANGE `congesAnnuel` `congesAnnuel` FLOAT(10);";
-$sql[]="DELETE FROM `{$dbprefix}acces` WHERE `page`='plugins/conges/recuperation.php';";
+// $sql[]="ALTER TABLE `{$dbprefix}conges` ADD `anticipation_prec` FLOAT(10), ADD `anticipation_actuel` FLOAT(10);";
+// $sql[]="ALTER TABLE `{$dbprefix}personnel` CHANGE `congesCredit` `congesCredit` FLOAT(10), CHANGE `congesReliquat` `congesReliquat` FLOAT(10), CHANGE `congesAnticipation` `congesAnticipation` FLOAT(10);";
+// $sql[]="ALTER TABLE `{$dbprefix}personnel` CHANGE `recupSamedi` `recupSamedi` FLOAT(10);";
+// $sql[]="ALTER TABLE `{$dbprefix}personnel` CHANGE `congesAnnuel` `congesAnnuel` FLOAT(10);";
+// $sql[]="DELETE FROM `{$dbprefix}acces` WHERE `page`='plugins/conges/recuperation.php';";
+
+// Modification du 3 octobre 2013, version 1.3.5
+$sql[]="INSERT INTO `{$dbprefix}acces` (`nom`,`groupe_id`,`groupe`) VALUES ('Congés - Validation niveau 1','7','Gestion des cong&eacute;s, validation N1');";
+$sql[]="UPDATE `{$dbprefix}acces` SET `groupe`='Gestion des cong&eacute;s, validation N2' WHERE groupe_id='2';";
+$sql[]="ALTER TABLE `{$dbprefix}conges` ADD `valideN1` INT(11), ADD `validationN1` TIMESTAMP;";
 
 ?>
 <!-- Entête HTML -->

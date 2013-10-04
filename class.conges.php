@@ -418,8 +418,17 @@ class conges{
       "perso_id"=>$data['perso_id'],"modif"=>$_SESSION['login_id'],"modification"=>date("Y-m-d H:i:s"));
     
     if($data['valide']){
-      $update["valide"]=$data['valide']*$_SESSION['login_id']; // login_id positif si accepté, négatif si refusé
-      $update["validation"]=date("Y-m-d H:i:s");
+      // Validation Niveau 2
+      if($data['valide']==-1 or $data['valide']==1){
+	$update["valide"]=$data['valide']*$_SESSION['login_id']; // login_id positif si accepté, négatif si refusé
+	$update["validation"]=date("Y-m-d H:i:s");
+      }
+      // Validation Niveau 1
+      elseif($data['valide']==-2 or $data['valide']==2){
+	$update["valideN1"]=($data['valide']/2)*$_SESSION['login_id']; // login_id positif si accepté, négatif si refusé
+	$update["validationN1"]=date("Y-m-d H:i:s");
+	$update['valide']=0;
+      }
     }
     else{
       $update['valide']=0;
