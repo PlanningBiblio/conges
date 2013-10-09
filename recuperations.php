@@ -7,7 +7,7 @@ Copyright (C) 2013 - Jérôme Combes
 
 Fichier : plugins/conges/recuperations.php
 Création : 27 août 2013
-Dernière modification : 27 septembre 2013
+Dernière modification : 9 octobre 2013
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -51,11 +51,9 @@ $c->getRecup();
 $recup=$c->elements;
 
 // Recherche des agents
-if($admin){
-  $p=new personnel();
-  $p->fetch();
-  $agents=$p->elements;
-}
+$p=new personnel();
+$p->fetch();
+$agents=$p->elements;
 
 // Années universitaires
 $annees=array();
@@ -164,14 +162,27 @@ if($admin){
       <option value=''>&nbsp;</option>
 EOD;
   foreach($agents as $elem){
-    $selected=$elem['id']==$_SESSION['login_id']?"selected='selected'":null;
+    $selected=$elem['id']==$perso_id?"selected='selected'":null;
     echo "<option value='{$elem['id']}' $selected >".nom($elem['id'])."</option>\n";
   }
   echo "</select></td></tr>\n";
 }
+
+$label=($config['Recup-DeuxSamedis'])?"Date (1<sup>er</sup> samedi)":"Date";
+
 echo <<<EOD
-    <tr><td><label for="date">Date</label></td>
+    <tr><td><label for="date">$label</label></td>
     <td><input type="text" name="date" id="date" class="text ui-widget-content ui-corner-all datepicker"/></td></tr>
+EOD;
+
+  if($config['Recup-DeuxSamedis']){
+    echo <<<EOD
+      <tr><td><label for="date2">Date (2<sup>ème</sup> samedi) (optionel)</label></td>
+      <td><input type="text" name="date2" id="date2" class="text ui-widget-content ui-corner-all datepicker"/></td></tr>
+EOD;
+    }
+
+echo <<<EOD
     <tr><td><label for="heures">Heures</label></td>
     <td><select id='heures' name='heures' style='text-align:center;'>
       <option value=''>&nbsp;</option>
@@ -194,22 +205,73 @@ EOD;
 ?>
 
 <script type='text/JavaScript'>
+<?php
+// Delai limite pour les demandes de récupération
+echo "var limitDefaut=7;";
+echo "var limitTitulaire1={$config['Recup-DelaiTitulaire1']};";
+echo "var limitTitulaire2={$config['Recup-DelaiTitulaire2']};";
+echo "var limitContractuel1={$config['Recup-DelaiContractuel1']};";
+echo "var limitContractuel2={$config['Recup-DelaiContractuel2']};";
+echo "var perso_id=$perso_id;";
+echo "var categories=new Array();";
+foreach($agents as $elem){
+  echo "categories[{$elem['id']}]='{$elem['categorie']}';";
+}
+// Samedis seulement
+echo "var samediSeulement=false;";
+if($config['Recup-SamediSeulement']){
+  echo "var samediSeulement=true;";
+}
+?>
+
 $(function() {
   var date = $( "#date" ),
+    date2 = $( "#date2" ),
     heures = $( "#heures" ),
     allFields = $( [] ).add( date ).add( heures );
 
   $( "#dialog-form" ).dialog({
     autoOpen: false,
-    height: 450,
-    width: 480,
+    height: 480,
+    width: 650,
     modal: true,
     buttons: {
       "Enregistrer": function() {
-	var limitJours=7;
+	// Calcul du delai limit pour la demande de récup en fonction de la catégorie de l'agent
+	if($("#agent option:selected").val()){
+	  perso_id=$("#agent option:selected").val();
+	}
+	if(categories[perso_id]=="Titulaire"){
+	  if($("#date2").val()){
+	    limitJours=limitTitulaire2*30;
+	  }else{
+	    limitJours=limitTitulaire1*30;
+	  }
+	}
+	else if(categories[perso_id]=="Contractuel"){
+	  if($("#date2").val()){
+	    limitJours=limitContractuel2*7;
+	  }else{
+	    limitJours=limitContractuel1*7;
+	  }
+	}
+	else{
+	  limitJours=limitDefaut;
+	}
+
 	var bValid = true;
 	allFields.removeClass( "ui-state-error" );
  	bValid = bValid && checkRegexp( date, /^[0-9]{2}\/[0-9]{2}\/[0-9]{4}/i, "La date doit être au format JJ/MM/AAAA" );
+	if(samediSeulement){
+	  bValid = bValid && checkSamedi(date,"Vous devez choisir un samedi");
+	}
+	if($("#date2").val()){
+	  bValid = bValid && checkRegexp( date2, /^[0-9]{2}\/[0-9]{2}\/[0-9]{4}/i, "La date doit être au format JJ/MM/AAAA" );
+	  bValid = bValid && checkDate2(date, date2,"La 2ème date doit être supérieure à la première");
+	  if(samediSeulement){
+	    bValid = bValid && checkSamedi(date2,"Vous devez choisir un samedi");
+	  }
+	}
 	bValid = bValid && checkLength( heures, "heures", 4, 5 );
 	bValid = bValid && checkDateAge( date, limitJours, "La demande de récupération doit être effectuée dans les "+limitJours+" jours");
 
