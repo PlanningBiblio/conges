@@ -6,7 +6,7 @@ Copyright (C) 2013 - Jérôme Combes
 
 Fichier : plugins/conges/js/script.conges.js
 Création : 2 août 2013
-Dernière modification : 9 octobre 2013
+Dernière modification : 11 octobre 2013
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -124,37 +124,22 @@ function calculRestes(){
   document.getElementById("anticipation4").innerHTML=heure4(anticipation);
 }
 
-function recuperation(date){
-  heures=$("#heures_"+date).val();
-  recup=file("index.php?page=plugins/conges/ajax.recup.php&date="+date+"&heures="+heures);
-  msg=recup.split("###");
-  if(msg[1]=="OK"){
-    $("#td_"+date).html("<b>Demande de récupération enregistrée.</b>");
-  }
-}
-
 function valideConges(){
   document.form.elements["valide"].value="1";
   document.form.submit();
 }
 
-function verifRecup(){
-  var date = $("#date"),
-    heures = $("#heures").val(),
-    commentaires = $("#commentaires").val();
+function verifRecup(o){
   var perso_id=$("#agent").val();
 
-  f=file("plugins/conges/ajax.verifRecup.php?date="+date.val()+"&heures="+heures+"&perso_id="+perso_id+"&commentaires="+commentaires);
+  f=file("plugins/conges/ajax.verifRecup.php?date="+o.val()+"&perso_id="+perso_id);
   tmp=f.split("###");
   if(tmp[1]=="Demande"){
-    date.addClass( "ui-state-error" );
-    updateTips( "Une demande a déjà été enregistrée pour le "+date.val()+"." );
+    o.addClass( "ui-state-error" );
+    updateTips( "Une demande a déjà été enregistrée pour le "+o.val()+"." );
     return false;
   }
-  else{
-    document.location.href="index.php?page=plugins/conges/recuperations.php&message="+tmp[1];
-    return false;
-  }
+  return true;
 }
 
 

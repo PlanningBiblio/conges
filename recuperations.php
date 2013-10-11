@@ -7,7 +7,7 @@ Copyright (C) 2013 - Jérôme Combes
 
 Fichier : plugins/conges/recuperations.php
 Création : 27 août 2013
-Dernière modification : 9 octobre 2013
+Dernière modification : 11 octobre 2013
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -137,7 +137,8 @@ foreach($recup as $elem){
   if($admin){
     echo "<td>".nom($elem['perso_id'])."</td>";
   }
-  echo "<td>".dateFr($elem['date'])."</td><td>".heure4($elem['heures'])."</td>";
+  $date2=($elem['date2'] and $elem['date2']!="0000-00-00")?" &amp; ".dateFr($elem['date2']):null;
+  echo "<td>".dateFr($elem['date'])."$date2</td><td>".heure4($elem['heures'])."</td>";
   echo "<td>".str_replace("\n","<br/>",$elem['commentaires'])."</td><td>$validation</td><td>$credits</td></tr>\n";
 }
 
@@ -228,6 +229,7 @@ $(function() {
   var date = $( "#date" ),
     date2 = $( "#date2" ),
     heures = $( "#heures" ),
+    commentaires = $( "#commentaires" ),
     allFields = $( [] ).add( date ).add( heures );
 
   $( "#dialog-form" ).dialog({
@@ -275,10 +277,22 @@ $(function() {
 	bValid = bValid && checkLength( heures, "heures", 4, 5 );
 	bValid = bValid && checkDateAge( date, limitJours, "La demande de récupération doit être effectuée dans les "+limitJours+" jours");
 
+	bValid = bValid && verifRecup($("#date"));
+
+	<?php
+	if($config['Recup-DeuxSamedis']){
+	  echo "if($(\"#date2\").val())\n";
+	  echo "bValid = bValid && verifRecup($(\"#date2\"));\n";
+	}
+	?>
+
 	if ( bValid ) {
-	  if(verifRecup()){
-	    $( this ).dialog( "close" );
-	  }
+	  // Enregistre la demande
+	  f=file("plugins/conges/ajax.enregistreRecup.php?date="+date.val()+"&date2="+date2.val()+"&heures="+heures.val()+"&commentaires="+commentaires.val()+"&perso_id="+perso_id);
+	  // Affiche la liste des demandes après enregistrement
+	  document.location.href="index.php?page=plugins/conges/recuperations.php&message=Demande-OK";
+	  // Ferme le dialog
+	  $( this ).dialog( "close" );
 	}
       },
 

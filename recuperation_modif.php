@@ -7,7 +7,7 @@ Copyright (C) 2013 - Jérôme Combes
 
 Fichier : plugins/conges/recuperation_modif.php
 Création : 29 août 2013
-Dernière modification : 23 septembre 2013
+Dernière modification : 11 octobre 2013
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -38,7 +38,9 @@ if(!$admin and $perso_id!=$_SESSION['login_id']){
 // Initialisation des variables (suite)
 $agent=nom($recup['perso_id'],"prenom nom");
 $date=$recup['date'];
+$date2=$recup['date2'];
 $dateAlpha=dateAlpha($date);
+$date2Alpha=dateAlpha($date2);
 $saisie=dateFr($recup['saisie'],true);
 $valide=$recup['valide']>0?true:false;
 $select5=$recup['valide']>0?"selected='selected'":null;
@@ -53,7 +55,14 @@ echo <<<EOD
 <input type='hidden' name='id' value='$id' />
 <table class='tableauFiches'>
 <tr><td>Agent : </td><td>$agent</td></td></tr>
-<tr><td>Date concernée : </td><td>$dateAlpha</td></td></tr>
+EOD;
+if($config['Recup-DeuxSamedis']){
+  echo "<tr><td>Date(s) concernée(s) : </td><td>$dateAlpha</td></td></tr>\n";
+  echo "<tr><td>&nbsp;</td><td>$date2Alpha</td></td></tr>\n";
+}else{
+  echo "<tr><td>Date concernée : </td><td>$dateAlpha</td></td></tr>\n";
+}
+echo <<<EOD
 <tr><td>Date de la demande : </td><td>$saisie</td></td></tr>
 <tr><td>Heures demandées : </td>
 EOD;

@@ -7,7 +7,7 @@ Copyright (C) 2013 - Jérôme Combes
 
 Fichier : plugins/conges/class.conges.php
 Création : 24 juillet 2013
-Dernière modification : 3 octobre 2013
+Dernière modification : 11 octobre 2013
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -140,13 +140,13 @@ class conges{
   }
 
 
-  public function enregistreRecup($date,$heures){
+  public function enregistreRecup($date,$date2,$heures){
     // Enregistrement de la demande de récupération
     $perso_id=$_SESSION['login_id'];
     $db=new db();
     $db->delete("recuperations","`perso_id`='$perso_id' AND `date`='$date'");
     $db=new db();
-    $db->insert2("recuperations",array("perso_id"=>$perso_id,"date"=>$date,"heures"=>$heures,"etat"=>"Demande"));
+    $db->insert2("recuperations",array("perso_id"=>$perso_id,"date"=>$date,"date2"=>$date2,"heures"=>$heures,"etat"=>"Demande"));
 
 
     // Envoi d'un e-mail à l'agent et aux responsables
