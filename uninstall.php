@@ -24,7 +24,7 @@ if($_SESSION['login_id']!=1){
 }
 
 
-$version="1.0";
+$version="1.3.5";
 include_once "../../include/config.php";
 $sql=array();
 
