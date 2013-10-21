@@ -7,7 +7,7 @@ Copyright (C) 2013 - Jérôme Combes
 
 Fichier : plugins/conges/class.conges.php
 Création : 24 juillet 2013
-Dernière modification : 11 octobre 2013
+Dernière modification : 21 octobre 2013
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -107,31 +107,33 @@ class conges{
       $finConges=strtotime($finConges);
 
 
-      // S'il y a une pause le midi
-      if($temps[1]){
-	// calcul du temps du matin
+      // Calcul du temps du matin
+      if($temps[0] and $temps[1]){
 	$debutConges1=$debutConges>$temps[0]?$debutConges:$temps[0];
 	$finConges1=$finConges<$temps[1]?$finConges:$temps[1];
 	if($finConges1>$debutConges1){
 	  $difference+=$finConges1-$debutConges1;
 	}
-	// calcul du temps de l'après-midi
+      }
+
+      // Calcul du temps de l'après-midi
+      if($temps[2] and $temps[3]){
 	$debutConges2=$debutConges>$temps[2]?$debutConges:$temps[2];
 	$finConges2=$finConges<$temps[3]?$finConges:$temps[3];
 	if($finConges2>$debutConges2){
 	  $difference+=$finConges2-$debutConges2;
 	}
-	
       }
-      // S'il n'y a pas de pause le midi, calcul du temps de la journée
-      else{
+
+      // Calcul du temps de la journée s'il n'y a pas de pause le midi
+      if($temps[0] and $temps[3] and !$temps[1] and !$temps[2]){
 	$debutConges=$debutConges>$temps[0]?$debutConges:$temps[0];
 	$finConges=$finConges<$temps[3]?$finConges:$temps[3];
 	if($finConges>$debutConges){
 	  $difference+=$finConges-$debutConges;
 	}
-
       }
+
       $current=date("Y-m-d",strtotime("+1 day",strtotime($current)));
     }
     $this->minutes=$difference/60;
