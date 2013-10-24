@@ -7,7 +7,7 @@ Copyright (C) 2013 - Jérôme Combes
 
 Fichier : plugins/conges/class.conges.php
 Création : 24 juillet 2013
-Dernière modification : 21 octobre 2013
+Dernière modification : 24 octobre 2013
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -190,10 +190,10 @@ class conges{
     // Date, debut, fin
     $debut=$this->debut;
     $fin=$this->fin;
-    $date=date("Y-m-d");
+    $date=date("Y-m-d")." 23:59:59";
     if($debut){
       $fin=$fin?$fin:$date;
-      $filter.=" AND `debut`<='$fin' AND `fin`>='$debut'";
+      $filter.=" AND `debut`<'$fin' AND `fin`>'$debut'";
     }
     else{
       $filter.=" AND `fin`>='$date'";
@@ -224,7 +224,7 @@ class conges{
 
     // Valide
     if($this->valide){
-      $filter.=" AND `valide`<>0";
+      $filter.=" AND `valide`>0";
     }
   
     // Filtre avec ID, si ID, les autres filtres sont effacés
@@ -232,10 +232,21 @@ class conges{
       $filter="`id`='{$this->id}'";
     }
 
+    // Récupération des noms des agents
+    $p=new personnel();
+    $p->fetch("nom","Actif");
+    $agents=$p->elements;
+
     $db=new db();
     $db->select("conges","*",$filter,"ORDER BY debut,fin,saisie");
     if($db->result){
-      $this->elements=$db->result;
+      foreach($db->result as $elem){
+	$elem['nom']=$agents[$elem['perso_id']]['nom'];
+	$elem['prenom']=$agents[$elem['perso_id']]['prenom'];
+	$elem['debutAff']=dateFr($elem['debut'],true);
+	$elem['finAff']=dateFr($elem['fin'],true);
+	$this->elements[]=$elem;
+      }
     }
   }
 
