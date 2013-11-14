@@ -7,7 +7,7 @@ Copyright (C) 2013 - Jérôme Combes
 
 Fichier : plugins/conges/index.php
 Création : 24 juillet 2013
-Dernière modification : 27 août 2013
+Dernière modification : 31 octobre 2013
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -24,7 +24,7 @@ echo "<h3>Informations sur les congés</h3>\n";
 // Initialisation des variables
 $id=isset($_GET['id'])?$_GET['id']:null;
 
-// Suppresion
+// Suppression
 if(isset($_GET['suppression']) and isset($_GET['validation'])){
   $db=new db();
   $db->delete("conges_infos","id='$id'");

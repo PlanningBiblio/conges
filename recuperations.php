@@ -7,7 +7,7 @@ Copyright (C) 2013 - Jérôme Combes
 
 Fichier : plugins/conges/recuperations.php
 Création : 27 août 2013
-Dernière modification : 11 octobre 2013
+Dernière modification : 14 novembre 2013
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -317,7 +317,6 @@ $(function() {
 
   // Champ date
   $( ".datepicker" ).datepicker();
-  $( ".datepicker" ).datepicker("option", "dateFormat", "dd/mm/yy");
 
 });
 </script>
