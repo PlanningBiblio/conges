@@ -7,7 +7,7 @@ Copyright (C) 2013 - Jérôme Combes
 
 Fichier : plugins/conges/uninstall.php
 Création : 24 juillet 2013
-Dernière modification : 20 août 2013
+Dernière modification : 15 novembre 2013
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -52,8 +52,16 @@ $sql[]="ALTER TABLE `{$dbprefix}personnel` DROP `congesAnnuel`;";
 // Suppression des tâches planifiées
 $sql[]="DELETE FROM `{$dbprefix}cron` WHERE command LIKE 'plugins/conges/';";
 
-//	Suppression du plugin Congés dans la base
+// Suppression du plugin Congés dans la base
 $sql[]="DELETE FROM `{$dbprefix}plugins` WHERE `nom`='conges';";
+
+// Suppression de  la config
+$sql[]="DELETE FROM `{$dbprefix}config` WHERE `nom`='Recup-SamediSeulement';";
+$sql[]="DELETE FROM `{$dbprefix}config` WHERE `nom`='Recup-DeuxSamedis';";
+$sql[]="DELETE FROM `{$dbprefix}config` WHERE `nom`='Recup-DelaiTitulaire1';";
+$sql[]="DELETE FROM `{$dbprefix}config` WHERE `nom`='Recup-DelaiTitulaire2';";
+$sql[]="DELETE FROM `{$dbprefix}config` WHERE `nom`='Recup-DelaiContractuel1';";
+$sql[]="DELETE FROM `{$dbprefix}config` WHERE `nom`='Recup-DelaiContractuel2';";
 
 ?>
 <!-- Entête HTML -->
