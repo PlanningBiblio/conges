@@ -1,3 +1,20 @@
+***	Version 1.3.8	(Jérôme Combes, 25 novembre 2013)		***
+- Corrections :
+Suppression des paramétres liés aux plugins "congés" dans la config lors de la déinstallation
+
+***	Version 1.3.7	(Jérôme Combes, 14 novembre 2013)		***
+- Corrections :
+Modification des paramétres des datePicker suite à l'utilisation de la fonction de traduction dans le planning
+
+***	Version 1.3.5	(Jérôme Combes, 11 octobre 2013)		***
+- Améliorations :
+Possibilité de demander la récupération de 2 samedis simultanément
+
+***	Version 1.3.4	(Jérôme Combes, 4 octobre 2013)		***
+- Améliorations :
+Workflow de validation N1, N2.
+Gestion des congés par anticipation
+
 ***	Version 1.3.3	(Jérôme Combes, 27 Septembre 2013)		***
 - Améliorations :
 Affiche les débits et crédits des compteurs dans les listes de récupérations et congés
