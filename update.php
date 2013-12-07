@@ -1,6 +1,6 @@
 <?php
 /*
-Planning Biblio, Plugin Congés Version 1.3.8
+Planning Biblio, Plugin Congés Version 1.3.9
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.txt et COPYING.txt
 Copyright (C) 2013 - Jérôme Combes
@@ -23,7 +23,7 @@ if($_SESSION['login_id']!=1){
   exit;
 }
 
-$version="1.3.8";
+$version="1.3.9";
 include_once "../../include/config.php";
 
 $sql=array();
@@ -74,14 +74,14 @@ $sql[]="UPDATE `{$dbprefix}menu` SET `titre`='R&eacute;cup&eacute;rations' WHERE
 
 // Modification du 11 octobre 2013
 // Configuration
-$sql[]="INSERT INTO `{$dbprefix}config` VALUES (null,'Recup-SamediSeulement','boolean','0','Autoriser les demandes de récupération des samedis seulement','Congés','','40');";
-$sql[]="INSERT INTO `{$dbprefix}config` VALUES (null,'Recup-DeuxSamedis','boolean','0','Autoriser les demandes de récupération pour 2 samedis','Congés','','40');";
-$sql[]="INSERT INTO `{$dbprefix}config` VALUES (null,'Recup-DelaiTitulaire1','enum','0','Delai pour les demandes de récupération des titulaires pour 1 samedi (en mois)','Congés','0,1,2,3,4,5','40');";
-$sql[]="INSERT INTO `{$dbprefix}config` VALUES (null,'Recup-DelaiTitulaire2','enum','0','Delai pour les demandes de récupération des titulaires pour 2 samedis (en mois)','Congés','0,1,2,3,4,5','40');";
-$sql[]="INSERT INTO `{$dbprefix}config` VALUES (null,'Recup-DelaiContractuel1','enum','0','Delai pour les demandes de récupération des contractuels pour 1 samedi (en semaines)','Congés','0,1,2,3,4,5,6,7,8,9,10','40');";
-$sql[]="INSERT INTO `{$dbprefix}config` VALUES (null,'Recup-DelaiContractuel2','enum','0','Delai pour les demandes de récupération des contractuels pour 2 samedis (en semaines)','Congés','0,1,2,3,4,5,6,7,8,9,10','40');";
-$sql[]="ALTER TABLE `{$dbprefix}recuperations` ADD `date2` DATE ;";
-$sql[]="DELETE FROM `{$dbprefix}acces` WHERE `page`='plugins/conges/ajax.recup.php';";
+// $sql[]="INSERT INTO `{$dbprefix}config` VALUES (null,'Recup-SamediSeulement','boolean','0','Autoriser les demandes de récupération des samedis seulement','Congés','','40');";
+// $sql[]="INSERT INTO `{$dbprefix}config` VALUES (null,'Recup-DeuxSamedis','boolean','0','Autoriser les demandes de récupération pour 2 samedis','Congés','','40');";
+// $sql[]="INSERT INTO `{$dbprefix}config` VALUES (null,'Recup-DelaiTitulaire1','enum','0','Delai pour les demandes de récupération des titulaires pour 1 samedi (en mois)','Congés','0,1,2,3,4,5','40');";
+// $sql[]="INSERT INTO `{$dbprefix}config` VALUES (null,'Recup-DelaiTitulaire2','enum','0','Delai pour les demandes de récupération des titulaires pour 2 samedis (en mois)','Congés','0,1,2,3,4,5','40');";
+// $sql[]="INSERT INTO `{$dbprefix}config` VALUES (null,'Recup-DelaiContractuel1','enum','0','Delai pour les demandes de récupération des contractuels pour 1 samedi (en semaines)','Congés','0,1,2,3,4,5,6,7,8,9,10','40');";
+// $sql[]="INSERT INTO `{$dbprefix}config` VALUES (null,'Recup-DelaiContractuel2','enum','0','Delai pour les demandes de récupération des contractuels pour 2 samedis (en semaines)','Congés','0,1,2,3,4,5,6,7,8,9,10','40');";
+// $sql[]="ALTER TABLE `{$dbprefix}recuperations` ADD `date2` DATE ;";
+// $sql[]="DELETE FROM `{$dbprefix}acces` WHERE `page`='plugins/conges/ajax.recup.php';";
 
 
 ?>
