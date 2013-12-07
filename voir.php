@@ -7,7 +7,7 @@ Copyright (C) 2013 - Jérôme Combes
 
 Fichier : plugins/conges/voir.php
 Création : 24 juillet 2013
-Dernière modification : 3 octobre 2013
+Dernière modification : 8 décembre 2013
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -26,6 +26,7 @@ $admin=in_array(2,$droits)?true:$admin;
 
 $tri=isset($_GET['tri'])?$_GET['tri']:"`debut`,`fin`,`nom`,`prenom`";
 $annee=isset($_GET['annee'])?$_GET['annee']:(isset($_SESSION['oups']['conges_annee'])?$_SESSION['oups']['conges_annee']:(date("m")<9?date("Y")-1:date("Y")));
+$congesAffiches=isset($_GET['congesAffiches'])?$_GET['congesAffiches']:(isset($_SESSION['oups']['congesAffiches'])?$_SESSION['oups']['congesAffiches']:"aVenir");
 if($admin){
   $perso_id=isset($_GET['perso_id'])?$_GET['perso_id']:(isset($_SESSION['oups']['conges_perso_id'])?$_SESSION['oups']['conges_perso_id']:$_SESSION['login_id']);
 }
@@ -37,10 +38,16 @@ if(isset($_GET['reset'])){
   $perso_id=$_SESSION['login_id'];
 }
 $_SESSION['oups']['conges_annee']=$annee;
+$_SESSION['oups']['congesAffiches']=$congesAffiches;
 $_SESSION['oups']['conges_perso_id']=$perso_id;
+
 
 $debut=$annee."-09-01";
 $fin=($annee+1)."-08-31";
+
+if($congesAffiches=="aVenir"){
+  $debut=date("Y-m-d");
+}
 
 $c=new conges();
 $c->debut=$debut;
@@ -78,6 +85,13 @@ foreach($annees as $elem){
 }
 echo "</select>\n";
 
+$selected=$congesAffiches=="aVenir"?"selected='selected'":null;
+echo "&nbsp;&nbsp;Congés : ";
+echo "<select name='congesAffiches'>";
+echo "<option value='tous'>Tous</option>";
+echo "<option value='aVenir' $selected>A venir</option>";
+echo "</select>\n";
+
 if($admin){
   echo "&nbsp;&nbsp;Agent : ";
   echo "<select name='perso_id'>";
@@ -94,29 +108,30 @@ echo <<<EOD
 &nbsp;&nbsp;<input type='button' value='Reset' onclick='location.href="index.php?page=plugins/conges/voir.php&reset"' />
 </form>
 <br/>
-<table class='tableauStandard'>
-<tr class='th'><td>&nbsp;</td><td>Début</td><td>Fin</td>
+<table id='tableConges'>
+<thead><tr><th>&nbsp;</th><th>Début</th><th>Fin</th>
 EOD;
 if($admin){
-  echo "<td>Nom</td>";
+  echo "<th>Nom</th>";
 }
-echo "<td>Validation</td><td>Crédits</td><td>Reliquat</td><td>Récupérations</td><td>Anticipation</td></tr>\n";
+echo "<th>Validation</th><th>Crédits</th><th>Reliquat</th><th>Récupérations</th><th>Anticipation</th></tr></thead>\n";
+echo "<tbody>\n";
 
-$class="tr1";
 foreach($c->elements as $elem){
   $debut=str_replace("00h00","",dateFr($elem['debut'],true));
   $fin=str_replace("23h59","",dateFr($elem['fin'],true));
-  $validation="<b>Demand&eacute;</b>";
+  // $validation="<font style='display:none;'>....</font>  ==> Permet d'avoir un tri cohérent sur la colonne validation
+  $validation="<font style='display:none;'>demand</font><b>Demand&eacute;</b>";
   $credits=null;
   $recuperations=null;
   $reliquat=null;
   $anticipation=null;
 
   if($elem['valide']<0){
-    $validation="<font style='color:red;font-weight:bold;'>Refus&eacute;, ".nom(-$elem['valide']).", ".dateFr($elem['validation'],true)."</font>";
+    $validation="<font style='display:none;'>refus</font><font style='color:red;font-weight:bold;'>Refus&eacute;, ".nom(-$elem['valide']).", ".dateFr($elem['validation'],true)."</font>";
   }
   elseif($elem['valide']){
-    $validation=nom($elem['valide']).", ".dateFr($elem['validation'],true);
+    $validation="<font style='display:none;'>valid</font>Valid&eacute;, ".nom($elem['valide']).", ".dateFr($elem['validation'],true);
     if($elem['solde_prec']!=null and $elem['solde_actuel']!=null){
       $credits=heure4($elem['solde_prec'])." &rarr; ".heure4($elem['solde_actuel']);
     }
@@ -131,13 +146,12 @@ foreach($c->elements as $elem){
     }
   }
   elseif($elem['valideN1']){
-    $validation="<font style='font-weight:bold;'>En attente de validation hi&eacute;rarchique,<br/>".dateFr($elem['validationN1'],true)."</font>";
+    $validation="<font style='display:none;'>en attente</font><font style='font-weight:bold;'>En attente de validation hi&eacute;rarchique,<br/>".dateFr($elem['validationN1'],true)."</font>";
   }
 
   $nom=$admin?"<td>".nom($elem['perso_id'])."</td>":null;
-  $class=$class=="tr1"?"tr2":"tr1";
   echo <<<EOD
-    <tr class='$class'>
+    <tr>
       <td><a href='index.php?page=plugins/conges/modif.php&amp;id={$elem['id']}'/>
       <img src='img/modif.png' alt='Voir' border='0'/></a></td>
       <td>$debut</td><td>$fin</td>$nom<td>$validation</td><td>$credits</td><td>$reliquat</td><td>$recuperations</td><td>$anticipation</td>
@@ -146,4 +160,29 @@ EOD;
 }
 
 ?>
+</tbody>
 </table>
+
+<script type='text/JavaScript'>
+$(document).ready(function() {
+  $(".datepicker").datepicker();
+
+  $("#tableConges").dataTable({
+    "bJQueryUI": true,
+    "sPaginationType": "full_numbers",
+    "bStateSave": true,
+    "aaSorting" : [[1,"asc"],[2,"asc"]],
+    "aoColumns" : [{"bSortable":false},{"bSortable":true},{"bSortable":true},{"bSortable":true},{"bSortable":true},{"bSortable":true},
+      {"bSortable":true},{"bSortable":true},
+    <?php
+    if($admin){
+      echo "{\"bSortable\":true},";
+    }
+    ?>
+      ],
+    "aLengthMenu" : [[25,50,75,100,-1],[25,50,75,100,"Tous"]],
+    "iDisplayLength" : 25,
+    "oLanguage" : {"sUrl" : "js/dataTables/french.txt"}
+  });
+});
+</script>
