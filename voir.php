@@ -7,7 +7,7 @@ Copyright (C) 2013 - Jérôme Combes
 
 Fichier : plugins/conges/voir.php
 Création : 24 juillet 2013
-Dernière modification : 8 décembre 2013
+Dernière modification : 9 décembre 2013
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -172,7 +172,7 @@ $(document).ready(function() {
     "sPaginationType": "full_numbers",
     "bStateSave": true,
     "aaSorting" : [[1,"asc"],[2,"asc"]],
-    "aoColumns" : [{"bSortable":false},{"bSortable":true},{"bSortable":true},{"bSortable":true},{"bSortable":true},{"bSortable":true},
+    "aoColumns" : [{"bSortable":false},{"sType": "date-fr"},{"sType": "date-fr-fin"},{"bSortable":true},{"bSortable":true},{"bSortable":true},
       {"bSortable":true},{"bSortable":true},
     <?php
     if($admin){
