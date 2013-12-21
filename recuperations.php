@@ -72,14 +72,7 @@ if(isset($_GET['message'])){
     case "Refus" : $message="Accès refusé."; $type="error"; break;
   }
   if($message){
-    echo <<<EOD
-      <div id='information'>$message</div>
-      <script type='text/JavaScript'>
-      errorHighlight($("#information"),"$type");
-      position($('#information'),80,"center");
-      setTimeout("$('#information').hide()",5000);
-      </script>
-EOD;
+    echo "<script type='text/JavaScript'>information('$message','$type',70);</script>\n";
   }
 }
 
