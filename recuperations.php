@@ -7,7 +7,7 @@ Copyright (C) 2013 - Jérôme Combes
 
 Fichier : plugins/conges/recuperations.php
 Création : 27 août 2013
-Dernière modification : 14 novembre 2013
+Dernière modification : 21 décembre 2013
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -38,6 +38,7 @@ $_SESSION['oups']['recup_perso_id']=$perso_id;
 $debut=$annee."-09-01";
 $fin=($annee+1)."-08-31";
 $admin=in_array(2,$droits)?true:false;
+$message=null;
 
 // Recherche des demandes de récupérations enregistrées
 $c=new conges();
@@ -64,15 +65,21 @@ for($d=date("Y")+2;$d>date("Y")-11;$d--){
 // Notifications
 if(isset($_GET['message'])){
   switch($_GET['message']){
-    case "Demande-OK" : $message="Votre demande a été enregistrée"; $class="MessageOK";	break;
-    case "Demande-Erreur" : $message="Une erreur est survenue lors de l'enregitrement de votre demande."; $class="MessageErreur"; break;
-    case "OK" : $message="Vos modifications ont été enregistrées"; $class="MessageOK";	break;
-    case "Erreur" : $message="Une erreur est survenue lors de la validation de vos modifications."; $class="MessageErreur"; break;
-    case "Refus" : $message="Accès refusé."; $class="MessageErreur";	break;
+    case "Demande-OK" : $message="Votre demande a été enregistrée"; $type="highlight";	break;
+    case "Demande-Erreur" : $message="Une erreur est survenue lors de l'enregitrement de votre demande."; $type="error"; break;
+    case "OK" : $message="Vos modifications ont été enregistrées"; $type="highlight";	break;
+    case "Erreur" : $message="Une erreur est survenue lors de la validation de vos modifications."; $type="error"; break;
+    case "Refus" : $message="Accès refusé."; $type="error"; break;
   }
   if($message){
-    echo "<div class='$class' id='information'>$message</div>\n";
-    echo "<script type='text/JavaScript'>setTimeout(\"document.getElementById('information').style.display='none'\",3000);</script>\n";
+    echo <<<EOD
+      <div id='information'>$message</div>
+      <script type='text/JavaScript'>
+      errorHighlight($("#information"),"$type");
+      position($('#information'),80,"center");
+      setTimeout("$('#information').hide()",5000);
+      </script>
+EOD;
   }
 }
 
