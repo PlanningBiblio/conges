@@ -7,7 +7,7 @@ Copyright (C) 2013 - Jérôme Combes
 
 Fichier : plugins/conges/voir.php
 Création : 24 juillet 2013
-Dernière modification : 9 décembre 2013
+Dernière modification : 27 décembre 2013
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -24,7 +24,6 @@ require_once "personnel/class.personnel.php";
 $admin=in_array(7,$droits)?true:false;
 $admin=in_array(2,$droits)?true:$admin;
 
-$tri=isset($_GET['tri'])?$_GET['tri']:"`debut`,`fin`,`nom`,`prenom`";
 $annee=isset($_GET['annee'])?$_GET['annee']:(isset($_SESSION['oups']['conges_annee'])?$_SESSION['oups']['conges_annee']:(date("m")<9?date("Y")-1:date("Y")));
 $congesAffiches=isset($_GET['congesAffiches'])?$_GET['congesAffiches']:(isset($_SESSION['oups']['congesAffiches'])?$_SESSION['oups']['congesAffiches']:"aVenir");
 if($admin){
@@ -52,7 +51,6 @@ if($congesAffiches=="aVenir"){
 $c=new conges();
 $c->debut=$debut;
 $c->fin=$fin;
-$c->tri=$tri;
 if($perso_id!=0){
   $c->perso_id=$perso_id;
 }
@@ -104,8 +102,8 @@ if($admin){
   echo "</select>\n";
 }
 echo <<<EOD
-&nbsp;&nbsp;<input type='submit' value='OK' id='button-OK'/>
-&nbsp;&nbsp;<input type='button' value='Reset' onclick='location.href="index.php?page=plugins/conges/voir.php&reset"' />
+&nbsp;&nbsp;<input type='submit' value='OK' id='button-OK' class='ui-button'/>
+&nbsp;&nbsp;<input type='button' value='Effacer' onclick='location.href="index.php?page=plugins/conges/voir.php&reset"' class='ui-button'/>
 </form>
 <br/>
 <table id='tableConges'>
