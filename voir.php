@@ -7,7 +7,7 @@ Copyright (C) 2013 - Jérôme Combes
 
 Fichier : plugins/conges/voir.php
 Création : 24 juillet 2013
-Dernière modification : 27 décembre 2013
+Dernière modification : 3 janvier 2014
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -118,18 +118,20 @@ echo "<tbody>\n";
 foreach($c->elements as $elem){
   $debut=str_replace("00h00","",dateFr($elem['debut'],true));
   $fin=str_replace("23h59","",dateFr($elem['fin'],true));
-  // $validation="<font style='display:none;'>....</font>  ==> Permet d'avoir un tri cohérent sur la colonne validation
-  $validation="<font style='display:none;'>demand</font><b>Demand&eacute;</b>";
+  $validation="Demand&eacute;";
+  $validationStyle="font-weight:bold;";
   $credits=null;
   $recuperations=null;
   $reliquat=null;
   $anticipation=null;
 
   if($elem['valide']<0){
-    $validation="<font style='display:none;'>refus</font><font style='color:red;font-weight:bold;'>Refus&eacute;, ".nom(-$elem['valide']).", ".dateFr($elem['validation'],true)."</font>";
+    $validation="Refus&eacute;, ".nom(-$elem['valide']).", ".dateFr($elem['validation'],true);
+    $validationStyle="color:red;";
   }
   elseif($elem['valide']){
-    $validation="<font style='display:none;'>valid</font>Valid&eacute;, ".nom($elem['valide']).", ".dateFr($elem['validation'],true);
+    $validation="Valid&eacute;, ".nom($elem['valide']).", ".dateFr($elem['validation'],true);
+    $validationStyle=null;
     if($elem['solde_prec']!=null and $elem['solde_actuel']!=null){
       $credits=heure4($elem['solde_prec'])." &rarr; ".heure4($elem['solde_actuel']);
     }
@@ -144,7 +146,8 @@ foreach($c->elements as $elem){
     }
   }
   elseif($elem['valideN1']){
-    $validation="<font style='display:none;'>en attente</font><font style='font-weight:bold;'>En attente de validation hi&eacute;rarchique,<br/>".dateFr($elem['validationN1'],true)."</font>";
+    $validation="En attente de validation hi&eacute;rarchique,<br/>".dateFr($elem['validationN1'],true);
+    $validationStyle="font-weight:bold;";
   }
 
   $nom=$admin?"<td>".nom($elem['perso_id'])."</td>":null;
@@ -152,7 +155,7 @@ foreach($c->elements as $elem){
     <tr>
       <td><a href='index.php?page=plugins/conges/modif.php&amp;id={$elem['id']}'/>
       <img src='img/modif.png' alt='Voir' border='0'/></a></td>
-      <td>$debut</td><td>$fin</td>$nom<td>$validation</td><td>$credits</td><td>$reliquat</td><td>$recuperations</td><td>$anticipation</td>
+      <td>$debut</td><td>$fin</td>$nom<td style='$validationStyle'>$validation</td><td>$credits</td><td>$reliquat</td><td>$recuperations</td><td>$anticipation</td>
       </tr>
 EOD;
 }
