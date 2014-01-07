@@ -7,7 +7,7 @@ Copyright (C) 2013 - Jérôme Combes
 
 Fichier : plugins/conges/modif.php
 Création : 1er août 2013
-Dernière modification : 4 octobre 2013
+Dernière modification : 6 janvier 2014
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -66,6 +66,10 @@ if(isset($_GET['confirm'])){
   $commentaires=htmlentities($_GET['commentaires'],ENT_QUOTES|ENT_IGNORE,"UTF-8",false);
   $refus=isset($_GET['refus'])?htmlentities($_GET['refus'],ENT_QUOTES|ENT_IGNORE,"UTF-8",false):null;
 
+  // Enregistre la modification du congés
+  $c=new conges();
+  $c->update($_GET);
+
   // Récupération des adresses e-mails de l'agent et des responsables pour m'envoi des alertes
   $c=new conges();
   $c->getResponsables($debut,$fin,$perso_id);
@@ -75,25 +79,61 @@ if(isset($_GET['confirm'])){
   $db_perso->query("select nom,prenom,mail from {$dbprefix}personnel where id=$perso_id;");
   $nom=$db_perso->result[0]['nom'];
   $prenom=$db_perso->result[0]['prenom'];
-  $destinataires=$db_perso->result[0]['mail'];
-  foreach($responsables as $elem){
-    if(verifmail($elem['mail'])){
-      $destinataires.=";{$elem['mail']}";
-    }
-  }
+  $mail=$db_perso->result[0]['mail'];
+  $mailResponsable=$db_perso->result[0]['mailResponsable'];
 
-  $c=new conges();
-  $c->update($_GET);
-
+  // Choix du sujet et des destinataires en fonction du degré de validation
   switch($_GET['valide']){
     // Modification sans validation
-    case 0 : $sujet="Modification de congés";	break;
+    case 0 : 
+      $sujet="Modification de congés";
+      $notifications=$config['Absences-notifications'];
+      break;
     // Validations Niveau 2
-    case 1 : $sujet="Validation de congés";	break;
-    case -1 : $sujet="Refus de congés";	break;
+    case 1 : 
+      $sujet="Validation de congés";
+      $notifications=$config['Absences-notifications3'];
+      break;
+    case -1 :
+      $sujet="Refus de congés";
+      $notifications=$config['Absences-notifications3'];
+      break;
     // Validations Niveau 1
-    case 2 : $sujet="Congés en attente de validation hiérarchique";	break;
-    case -2 : $sujet="Congés en attente de validation hiérarchique";	break;
+    case 2 :
+      $sujet="Congés en attente de validation hiérarchique";
+      $notifications=$config['Absences-notifications2'];
+      break;
+    case -2 :
+      $sujet="Congés en attente de validation hiérarchique";
+      $notifications=$config['Absences-notifications2'];
+      break;
+  }
+
+  // Choix des destinataires en fonction de la configuration
+  $destinataires=array();
+  switch($notifications){
+    case "Aux agents ayant le droit de g&eacute;rer les absences" :
+      foreach($responsables as $elem){
+	$destinataires[]=$elem['mail'];
+      }
+      break;
+    case "Au responsable direct" :
+      $destinataires[]=$mailResponsable;
+      break;
+    case "A la cellule planning" :
+      $destinataires[]=$config['Mail-Planning'];
+      break;
+    case "A l&apos;agent concern&eacute;" :
+      $destinataires[]=$mail;
+      break;
+    case "A tous" :
+      $destinataires[]=$mail;
+      $destinataires[]=$mailResponsable;
+      $destinataires[]=$config['Mail-Planning'];
+      foreach($responsables as $elem){
+	$destinataires[]=$elem['mail'];
+      }
+      break;
   }
 
   // Envoi d'une notification par email

@@ -7,7 +7,7 @@ Copyright (C) 2013 - Jérôme Combes
 
 Fichier : plugins/conges/ajax.verifRecup.php
 Création : 11 octobre 2013
-Dernière modification : 11 ocotbre 2013
+Dernière modification : 6 janvier 2014
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -15,11 +15,21 @@ Enregistre la demande de récupération
 */
 
 session_start();
-ini_set('display_errors',0);
-ini_set('error_reporting',E_ERROR | E_WARNING | E_PARSE | E_NOTICE);
 
 $version="1.3.9";
 include "../../include/config.php";
+
+ini_set('display_errors',$config['display_errors']);
+switch($config['error_reporting']){
+  case 0: error_reporting(0); break;
+  case 1: error_reporting(E_ERROR | E_WARNING | E_PARSE); break;
+  case 2: error_reporting(E_ERROR | E_WARNING | E_PARSE | E_NOTICE); break;
+  case 3: error_reporting(E_ALL ^ (E_NOTICE | E_WARNING)); break;
+  case 4: error_reporting(E_ALL ^ E_NOTICE); break;
+  case 5: error_reporting(E_ALL); break;
+  default: error_reporting(E_ALL ^ E_NOTICE); break;
+}
+
 include "../../include/function.php";
 include "../../personnel/class.personnel.php";
 include "class.conges.php";
@@ -39,30 +49,50 @@ else{
   echo "###Demande-OK###";
 
   // Envoi d'un e-mail à l'agent et aux responsables
-  $destinataires=array();
   $p=new personnel();
   $p->fetchById($perso_id);
   $nom=$p->elements[0]['nom'];
   $prenom=$p->elements[0]['prenom'];
   $mail=$p->elements[0]['mail'];
-  if(verifmail($mail)){
-    $destinataires[]=$mail;
-  }
+  $mailResponsable=$p->elements[0]['mailResponsable'];
+
   $c=new conges();
   $c->getResponsables($date,$date,$perso_id);
   $responsables=$c->responsables;
-  foreach($responsables as $elem){
-    if(verifmail($elem['mail']) and !in_array($elem['mail'],$destinataires)){
-      $destinataires[]=$elem['mail'];
-    }
+
+  // Choix des destinataires en fonction de la configuration
+  $destinataires=array();
+  switch($config['Absences-notifications']){
+    case "Aux agents ayant le droit de g&eacute;rer les absences" :
+      foreach($responsables as $elem){
+	$destinataires[]=$elem['mail'];
+      }
+      break;
+    case "Au responsable direct" :
+      $destinataires[]=$mailResponsable;
+      break;
+    case "A la cellule planning" :
+      $destinataires[]=$config['Mail-Planning'];
+      break;
+    case "A l&apos;agent concern&eacute;" :
+      $destinataires[]=$mail;
+      break;
+    case "A tous" :
+      $destinataires[]=$mail;
+      $destinataires[]=$mailResponsable;
+      $destinataires[]=$config['Mail-Planning'];
+      foreach($responsables as $elem){
+	$destinataires[]=$elem['mail'];
+      }
+      break;
   }
+
   if(!empty($destinataires)){
     $sujet="Nouvelle demande de récupération";
     $message="Demande de récupération du ".dateFr($date)." enregistrée pour $prenom $nom<br/><br/>";
     if($_GET['commentaires']){
       $message.="Commentaires : ".str_replace("\n","<br/>",$_GET['commentaires']);
     }
-    $destinataires=join(";",$destinataires);
     sendmail($sujet,$message,$destinataires);
   }
 }

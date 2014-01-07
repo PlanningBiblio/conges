@@ -7,7 +7,7 @@ Copyright (C) 2013 - Jérôme Combes
 
 Fichier : plugins/conges/recuperation_valide.php
 Création : 30 août 2013
-Dernière modification : 25 septembre 2013
+Dernière modification : 7 janvier 2014
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -15,11 +15,21 @@ Fichier permettant de modifier et valider les demandes de récupérations des sa
 */
 
 session_start();
-ini_set('display_errors',0);
-ini_set('error_reporting',E_ERROR | E_WARNING | E_PARSE | E_NOTICE);
 
 $version="1.3.9";
 include "../../include/config.php";
+
+ini_set('display_errors',$config['display_errors']);
+switch($config['error_reporting']){
+  case 0: error_reporting(0); break;
+  case 1: error_reporting(E_ERROR | E_WARNING | E_PARSE); break;
+  case 2: error_reporting(E_ERROR | E_WARNING | E_PARSE | E_NOTICE); break;
+  case 3: error_reporting(E_ALL ^ (E_NOTICE | E_WARNING)); break;
+  case 4: error_reporting(E_ALL ^ E_NOTICE); break;
+  case 5: error_reporting(E_ALL); break;
+  default: error_reporting(E_ALL ^ E_NOTICE); break;
+}
+
 include "../../include/function.php";
 include "class.conges.php";
 
@@ -57,7 +67,8 @@ if(isset($update)){
   if(!$db->error){
     $msg="OK";
   }
-  // Modification du crédit d'heures de récupérations si il y a validation
+
+  // Modification du crédit d'heures de récupérations s'il y a validation
   if(isset($update['valide']) and $update['valide']>0){
     $db=new db();
     $db->select("personnel","recupSamedi","id='$perso_id'");
@@ -67,43 +78,63 @@ if(isset($update)){
     $db->update2("personnel",array("recupSamedi"=>$recupSamedi),array("id"=>$perso_id));
     $db=new db();
     $db->update2("recuperations",array("solde_prec"=>$solde_prec,"solde_actuel"=>$recupSamedi),array("id"=>$id));
-    
   }
+
   // Envoi d'un e-mail à l'agent et aux responsables
-  $destinataires=array();
   $p=new personnel();
   $p->fetchById($perso_id);
   $nom=$p->elements[0]['nom'];
   $prenom=$p->elements[0]['prenom'];
   $mail=$p->elements[0]['mail'];
-  if(verifmail($mail)){
-    $destinataires[]=$mail;
-  }
+  $mailResponsable=$p->elements[0]['mailResponsable'];
+
   $c->getResponsables($recup['date'],$recup['date'],$perso_id);
   $responsables=$c->responsables;
-  foreach($responsables as $elem){
-    if(verifmail($elem['mail']) and !in_array($elem['mail'],$destinataires)){
-      $destinataires[]=$elem['mail'];
-    }
-  }
-  if(!empty($destinataires)){
-    if(isset($update['valide']) and $update['valide']>0){
-      $sujet="Demande de récupération validée";
-      $message="Demande de récupération du ".dateFr($recup['date'])." validée pour $prenom $nom";
-    }
-    elseif(isset($update['valide']) and $update['valide']<0){
-      $sujet="Demande de récupération refusée";
-      $message="Demande de récupération du ".dateFr($recup['date'])." refusée pour $prenom $nom";
-      $message.="<br/><br/>".str_replace("\n","<br/>",$update['refus']);
-    }
-    else{
-      $sujet="Demande de récupération modifiée";
-      $message="Demande de récupération du ".dateFr($recup['date'])." modifiée pour $prenom $nom";
-    }
 
-    $destinataires=join(";",$destinataires);
-    sendmail($sujet,$message,$destinataires);
+  if(isset($update['valide']) and $update['valide']>0){
+    $sujet="Demande de récupération validée";
+    $message="Demande de récupération du ".dateFr($recup['date'])." validée pour $prenom $nom";
+    $notifications=$config['Absences-notifications3'];
   }
+  elseif(isset($update['valide']) and $update['valide']<0){
+    $sujet="Demande de récupération refusée";
+    $message="Demande de récupération du ".dateFr($recup['date'])." refusée pour $prenom $nom";
+    $message.="<br/><br/>".str_replace("\n","<br/>",$update['refus']);
+    $notifications=$config['Absences-notifications3'];
+  }
+  else{
+    $sujet="Demande de récupération modifiée";
+    $message="Demande de récupération du ".dateFr($recup['date'])." modifiée pour $prenom $nom";
+    $notifications=$config['Absences-notifications'];
+  }
+
+  // Choix des destinataires en fonction de la configuration
+  $destinataires=array();
+  switch($notifications){
+    case "Aux agents ayant le droit de g&eacute;rer les absences" :
+      foreach($responsables as $elem){
+	$destinataires[]=$elem['mail'];
+      }
+      break;
+    case "Au responsable direct" :
+      $destinataires[]=$mailResponsable;
+      break;
+    case "A la cellule planning" :
+      $destinataires[]=$config['Mail-Planning'];
+      break;
+    case "A l&apos;agent concern&eacute;" :
+      $destinataires[]=$mail;
+      break;
+    case "A tous" :
+      $destinataires[]=$mail;
+      $destinataires[]=$mailResponsable;
+      $destinataires[]=$config['Mail-Planning'];
+      foreach($responsables as $elem){
+	$destinataires[]=$elem['mail'];
+      }
+      break;
+  }
+  sendmail($sujet,$message,$destinataires);
 }
 
 header("Location: ../../index.php?page=plugins/conges/recuperations.php&message=$msg");

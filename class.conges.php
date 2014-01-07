@@ -7,7 +7,7 @@ Copyright (C) 2013 - Jérôme Combes
 
 Fichier : plugins/conges/class.conges.php
 Création : 24 juillet 2013
-Dernière modification : 24 octobre 2013
+Dernière modification : 6 janvier 2014
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -150,32 +150,49 @@ class conges{
     $db=new db();
     $db->insert2("recuperations",array("perso_id"=>$perso_id,"date"=>$date,"date2"=>$date2,"heures"=>$heures,"etat"=>"Demande"));
 
-
-    // Envoi d'un e-mail à l'agent et aux responsables
-    $destinataires=array();
     $p=new personnel();
     $p->fetchById($perso_id);
     $nom=$p->elements[0]['nom'];
     $prenom=$p->elements[0]['prenom'];
     $mail=$p->elements[0]['mail'];
-    if(verifmail($mail)){
-      $destinataires[]=$mail;
-    }
+    $mailResponsable=$p->elements[0]['mailResponsable'];
+
     $this->getResponsables($date,$date,$perso_id);
     $responsables=$this->responsables;
-    foreach($responsables as $elem){
-      if(verifmail($elem['mail']) and !in_array($elem['mail'],$destinataires)){
-	$destinataires[]=$elem['mail'];
-      }
+
+    // Choix des destinataires en fonction de la configuration
+    $destinataires=array();
+    switch($GLOBALES['config']['Absences-notifications']){
+      case "Aux agents ayant le droit de g&eacute;rer les absences" :
+	foreach($responsables as $elem){
+	  $destinataires[]=$elem['mail'];
+	}
+	break;
+      case "Au responsable direct" :
+	$destinataires[]=$mailResponsable;
+	break;
+      case "A la cellule planning" :
+	$destinataires[]=$GLOBALS['config']['Mail-Planning'];
+	break;
+      case "A l&apos;agent concern&eacute;" :
+	$destinataires[]=$mail;
+	break;
+      case "A tous" :
+	$destinataires[]=$mail;
+	$destinataires[]=$mailResponsable;
+	$destinataires[]=$GLOBALS['config']['Mail-Planning'];
+	foreach($responsables as $elem){
+	  $destinataires[]=$elem['mail'];
+	}
+	break;
     }
+
     if(!empty($destinataires)){
-      $destinataires=join(";",$destinataires);
       $sujet="Nouvelle demande de récupération";
       $message="Nouvelle demande de récupération<br/>$prenom $nom a fait une nouvelle demande de récupération";
       sendmail($sujet,$message,$destinataires);
     }
   }
-
 
 
   public function fetch(){

@@ -7,7 +7,7 @@ Copyright (C) 2013 - Jérôme Combes
 
 Fichier : plugins/conges/enregistrer.php
 Création : 24 juillet 2013
-Dernière modification : 3 octobre 2013
+Dernière modification : 6 janvier 2014
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -43,7 +43,11 @@ if(isset($_GET['confirm'])){	// Confirmation
   $hre_fin=$_GET['hre_fin']?$_GET['hre_fin']:"23:59:59";
   $commentaires=htmlentities($_GET['commentaires'],ENT_QUOTES|ENT_IGNORE,"UTF-8",false);
 
-  // Récupération des adresses e-mails de l'agent et des responsables pour m'envoi des alertes
+  // Enregistrement du congés
+  $c=new conges();
+  $c->add($_GET);
+
+  // Récupération des adresses e-mails de l'agent et des responsables pour l'envoi des alertes
   $c=new conges();
   $c->getResponsables($debut,$fin,$perso_id);
   $responsables=$c->responsables;
@@ -52,15 +56,35 @@ if(isset($_GET['confirm'])){	// Confirmation
   $db_perso->query("select nom,prenom,mail from {$dbprefix}personnel where id=$perso_id;");
   $nom=$db_perso->result[0]['nom'];
   $prenom=$db_perso->result[0]['prenom'];
-  $destinataires=$db_perso->result[0]['mail'];
-  foreach($responsables as $elem){
-    if(verifmail($elem['mail'])){
-      $destinataires.=";{$elem['mail']}";
-    }
-  }
+  $mail=$db_perso->result[0]['mail'];
+  $mailResponsable=$db_perso->result[0]['mailResponsable'];
 
-  $c=new conges();
-  $c->add($_GET);
+  // Choix des destinataires en fonction de la configuration
+  $destinataires=array();
+  switch($config['Absences-notifications']){
+    case "Aux agents ayant le droit de g&eacute;rer les absences" :
+      foreach($responsables as $elem){
+	$destinataires[]=$elem['mail'];
+      }
+      break;
+    case "Au responsable direct" :
+      $destinataires[]=$mailResponsable;
+      break;
+    case "A la cellule planning" :
+      $destinataires[]=$config['Mail-Planning'];
+      break;
+    case "A l&apos;agent concern&eacute;" :
+      $destinataires[]=$mail;
+      break;
+    case "A tous" :
+      $destinataires[]=$mail;
+      $destinataires[]=$mailResponsable;
+      $destinataires[]=$config['Mail-Planning'];
+      foreach($responsables as $elem){
+	$destinataires[]=$elem['mail'];
+      }
+      break;
+  }
 
   $message="Nouveau congés: <br/>$prenom $nom<br/>Début : ".dateFr($debut);
   if($hre_debut!="00:00:00")
@@ -82,7 +106,8 @@ if(isset($_GET['confirm'])){	// Confirmation
   }
 }
 
-else{	// Formulaire
+// Formulaire
+else{
   // Initialisation des variables
   $perso_id=$perso_id?$perso_id:$_SESSION['login_id'];
   $p=new personnel();
