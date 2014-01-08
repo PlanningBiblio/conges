@@ -7,7 +7,7 @@ Copyright (C) 2013 - Jérôme Combes
 
 Fichier : plugins/conges/modif.php
 Création : 1er août 2013
-Dernière modification : 6 janvier 2014
+Dernière modification : 7 janvier 2014
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -214,7 +214,7 @@ else{	// Formulaire
   echo "<input type='hidden' name='recuperation' value='$recuperation' />\n";
   echo "<input type='hidden' name='credit' value='$credit' />\n";
   echo "<input type='hidden' name='anticipation' value='$anticipation' />\n";
-  echo "<input type='hidden' name='id' value='$id' />\n";
+  echo "<input type='hidden' name='id' value='$id' id='id' />\n";
   echo "<input type='hidden' name='valide' value='0' />\n";
   echo "<table border='0'>\n";
   echo "<tr><td style='width:300px;'>\n";
@@ -370,6 +370,10 @@ EOD;
 
   if((!$valide and $admin) or ($data['valide']==0 and $data['valideN1']==0)){
     echo "<input type='submit' value='Enregistrer les modifications' style='margin-left:20px;'/>\n";
+  }
+
+  if($admin){
+    echo "<input type='button' value='Supprimer' style='margin-left:20px;' onclick='supprimeConges()'/>\n";
   }
 
   echo "</td></tr></table>\n";

@@ -7,7 +7,7 @@ Copyright (C) 2013 - Jérôme Combes
 
 Fichier : plugins/conges/recuperations.php
 Création : 27 août 2013
-Dernière modification : 21 décembre 2013
+Dernière modification : 8 janvier 2014
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -108,17 +108,18 @@ echo <<<EOD
 &nbsp;&nbsp;<input type='submit' value='OK' id='button-OK' />
 &nbsp;&nbsp;<input type='button' value='Reset' id='button-Effacer' onclick='location.href="index.php?page=plugins/conges/recuperations.php&reset"' />
 </form>
-<table class='tableauStandard'>
-<tr class='th'><td>&nbsp;</td>
+<table id='tableRecup'>
+<thead>
+<tr><th>&nbsp;</th>
 EOD;
 if($admin){
-  echo "<td>Agent</td>";
+  echo "<th>Agent</th>";
 }
-echo "<td>Date</td><td>Heures</td><td>Commentaires</td><td>Validation</td><td>Crédits</td></tr>\n";
+echo "<th>Date</th><th>Heures</th><th>Commentaires</th><th>Validation</th><th>Crédits</th></tr>\n";
+echo "</thead>\n";
+echo "<tbody>\n";
 
-$class="tr1";
 foreach($recup as $elem){
-  $class=$class=="tr1"?"tr2":"tr1";
   $validation="En attente";
   $credits=null;
   if($elem['valide']>0){
@@ -132,7 +133,7 @@ foreach($recup as $elem){
     $validation="<font style='color:red;font-weight:bold;'>Refus&eacute;, ".nom(-$elem['valide']).", ".dateFr($elem['validation'],true)."</font>";
   }
 
-  echo "<tr class='$class'>";
+  echo "<tr>";
   echo "<td><a href='index.php?page=plugins/conges/recuperation_modif.php&amp;id={$elem['id']}'><img src='img/modif.png' alt='Modifier' /></a></td>\n";
   if($admin){
     echo "<td>".nom($elem['perso_id'])."</td>";
@@ -143,11 +144,12 @@ foreach($recup as $elem){
 }
 
 echo <<<EOD
+</tbody>
 </table>
 </div> <!-- liste -->
 
 <div class='noprint'>
-<br/><button id='dialog-button'>Nouvelle demande</button>
+<br/><button id='dialog-button' class='ui-button'>Nouvelle demande</button>
 </div>
 
 <div id="dialog-form" title="Nouvelle demande" class='noprint'>
@@ -208,11 +210,11 @@ EOD;
 <script type='text/JavaScript'>
 <?php
 // Delai limite pour les demandes de récupération
-echo "var limitDefaut=7;";
-echo "var limitTitulaire1={$config['Recup-DelaiTitulaire1']};";
-echo "var limitTitulaire2={$config['Recup-DelaiTitulaire2']};";
-echo "var limitContractuel1={$config['Recup-DelaiContractuel1']};";
-echo "var limitContractuel2={$config['Recup-DelaiContractuel2']};";
+echo "var limitDefaut='{$config['Recup-DelaiDefaut']}';";
+echo "var limitTitulaire1='{$config['Recup-DelaiTitulaire1']}';";
+echo "var limitTitulaire2='{$config['Recup-DelaiTitulaire2']}';";
+echo "var limitContractuel1='{$config['Recup-DelaiContractuel1']}';";
+echo "var limitContractuel2='{$config['Recup-DelaiContractuel2']}';";
 echo "var perso_id=$perso_id;";
 echo "var categories=new Array();";
 foreach($agents as $elem){
@@ -224,7 +226,6 @@ if($config['Recup-SamediSeulement']){
   echo "var samediSeulement=true;";
 }
 ?>
-
 $(function() {
   var date = $( "#date" ),
     date2 = $( "#date2" ),
@@ -245,16 +246,32 @@ $(function() {
 	}
 	if(categories[perso_id]=="Titulaire"){
 	  if($("#date2").val()){
-	    limitJours=limitTitulaire2*30;
+	    if(limitTitulaire2=="Défaut"){
+	      limitJours=limitDefaut;
+	    }else{
+	      limitJours=limitTitulaire2*30;
+	    }
 	  }else{
-	    limitJours=limitTitulaire1*30;
+	    if(limitTitulaire1=="Défaut"){
+	      limitJours=limitDefaut;
+	    }else{
+	      limitJours=limitTitulaire1*30;
+	    }
 	  }
 	}
 	else if(categories[perso_id]=="Contractuel"){
 	  if($("#date2").val()){
-	    limitJours=limitContractuel2*7;
+	    if(limitContractuel2=="Défaut"){
+	      limitJours=limitDefaut;
+	    }else{
+	      limitJours=limitContractuel2*7;
+	    }
 	  }else{
-	    limitJours=limitContractuel1*7;
+	    if(limitContractuel1=="Défaut"){
+	      limitJours=limitDefaut;
+	    }else{
+	      limitJours=limitContractuel1*7;
+	    }
 	  }
 	}
 	else{
@@ -307,7 +324,6 @@ $(function() {
   });
 
   $( "#dialog-button" )
-    .button()
     .click(function() {
       date.datepicker("disable");
       $( "#dialog-form" ).dialog( "open" );
@@ -315,8 +331,22 @@ $(function() {
       return false;
     });
 
-  // Champ date
-  $( ".datepicker" ).datepicker();
+  $("#tableRecup").dataTable({
+    "bJQueryUI": true,
+    "sPaginationType": "full_numbers",
+    "bStateSave": true,
+    "aaSorting" : [[1,"asc"],[2,"asc"]],
+    "aoColumns" : [{"bSortable":false},{"bSortable":true},{"sType": "date-fr"},{"bSortable":true},{"bSortable":true},{"bSortable":true},
+      <?php
+      if($admin){
+	echo '{"bSortable":true},';
+      }
+      ?>
+      ],
+    "aLengthMenu" : [[25,50,75,100,-1],[25,50,75,100,"Toutes"]],
+    "iDisplayLength" : 25,
+    "oLanguage" : {"sUrl" : "js/dataTables/french.txt"}
+  });
 
 });
 </script>

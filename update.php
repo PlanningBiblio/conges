@@ -7,7 +7,7 @@ Copyright (C) 2013 - Jérôme Combes
 
 Fichier : plugins/conges/update.php
 Création : 26 août 2013
-Dernière modification : 11 octobre 2013
+Dernière modification : 8 janvier 2014
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -83,7 +83,19 @@ $sql[]="UPDATE `{$dbprefix}menu` SET `titre`='R&eacute;cup&eacute;rations' WHERE
 // $sql[]="ALTER TABLE `{$dbprefix}recuperations` ADD `date2` DATE ;";
 // $sql[]="DELETE FROM `{$dbprefix}acces` WHERE `page`='plugins/conges/ajax.recup.php';";
 
-
+// Modification du 8 janvier 2014
+$sql[]="INSERT INTO `{$dbprefix}config` VALUES (null,'Recup-DelaiDefaut','text','7','Delai pour les demandes de récupération par d&eacute;faut (en jours)','Congés','','40');";
+$sql[]="UPDATE `{$dbprefix}config` SET `ordre`='10' WHERE `nom`='Recup-Agent';";
+$sql[]="UPDATE `{$dbprefix}config` SET `ordre`='20' WHERE `nom`='Recup-SamediSeulement';";
+$sql[]="UPDATE `{$dbprefix}config` SET `ordre`='30' WHERE `nom`='Recup-DeuxSamedis';";
+$sql[]="UPDATE `{$dbprefix}config` SET `ordre`='50' WHERE `nom`='Recup-DelaiTitulaire1';";
+$sql[]="UPDATE `{$dbprefix}config` SET `ordre`='60' WHERE `nom`='Recup-DelaiTitulaire2';";
+$sql[]="UPDATE `{$dbprefix}config` SET `ordre`='70' WHERE `nom`='Recup-DelaiContractuel1';";
+$sql[]="UPDATE `{$dbprefix}config` SET `ordre`='80' WHERE `nom`='Recup-DelaiContractuel2';";
+$sql[]="UPDATE `{$dbprefix}config` SET `valeurs`='D&eacute;faut,0,1,2,3,4,5' WHERE `nom`='Recup-DelaiTitulaire1';";
+$sql[]="UPDATE `{$dbprefix}config` SET `valeurs`='D&eacute;faut,0,1,2,3,4,5' WHERE `nom`='Recup-DelaiTitulaire2';";
+$sql[]="UPDATE `{$dbprefix}config` SET `valeurs`='D&eacute;faut,0,1,2,3,4,5,6,7,8,9,10' WHERE `nom`='Recup-DelaiContractuel1';";
+$sql[]="UPDATE `{$dbprefix}config` SET `valeurs`='D&eacute;faut,0,1,2,3,4,5,6,7,8,9,10' WHERE `nom`='Recup-DelaiContractuel2';";
 ?>
 <!-- Entête HTML -->
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">

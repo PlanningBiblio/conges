@@ -6,7 +6,7 @@ Copyright (C) 2013 - Jérôme Combes
 
 Fichier : plugins/conges/js/script.conges.js
 Création : 2 août 2013
-Dernière modification : 11 octobre 2013
+Dernière modification : 7 janvier 2014
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -122,6 +122,17 @@ function calculRestes(){
   document.getElementById("recup4").innerHTML=heure4(recuperation);
   document.getElementById("credit4").innerHTML=heure4(credit);
   document.getElementById("anticipation4").innerHTML=heure4(anticipation);
+}
+
+function supprimeConges(){
+  conf=confirm("Etes-vous sûr(e) de vouloir supprimer ce congé ?");
+  if(conf){
+    id=$("#id").val();
+    alert("ok "+id);
+    // $.ajax ....
+    // ajax.supprime.php
+    
+  }
 }
 
 function valideConges(){
