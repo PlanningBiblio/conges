@@ -127,11 +127,17 @@ function calculRestes(){
 function supprimeConges(){
   conf=confirm("Etes-vous sûr(e) de vouloir supprimer ce congé ?");
   if(conf){
-    id=$("#id").val();
-    alert("ok "+id);
-    // $.ajax ....
-    // ajax.supprime.php
-    
+    $.ajax({
+      url: "plugins/conges/ajax.supprime.php",
+      type: "get",
+      data: "id="+$("#id").val(),
+      success: function(){
+	location.href="index.php?page=plugins/conges/voir.php";
+      },
+      error: function(){
+	information("Une erreur est survenue lors de la suppresion du congé.","error");
+      }
+    });
   }
 }
 

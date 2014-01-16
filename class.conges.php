@@ -7,7 +7,7 @@ Copyright (C) 2013 - Jérôme Combes
 
 Fichier : plugins/conges/class.conges.php
 Création : 24 juillet 2013
-Dernière modification : 6 janvier 2014
+Dernière modification : 15 janvier 2014
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -142,6 +142,79 @@ class conges{
   }
 
 
+  public function delete(){
+    // Marque une demande de congé comme supprimée
+    // Contrôle si le congé avait été validé.
+    // Dans ce cas : 
+    // - Recredite les comptes débités
+    // - Ajoute une ligne faisant apparaître les crédits dans le tableau Congés
+
+    $id=$this->id;
+
+    // Récupération des infos à partir de la table congés
+    $db=new db();
+    $db->select("conges",null,"id='$id'");
+    if($db->result){
+      $result=$db->result[0];
+      $heures=$result['heures'];
+      $perso_id=$result['perso_id'];
+      $valide=$result['valide'];
+      $credit=floatval($result['solde_prec'])-floatval($result['solde_actuel']);
+      $recup=floatval($result['recup_prec'])-floatval($result['recup_actuel']);
+      $reliquat=floatval($result['reliquat_prec'])-floatval($result['reliquat_actuel']);
+      $anticipation=floatval($result['anticipation_actuel'])-floatval($result['anticipation_prec']);
+
+      // Si le congés a été validé, mise à jour des crédits dans la table personnel
+      if($valide>0){
+	$db=new db();
+	$db->select("personnel",null,"id=$perso_id");
+	$perso_credit=$db->result[0]['congesCredit'];
+	$perso_reliquat=$db->result[0]['congesReliquat'];
+	$perso_anticipation=$db->result[0]['congesAnticipation'];
+	$perso_recup=$db->result[0]['recupSamedi'];
+
+	$perso_credit_new=floatval($perso_credit)+floatval($credit);
+	$perso_reliquat_new=floatval($perso_reliquat)+floatval($reliquat);
+	$perso_recup_new=floatval($perso_recup)+floatval($recup);
+	$perso_anticipation_new=floatval($perso_anticipation)-floatval($anticipation);
+
+	$update=array("congesCredit"=>$perso_credit_new, "congesReliquat"=>$perso_reliquat_new, 
+	  "congesAnticipation"=>$perso_anticipation_new, "recupSamedi"=>$perso_recup_new);
+	$db=new db();
+	$db->update2("personnel",$update,array("id"=>$perso_id));
+
+	// Ajout d'une ligne d'information sur les crédits
+	$insert=array();
+	$keys=array_keys($result);
+	foreach($keys as $key){
+	  if($key!="id" and !is_numeric($key)){
+	    $insert[$key]=$result[$key];
+	  }
+	}
+	if(!empty($insert)){
+	  $insert["solde_prec"]=$perso_credit;
+	  $insert["recup_prec"]=$perso_recup;
+	  $insert["reliquat_prec"]=$perso_reliquat;
+	  $insert["anticipation_prec"]=$perso_anticipation;
+	  $insert["solde_actuel"]=$perso_credit_new;
+	  $insert["recup_actuel"]=$perso_recup_new;
+	  $insert["reliquat_actuel"]=$perso_reliquat_new;
+	  $insert["anticipation_actuel"]=$perso_anticipation_new;
+	  $insert["information"]=$_SESSION['login_id'];
+	  $insert["infoDate"]=date("Y-m-d H:i:s");
+	  $db=new db();
+	  $db->insert2("conges",$insert);
+	}
+      }
+      
+    }
+
+    // Marque la demande de congé comme supprimée dans la table conges
+    $db=new db();
+    $db->update2("conges",array("supprime"=>$_SESSION['login_id'],"supprDate"=>date("Y-m-d H:i:s")),array("id"=>$id));
+  }
+
+
   public function enregistreRecup($date,$date2,$heures){
     // Enregistrement de la demande de récupération
     $perso_id=$_SESSION['login_id'];
@@ -241,7 +314,7 @@ class conges{
 
     // Valide
     if($this->valide){
-      $filter.=" AND `valide`>0";
+      $filter.=" AND `valide`>0 AND `supprime`=0";
     }
   
     // Filtre avec ID, si ID, les autres filtres sont effacés
@@ -423,6 +496,42 @@ class conges{
     }
   $this->samedis=$samedis;
   }
+
+
+  public function maj($credits,$action="modif",$cron=false){
+    // Ajoute une ligne faisant apparaître la mise à jour des crédits dans le tableau Congés
+    if($action=="modif"){
+      $db=new db();
+      $db->select("personnel","*","id='{$this->perso_id}'");
+      $old=array("congesCredit"=>$db->result[0]['congesCredit'], "recupSamedi"=>$db->result[0]['recupSamedi'], 
+	"congesReliquat"=>$db->result[0]['congesReliquat'], "congesAnticipation"=>$db->result[0]['congesAnticipation']);
+    }
+    else{
+      $old=array("congesCredit"=>0, "recupSamedi"=>0, "congesReliquat"=>0, "congesAnticipation"=>0);
+    }
+
+    unset($credits["congesAnnuel"]);
+    if($credits!=$old){
+      $insert=array();
+      $insert["perso_id"]=$this->perso_id;
+      $insert["debut"]=date("Y-m-d 00:00:00");
+      $insert["fin"]=date("Y-m-d 00:00:00");
+      $insert["solde_prec"]=$old['congesCredit'];
+      $insert["recup_prec"]=$old['recupSamedi'];
+      $insert["reliquat_prec"]=$old['congesReliquat'];
+      $insert["anticipation_prec"]=$old['congesAnticipation'];
+      $insert["solde_actuel"]=$credits['congesCredit'];
+      $insert["recup_actuel"]=$credits['recupSamedi'];
+      $insert["reliquat_actuel"]=$credits['congesReliquat'];
+      $insert["anticipation_actuel"]=$credits['congesAnticipation'];
+      $insert["information"]=$cron?99999999999:$_SESSION['login_id'];
+      $insert["infoDate"]=date("Y-m-d H:i:s");
+
+      $db=new db();
+      $db->insert2("conges",$insert);
+    }
+  }
+
 
   public function suppression_agents($liste){
     $db=new db();

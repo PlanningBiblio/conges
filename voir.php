@@ -7,7 +7,7 @@ Copyright (C) 2013 - Jérôme Combes
 
 Fichier : plugins/conges/voir.php
 Création : 24 juillet 2013
-Dernière modification : 3 janvier 2014
+Dernière modification : 16 janvier 2014
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -129,7 +129,7 @@ foreach($c->elements as $elem){
     $validation="Refus&eacute;, ".nom(-$elem['valide']).", ".dateFr($elem['validation'],true);
     $validationStyle="color:red;";
   }
-  elseif($elem['valide']){
+  elseif($elem['valide'] or $elem['information']){
     $validation="Valid&eacute;, ".nom($elem['valide']).", ".dateFr($elem['validation'],true);
     $validationStyle=null;
     if($elem['solde_prec']!=null and $elem['solde_actuel']!=null){
@@ -149,15 +149,29 @@ foreach($c->elements as $elem){
     $validation="En attente de validation hi&eacute;rarchique,<br/>".dateFr($elem['validationN1'],true);
     $validationStyle="font-weight:bold;";
   }
+  if($elem['information']){
+    $nom=$elem['information']<999999999?nom($elem['information']).", ":null;	// >999999999 = cron
+    $validation="Mise à jour des cr&eacute;dits, $nom".dateFr($elem['infoDate'],true);
+    $validationStyle=null;
+  }
+  elseif($elem['supprime']){
+    $validation="Supprim&eacute;, ".nom($elem['supprime']).", ".dateFr($elem['supprDate'],true);
+    $validationStyle=null;
+  }
 
   $nom=$admin?"<td>".nom($elem['perso_id'])."</td>":null;
-  echo <<<EOD
-    <tr>
-      <td><a href='index.php?page=plugins/conges/modif.php&amp;id={$elem['id']}'/>
-      <img src='img/modif.png' alt='Voir' border='0'/></a></td>
-      <td>$debut</td><td>$fin</td>$nom<td style='$validationStyle'>$validation</td><td>$credits</td><td>$reliquat</td><td>$recuperations</td><td>$anticipation</td>
-      </tr>
-EOD;
+  
+  echo "<tr><td>";
+  if($elem['supprime'] or $elem['information']){
+    echo "&nbsp;";
+  }
+  else{
+    echo "<a href='index.php?page=plugins/conges/modif.php&amp;id={$elem['id']}'/>";
+    echo "<img src='img/modif.png' alt='Voir' border='0'/></a>";
+  }
+  echo "</td>";
+  echo "<td>$debut</td><td>$fin</td>$nom<td style='$validationStyle'>$validation</td><td>$credits</td><td>$reliquat</td>";
+  echo "<td>$recuperations</td><td>$anticipation</td></tr>\n";
 }
 
 ?>
