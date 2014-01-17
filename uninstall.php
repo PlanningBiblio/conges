@@ -1,6 +1,6 @@
 <?php
 /*
-Planning Biblio, Plugin Congés Version 1.3.9
+Planning Biblio, Plugin Congés Version 1.4
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.txt et COPYING.txt
 Copyright (C) 2013 - Jérôme Combes
@@ -24,7 +24,7 @@ if($_SESSION['login_id']!=1){
 }
 
 
-$version="1.3.9";
+$version="1.4";
 include_once "../../include/config.php";
 $sql=array();
 
