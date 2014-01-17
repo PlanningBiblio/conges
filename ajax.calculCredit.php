@@ -3,7 +3,7 @@
 Planning Biblio, Plugin Congés Version 1.4
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.txt et COPYING.txt
-Copyright (C) 2013 - Jérôme Combes
+Copyright (C) 2013-2014 - Jérôme Combes
 
 Fichier : plugins/conges/ajax.calculCredit.php
 Création : 2 août 2013

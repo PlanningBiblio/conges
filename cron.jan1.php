@@ -3,7 +3,7 @@
 Planning Biblio, Plugin Conges Version 1.0.1
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.txt et COPYING.txt
-Copyright (C) 2013 - Jérôme Combes
+Copyright (C) 2013-2014 - Jérôme Combes
 
 Fichier : plugins/conges/cron.jan1.php
 Création : 13 août 2013
