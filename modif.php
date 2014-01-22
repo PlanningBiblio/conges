@@ -7,7 +7,7 @@ Copyright (C) 2013-2014 - Jérôme Combes
 
 Fichier : plugins/conges/modif.php
 Création : 1er août 2013
-Dernière modification : 7 janvier 2014
+Dernière modification : 22 janvier 2014
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -254,7 +254,7 @@ else{	// Formulaire
   echo "Heure de début : \n";
   echo "</td><td>\n";
   echo "<select name='hre_debut' >\n";
-  selectHeure(8,23,true,true,$hre_debut);
+  selectHeure(7,23,true,true,$hre_debut);
   echo "</select>\n";
   echo "</td></tr>\n";
   echo "<tr><td>\n";
@@ -267,7 +267,7 @@ else{	// Formulaire
   echo "Heure de fin : \n";
   echo "</td><td>\n";
   echo "<select name='hre_fin' >\n";
-  selectHeure(8,23,true,true,$hre_fin);
+  selectHeure(7,23,true,true,$hre_fin);
   echo "</select>\n";
   echo "</td></tr>\n";
 

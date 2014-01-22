@@ -7,7 +7,7 @@ Copyright (C) 2013-2014 - Jérôme Combes
 
 Fichier : plugins/conges/enregistrer.php
 Création : 24 juillet 2013
-Dernière modification : 6 janvier 2014
+Dernière modification : 22 janvier 2014
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -170,7 +170,7 @@ else{
   echo "Heure de début : \n";
   echo "</td><td>\n";
   echo "<select name='hre_debut' >\n";
-  selectHeure(8,23,true,true);
+  selectHeure(7,23,true,true);
   echo "</select>\n";
   echo "</td></tr>\n";
   echo "<tr><td>\n";
@@ -183,7 +183,7 @@ else{
   echo "Heure de fin : \n";
   echo "</td><td>\n";
   echo "<select name='hre_fin' >\n";
-  selectHeure(8,23,true,true);
+  selectHeure(7,23,true,true);
   echo "</select>\n";
   echo "</td></tr>\n";
   
