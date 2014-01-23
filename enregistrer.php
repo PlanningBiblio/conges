@@ -7,7 +7,7 @@ Copyright (C) 2013-2014 - Jérôme Combes
 
 Fichier : plugins/conges/enregistrer.php
 Création : 24 juillet 2013
-Dernière modification : 22 janvier 2014
+Dernière modification : 23 janvier 2014
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -57,7 +57,7 @@ if(isset($_GET['confirm'])){	// Confirmation
   $nom=$db_perso->result[0]['nom'];
   $prenom=$db_perso->result[0]['prenom'];
   $mail=$db_perso->result[0]['mail'];
-  $mailResponsable=$db_perso->result[0]['mailResponsable'];
+  $mailResponsable=isset($db_perso->result[0]['mailResponsable'])?$db_perso->result[0]['mailResponsable']:null;
 
   // Choix des destinataires en fonction de la configuration
   $destinataires=array();
@@ -71,15 +71,18 @@ if(isset($_GET['confirm'])){	// Confirmation
       $destinataires[]=$mailResponsable;
       break;
     case "A la cellule planning" :
-      $destinataires[]=$config['Mail-Planning'];
+      $destinataires=explode(";",$config['Mail-Planning']);
       break;
     case "A l&apos;agent concern&eacute;" :
       $destinataires[]=$mail;
       break;
+    case "A l&apos;agent concerné" :
+      $destinataires[]=$mail;
+      break;
     case "A tous" :
+      $destinataires=explode(";",$config['Mail-Planning']);
       $destinataires[]=$mail;
       $destinataires[]=$mailResponsable;
-      $destinataires[]=$config['Mail-Planning'];
       foreach($responsables as $elem){
 	$destinataires[]=$elem['mail'];
       }
@@ -93,7 +96,7 @@ if(isset($_GET['confirm'])){	// Confirmation
   if($hre_fin!="23:59:59")
     $message.=" ".heure3($hre_fin);
   if($commentaires)
-    $message.="Commentaire :<br/>$commentaires<br/>";
+    $message.="<br/><br/>Commentaire :<br/>$commentaires<br/>";
   sendmail("Nouveau congés",$message,$destinataires);
   if($menu=="off"){
     echo "<script type=text/JavaScript>parent.document.location.reload(false);</script>\n";
@@ -170,7 +173,7 @@ else{
   echo "Heure de début : \n";
   echo "</td><td>\n";
   echo "<select name='hre_debut' >\n";
-  selectHeure(7,23,true,true);
+  selectHeure(7,23,true,$quartDHeure);
   echo "</select>\n";
   echo "</td></tr>\n";
   echo "<tr><td>\n";
@@ -183,7 +186,7 @@ else{
   echo "Heure de fin : \n";
   echo "</td><td>\n";
   echo "<select name='hre_fin' >\n";
-  selectHeure(7,23,true,true);
+  selectHeure(7,23,true,$quartDHeure);
   echo "</select>\n";
   echo "</td></tr>\n";
   

@@ -7,7 +7,7 @@ Copyright (C) 2013-2014 - Jérôme Combes
 
 Fichier : plugins/conges/modif.php
 Création : 1er août 2013
-Dernière modification : 22 janvier 2014
+Dernière modification : 23 janvier 2014
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -76,7 +76,7 @@ if(isset($_GET['confirm'])){
   $responsables=$c->responsables;
 
   $db_perso=new db();
-  $db_perso->query("select nom,prenom,mail from {$dbprefix}personnel where id=$perso_id;");
+  $db_perso->query("select nom,prenom,mail,mailResponsable from {$dbprefix}personnel where id=$perso_id;");
   $nom=$db_perso->result[0]['nom'];
   $prenom=$db_perso->result[0]['prenom'];
   $mail=$db_perso->result[0]['mail'];
@@ -121,15 +121,18 @@ if(isset($_GET['confirm'])){
       $destinataires[]=$mailResponsable;
       break;
     case "A la cellule planning" :
-      $destinataires[]=$config['Mail-Planning'];
+      $destinataires=explode(";",$config['Mail-Planning']);
       break;
     case "A l&apos;agent concern&eacute;" :
       $destinataires[]=$mail;
       break;
+    case "A l&apos;agent concerné" :
+      $destinataires[]=$mail;
+      break;
     case "A tous" :
+      $destinataires=explode(";",$config['Mail-Planning']);
       $destinataires[]=$mail;
       $destinataires[]=$mailResponsable;
-      $destinataires[]=$config['Mail-Planning'];
       foreach($responsables as $elem){
 	$destinataires[]=$elem['mail'];
       }
@@ -254,7 +257,7 @@ else{	// Formulaire
   echo "Heure de début : \n";
   echo "</td><td>\n";
   echo "<select name='hre_debut' >\n";
-  selectHeure(7,23,true,true,$hre_debut);
+  selectHeure(7,23,true,$quartDHeure,$hre_debut);
   echo "</select>\n";
   echo "</td></tr>\n";
   echo "<tr><td>\n";
@@ -267,7 +270,7 @@ else{	// Formulaire
   echo "Heure de fin : \n";
   echo "</td><td>\n";
   echo "<select name='hre_fin' >\n";
-  selectHeure(7,23,true,true,$hre_fin);
+  selectHeure(7,23,true,$quartDHeure,$hre_fin);
   echo "</select>\n";
   echo "</td></tr>\n";
 
@@ -332,12 +335,12 @@ EOD;
   if(($adminN2 and !$valide) or ($admin and $data['valide']==0)){
     echo "<td><select name='valide' style='width:100%;' onchange='afficheRefus(this);'>\n";
     echo "<option value='0'>&nbsp;</option>\n";
+    echo "<option value='2' {$selectAccept[2]}>Accept&eacute; (En attente de validation hi&eacute;rarchique)</option>\n";
+    echo "<option value='-2' {$selectAccept[3]}>Refus&eacute; (En attente de validation hi&eacute;rarchique)</option>\n";
     if($adminN2){
       echo "<option value='1' {$selectAccept[0]}>Accept&eacute;</option>\n";
       echo "<option value='-1' {$selectAccept[1]}>Refus&eacute;</option>\n";
     }
-    echo "<option value='2' {$selectAccept[2]}>Accept&eacute; (En attente de validation hi&eacute;rarchique)</option>\n";
-    echo "<option value='-2' {$selectAccept[3]}>Refus&eacute; (En attente de validation hi&eacute;rarchique)</option>\n";
     echo "</select></td>\n";
     }
   // Affichage simple de l'état de validation si l'agent n'a pas le droit de le modifié ou si le congé est validé
