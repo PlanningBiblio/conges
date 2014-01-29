@@ -7,7 +7,7 @@ Copyright (C) 2013-2014 - Jérôme Combes
 
 Fichier : plugins/conges/class.conges.php
 Création : 24 juillet 2013
-Dernière modification : 15 janvier 2014
+Dernière modification : 29 janvier 2014
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -314,7 +314,7 @@ class conges{
 
     // Valide
     if($this->valide){
-      $filter.=" AND `valide`>0 AND `supprime`=0";
+      $filter.=" AND `valide`>0 AND `supprime`=0 AND `information`=0";
     }
   
     // Filtre avec ID, si ID, les autres filtres sont effacés
