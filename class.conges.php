@@ -7,7 +7,7 @@ Copyright (C) 2013-2014 - Jérôme Combes
 
 Fichier : plugins/conges/class.conges.php
 Création : 24 juillet 2013
-Dernière modification : 29 janvier 2014
+Dernière modification : 30 janvier 2014
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -647,17 +647,6 @@ class conges{
       $updateConges=array_merge($updateConges,array("solde_actuel"=>$credit,"reliquat_actuel"=>$reliquat,"recup_actuel"=>$recuperation,"anticipation_actuel"=>$anticipation));
       $db=new db();
       $db->update2("conges",$updateConges,array("id"=>$data['id']));
-
-      // On barre l'agent s'il est déjà placé dans le planning
-      $debut_sql=$data['debut']." ".$data['hre_debut'];
-      $fin_sql=$data['fin']." ".$data['hre_fin'];
-      $req="UPDATE `{$GLOBALS['dbprefix']}pl_poste` SET `absent`='2' WHERE
-	((CONCAT(`date`,' ',`debut`) < '$fin_sql' AND CONCAT(`date`,' ',`debut`) >= '$debut_sql')
-	OR (CONCAT(`date`,' ',`fin`) > '$debut_sql' AND CONCAT(`date`,' ',`fin`) <= '$fin_sql'))
-	AND `perso_id`='{$data['perso_id']}'";
-
-      $db=new db();
-      $db->query($req);
     }
 
   }
