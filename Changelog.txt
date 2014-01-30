@@ -1,3 +1,16 @@
+***	Version 1.4.2	(Jérôme Combes, 30 janvier 2014)			***
+- Améliorations :
+Modification du filtre de recherche des conges validés (pour ne pas compter les lignes d'informations)
+Modification de la façon de rechercher les congés pour les marquer dans le planning (recherche dans la table congés et non dans pl_poste, 
+le champ absent de pl_poste n'est plus marqué par les congés validés) 
+
+***	Version 1.4.1	(Jérôme Combes, 23 janvier 2014)			***
+- Améliorations :
+Congés à partit de 7h du matin
+
+- Corrections :
+Correction pour l'envoi des notifications
+
 ***	Version 1.4	(Jérôme Combes, 17 janvier 2014)			***
 - Améliorations :
 Utilise les styles JQuery-UI highlight et error pour l'affichage des notifications

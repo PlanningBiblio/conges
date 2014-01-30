@@ -7,7 +7,7 @@ Copyright (C) 2013-2014 - Jérôme Combes
 
 Fichier : plugins/conges/update.php
 Création : 26 août 2013
-Dernière modification : 16 janvier 2014
+Dernière modification : 30 janvier 2014
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -84,6 +84,7 @@ $sql[]="UPDATE `{$dbprefix}menu` SET `titre`='R&eacute;cup&eacute;rations' WHERE
 // $sql[]="DELETE FROM `{$dbprefix}acces` WHERE `page`='plugins/conges/ajax.recup.php';";
 
 // Modification du 16 janvier 2014
+/*
 $sql[]="INSERT INTO `{$dbprefix}config` VALUES (null,'Recup-DelaiDefaut','text','7','Delai pour les demandes de récupération par d&eacute;faut (en jours)','Congés','','40');";
 $sql[]="UPDATE `{$dbprefix}config` SET `ordre`='10' WHERE `nom`='Recup-Agent';";
 $sql[]="UPDATE `{$dbprefix}config` SET `ordre`='20' WHERE `nom`='Recup-SamediSeulement';";
@@ -101,6 +102,11 @@ $sql[]="ALTER TABLE `{$dbprefix}conges` ADD `supprDate` TIMESTAMP NOT NULL DEFAU
 $sql[]="ALTER TABLE `{$dbprefix}conges` ADD `information` INT(11) NOT NULL DEFAULT 0;";
 $sql[]="ALTER TABLE `{$dbprefix}conges` ADD `infoDate` TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00';";
 $sql[]="UPDATE `{$dbprefix}cron` SET `mon`='9' WHERE `command`='plugins/conges/cron.sept1.php';";
+*/
+
+// Modification du 30 janvier 2014
+$sql[]="UPDATE `{$dbprefix}pl_poste` SET `absent`='0' WHERE `absent`='2';";
+
 ?>
 <!-- Entête HTML -->
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
