@@ -7,7 +7,7 @@ Copyright (C) 2013-2014 - Jérôme Combes
 
 Fichier : plugins/conges/recuperation_valide.php
 Création : 30 août 2013
-Dernière modification : 7 janvier 2014
+Dernière modification : 4 février 2014
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -120,15 +120,15 @@ if(isset($update)){
       $destinataires[]=$mailResponsable;
       break;
     case "A la cellule planning" :
-      $destinataires[]=$config['Mail-Planning'];
+      $destinataires=explode(";",$config['Mail-Planning']);
       break;
     case "A l&apos;agent concern&eacute;" :
       $destinataires[]=$mail;
       break;
     case "A tous" :
+      $destinataires=explode(";",$config['Mail-Planning']);
       $destinataires[]=$mail;
       $destinataires[]=$mailResponsable;
-      $destinataires[]=$config['Mail-Planning'];
       foreach($responsables as $elem){
 	$destinataires[]=$elem['mail'];
       }
