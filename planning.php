@@ -7,7 +7,7 @@ Copyright (C) 2013-2014 - Jérôme Combes
 
 Fichier : plugins/conges/planning.php
 Création : 24 octobre 2013
-Dernière modification : 30 janvier 2014
+Dernière modification : 11 février 2014
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -18,10 +18,8 @@ Ajoute les agents en congés à la liste des absents
 // $conges = liste des congés du jour, créé par planning_cellules.php inclus plutôt dans planning/poste/index.php
 
 foreach($conges as $elem){
-  if(!in_array($elem['perso_id'],$absences_id)){
-    $elem['motif']="Cong&eacute; pay&eacute;";
-    $absences[]=$elem;
-    $absences_id[]=$elem['perso_id'];
-  }
+  $elem['motif']="Cong&eacute; pay&eacute;";
+  $absences[]=$elem;
+  $absences_id[]=$elem['perso_id'];
 }
 ?>
