@@ -7,7 +7,7 @@ Copyright (C) 2013-2014 - Jérôme Combes
 
 Fichier : plugins/conges/ajax.calculCredit.php
 Création : 2 août 2013
-Dernière modification : 2 août 2013
+Dernière modification : 13 février 2014
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -19,7 +19,7 @@ Appelé en arrière plan par la fonction JS calculCredit() (fichier plugins/cong
 include "class.conges.php";
 
 $c=new conges();
-$c->calculCredit($_GET['debut'],$_GET['hre_debut'],$_GET['fin'],$_GET['hre_fin'],$_GET['perso_id']);
+$c->calculCredit(dateSQL($_GET['debut']),$_GET['hre_debut'],dateSQL($_GET['fin']),$_GET['hre_fin'],$_GET['perso_id']);
 echo $c->error?"###error###":"###OK###";
 echo "###{$c->heures}###";
 ?>

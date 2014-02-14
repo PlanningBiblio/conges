@@ -7,7 +7,7 @@ Copyright (C) 2013-2014 - Jérôme Combes
 
 Fichier : plugins/conges/class.conges.php
 Création : 24 juillet 2013
-Dernière modification : 4 février 2014
+Dernière modification : 13 février 2014
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -51,6 +51,8 @@ class conges{
     $data['hre_debut']=$data['hre_debut']?$data['hre_debut']:"00:00:00";
     $data['hre_fin']=$data['hre_fin']?$data['hre_fin']:"23:59:59";
     $data['heures']=$data['heures'].".".$data['minutes'];
+    $data['debut']=dateSQL($data['debut']);
+    $data['fin']=dateSQL($data['fin']);
 
     $insert=array("debut"=>$data['debut']." ".$data['hre_debut'], "fin"=>$data['fin']." ".$data['hre_fin'],
       "commentaires"=>$data['commentaires'],"heures"=>$data['heures'],"debit"=>$data['debit'],"perso_id"=>$data['perso_id']);
@@ -551,6 +553,8 @@ class conges{
     $data['heures']=$data['heures'].".".$data['minutes'];
     $data['commentaires']=htmlentities($data['commentaires'],ENT_QUOTES|ENT_IGNORE,"UTF-8",false);
     $data['refus']=htmlentities($data['refus'],ENT_QUOTES|ENT_IGNORE,"UTF-8",false);
+    $data['debut']=dateSQL($data['debut']);
+    $data['fin']=dateSQL($data['fin']);
 
     $update=array("debut"=>$data['debut']." ".$data['hre_debut'], "fin"=>$data['fin']." ".$data['hre_fin'],
       "commentaires"=>$data['commentaires'],"refus"=>$data['refus'],"heures"=>$data['heures'],"debit"=>$data['debit'],

@@ -7,7 +7,7 @@ Copyright (C) 2013-2014 - Jérôme Combes
 
 Fichier : plugins/conges/voir.php
 Création : 24 juillet 2013
-Dernière modification : 16 janvier 2014
+Dernière modification : 14 février 2014
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -67,6 +67,11 @@ if($admin){
 $annees=array();
 for($d=date("Y")+2;$d>date("Y")-11;$d--){
   $annees[]=array($d,$d."-".($d+1));
+}
+
+// Affichage des notifications
+if(isset($_GET['information'])){
+  echo "<script type='text/JavaScript'>information(\"{$_GET['information']}\",\"highlight\");</script>\n";
 }
 
 // Affichage du tableau

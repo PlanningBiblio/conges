@@ -6,7 +6,7 @@ Copyright (C) 2013-2014 - Jérôme Combes
 
 Fichier : plugins/conges/js/script.conges.js
 Création : 2 août 2013
-Dernière modification : 7 janvier 2014
+Dernière modification : 14 février 2014
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -28,7 +28,6 @@ function calculCredit(){
   hre_debut=document.form.elements["hre_debut"].value;
   hre_fin=document.form.elements["hre_fin"].value;
   perso_id=document.form.elements["perso_id"].value;
-
   if(!fin){
     fin=debut;
     document.form.elements["fin"].value=fin;
@@ -53,7 +52,7 @@ function calculCredit(){
   if(msg=="error"){
     document.form.elements["heures"].value=0;
     document.form.elements["minutes"].value=0;
-    alert("Impossible de calculer le nombre d'heures correspondant au congé demandé");
+    alert("Impossible de calculer le nombre d'heures correspondant au congé demandé.");
   }
 
   calculRestes();
@@ -144,6 +143,47 @@ function supprimeConges(){
 function valideConges(){
   document.form.elements["valide"].value="1";
   document.form.submit();
+}
+
+function verifConges(){
+  // Variable, convertion des dates au format YYYY-MM-DD
+  var debut=dateFr($("#debut").val());
+  var fin=dateFr($("#fin").val());
+  var hre_debut=$("#hre_debut_select").val();
+  var hre_fin=$("#hre_fin_select").val();
+  var perso_id=$("#perso_id").val();
+  var id=$("#id").val();
+  if(hre_fin==""){
+    hre_fin="23:59:59";
+  }
+  // Vérifions si les dates sont correctement saisies
+  if($("#debut").val()==""){
+    information("Veuillez choisir la date de début","error");
+    return false;
+  }
+
+  // Vérifions si les dates sont cohérentes
+  if(debut+" "+hre_debut >= fin+" "+hre_fin){
+    information("La date de fin doit être supérieure à la date de début","error");
+    return false;
+  }
+    
+  // Vérifions si un autre congé a été demandé ou validé
+  var result=$.ajax({
+    url: "plugins/conges/ajax.verifConges.php",
+    type: "get",
+    data: "perso_id="+perso_id+"&debut="+debut+"&fin="+fin+"&hre_debut="+hre_debut+"&hre_fin="+hre_fin+"&id="+id,
+    success: function(){
+      if(result.responseText != "Pas de congé"){
+	information("Un congé a déjà été demandé "+result.responseText,"error");
+      }else{
+	$("#form").submit();
+      }
+    },
+    error: function(){
+      information("Une erreur est survenue lors de l'enregistrement du congé","error");
+    },
+  });
 }
 
 function verifRecup(o){

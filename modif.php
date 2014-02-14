@@ -7,7 +7,7 @@ Copyright (C) 2013-2014 - Jérôme Combes
 
 Fichier : plugins/conges/modif.php
 Création : 1er août 2013
-Dernière modification : 23 janvier 2014
+Dernière modification : 14 février 2014
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -61,6 +61,8 @@ $adminN2=in_array($droitsConges,$droits)?true:false;
 
 if(isset($_GET['confirm'])){
   $fin=$fin?$fin:$debut;
+  $debutSQL=dateSQL($debut);
+  $finSQL=dateSQL($fin);
   $hre_debut=$_GET['hre_debut']?$_GET['hre_debut']:"00:00:00";
   $hre_fin=$_GET['hre_fin']?$_GET['hre_fin']:"23:59:59";
   $commentaires=htmlentities($_GET['commentaires'],ENT_QUOTES|ENT_IGNORE,"UTF-8",false);
@@ -72,7 +74,7 @@ if(isset($_GET['confirm'])){
 
   // Récupération des adresses e-mails de l'agent et des responsables pour m'envoi des alertes
   $c=new conges();
-  $c->getResponsables($debut,$fin,$perso_id);
+  $c->getResponsables($debutSQL,$finSQL,$perso_id);
   $responsables=$c->responsables;
 
   $db_perso=new db();
@@ -140,10 +142,10 @@ if(isset($_GET['confirm'])){
   }
 
   // Envoi d'une notification par email
-  $message="$sujet : <br/>$prenom $nom<br/>Début : ".dateFr($debut);
+  $message="$sujet : <br/>$prenom $nom<br/>Début : $debut";
   if($hre_debut!="00:00:00")
     $message.=" ".heure3($hre_debut);
-  $message.="<br/>Fin : ".dateFr($fin);
+  $message.="<br/>Fin : $fin";
   if($hre_fin!="23:59:59")
     $message.=" ".heure3($hre_fin);
   if($commentaires)
@@ -158,10 +160,7 @@ if(isset($_GET['confirm'])){
     echo "<script type=text/JavaScript>popup_closed();</script>\n";
   }
   else{
-    echo "<h3>Congés</h3>\n";
-    echo "Le congé a été modifié";
-    echo "<br/><br/>";
-    echo "<a href='index.php?page=plugins/conges/voir.php'>Retour</a>";
+    echo "<script type='text/JavaScript'>document.location.href=\"index.php?page=plugins/conges/voir.php&information=Le congé à été modifié avec succés\"</script>\n";
   }
 }
 
@@ -174,8 +173,8 @@ else{	// Formulaire
   $displayRefus=$data['valide']>=0?"display:none;":null;
   $displayRefus=($data['valideN1']<0 and $admin)?null:$displayRefus;
   $perso_id=$data['perso_id'];
-  $debut=substr($data['debut'],0,10);
-  $fin=substr($data['fin'],0,10);
+  $debut=dateFr(substr($data['debut'],0,10));
+  $fin=dateFr(substr($data['fin'],0,10));
   $hre_debut=substr($data['debut'],-8);
   $hre_fin=substr($data['fin'],-8);
   $allday=null;
@@ -209,7 +208,7 @@ else{	// Formulaire
 
   // Affichage du formulaire
   echo "<h3>Congés</h3>\n";
-  echo "<form name='form' action='index.php' method='get' >\n";
+  echo "<form name='form' action='index.php' method='get' id='form'>\n";
   echo "<input type='hidden' name='page' value='plugins/conges/modif.php' />\n";
   echo "<input type='hidden' name='menu' value='$menu' />\n";
   echo "<input type='hidden' name='confirm' value='confirm' />\n";
@@ -226,7 +225,7 @@ else{	// Formulaire
   if($admin){
     $db_perso=new db();
     $db_perso->query("select * from {$dbprefix}personnel where actif='Actif' order by nom,prenom;");
-    echo "<select name='perso_id'>\n";
+    echo "<select name='perso_id' id='perso_id' style='width:98%;'>\n";
     foreach($db_perso->result as $elem){
       if($perso_id==$elem['id']){
 	echo "<option value='".$elem['id']."' selected='selected'>".$elem['nom']." ".$elem['prenom']."</option>\n";
@@ -238,7 +237,7 @@ else{	// Formulaire
     echo "</select>\n";
   }
   else{
-    echo "<input type='hidden' name='perso_id' value='{$_SESSION['login_id']}' />\n";
+    echo "<input type='hidden' name='perso_id' id='perso_id' value='{$_SESSION['login_id']}' />\n";
     echo $_SESSION['login_nom']." ".$_SESSION['login_prenom'];
   }
   echo "</td></tr>\n";
@@ -250,26 +249,24 @@ else{	// Formulaire
   echo "<tr><td>\n";
   echo "Date de début : \n";
   echo "</td><td>";
-  echo "<input type='text' name='debut' value='$debut' />&nbsp;\n";
-  echo "<img src='img/calendrier.gif' onclick='calendrier(\"debut\");' alt='début' />\n";
+  echo "<input type='text' name='debut' id='debut' value='$debut' class='datepicker' style='width:97%;'/>\n";
   echo "</td></tr>\n";
   echo "<tr id='hre_debut' $displayHeures ><td>\n";
   echo "Heure de début : \n";
   echo "</td><td>\n";
-  echo "<select name='hre_debut' >\n";
+  echo "<select name='hre_debut' id='hre_debut_select' style='width:98%;'>\n";
   selectHeure(7,23,true,$quartDHeure,$hre_debut);
   echo "</select>\n";
   echo "</td></tr>\n";
   echo "<tr><td>\n";
   echo "Date de fin : \n";
   echo "</td><td>";
-  echo "<input type='text' name='fin' value='$fin' />&nbsp;\n";
-  echo "<img src='img/calendrier.gif' onclick='calendrier(\"fin\");' alt='fin' />\n";
+  echo "<input type='text' name='fin' id='fin' value='$fin'  class='datepicker' style='width:97%;'/>\n";
   echo "</td></tr>\n";
   echo "<tr id='hre_fin' $displayHeures ><td>\n";
   echo "Heure de fin : \n";
   echo "</td><td>\n";
-  echo "<select name='hre_fin' >\n";
+  echo "<select name='hre_fin' id='hre_fin_select' style='width:98%;'>\n";
   selectHeure(7,23,true,$quartDHeure,$hre_fin);
   echo "</select>\n";
   echo "</td></tr>\n";
@@ -277,7 +274,7 @@ else{	// Formulaire
   echo <<<EOD
     <tr><td style='padding-top:15px;'>Nombre d'heures : </td>
       <td style='padding-top:15px;'>
-      <select name='heures' style='width:60px;' onchange='calculRestes();'>
+      <select name='heures' style='width:30%;' onchange='calculRestes();'>
 EOD;
       for($i=0;$i<1000;$i++){
 	$selected=$heures==$i?"selected='selected'":null;
@@ -287,13 +284,13 @@ EOD;
   echo <<<EOD
 	</select>
       h
-      <select name='minutes' style='width:60px;' onchange='calculRestes();'>
+      <select name='minutes' style='width:30%;' onchange='calculRestes();'>
 	<option value='00'>00</option>
 	<option value='25' $select25 >15</option>
 	<option value='50' $select50 >30</option>
 	<option value='75' $select75 >45</option>
 	</select>
-      <input type='button' value='Calculer' onclick='calculCredit();'></td></tr>
+      <input type='button' value='Calculer' onclick='calculCredit();' style='width:30%;'></td></tr>
 
   <tr><td colspan='2' style='padding-top:20px;'>
 EOD;
@@ -306,7 +303,7 @@ EOD;
   echo <<<EOD
     </td></tr>
     <tr><td>&nbsp;</td>
-    <td><select name='debit' style='width:100%;' onchange='calculRestes();'>
+    <td><select name='debit' style='width:98%;' onchange='calculRestes();'>
     <option value='recuperation' $selectRecup >Le crédit de récupérations</option>
     <option value='credit' $selectCredit >Le crédit de congés de l'année en cours</option>
     </select></td></tr>
@@ -327,13 +324,13 @@ EOD;
   echo "<tr valign='top'><td style='padding-top:15px;'>\n";
   echo "Commentaires : \n";
   echo "</td><td style='padding-top:15px;'>\n";
-  echo "<textarea name='commentaires' cols='16' rows='5' style='width:100%;'>{$data['commentaires']}</textarea>\n";
+  echo "<textarea name='commentaires' cols='16' rows='5' style='width:97%;'>{$data['commentaires']}</textarea>\n";
   echo "</td></tr><tr><td>&nbsp;\n";
 
   echo "<tr><td>Validation</td>\n";
   // Affichage de l'état de validation dans un menu déroulant si l'agent a le droit de le modifié et si le congé n'est pas validé
   if(($adminN2 and !$valide) or ($admin and $data['valide']==0)){
-    echo "<td><select name='valide' style='width:100%;' onchange='afficheRefus(this);'>\n";
+    echo "<td><select name='valide' style='width:98%;' onchange='afficheRefus(this);'>\n";
     echo "<option value='0'>&nbsp;</option>\n";
     echo "<option value='2' {$selectAccept[2]}>Accept&eacute; (En attente de validation hi&eacute;rarchique)</option>\n";
     echo "<option value='-2' {$selectAccept[3]}>Refus&eacute; (En attente de validation hi&eacute;rarchique)</option>\n";
@@ -363,20 +360,20 @@ EOD;
     echo "<td><textarea name='refus' cols='16' rows='5' style='width:100%;'>{$data['refus']}</textarea></td></tr>\n";
   echo "<tr><td>&nbsp;</td></tr>\n";
 
-  echo "</td></tr><tr><td colspan='2'>\n";
+  echo "</td></tr><tr><td colspan='2' style='text-align:center;'>\n";
   if($menu=="off"){
-    echo "<input type='button' value='Annuler' onclick='popup_closed();' />";
+    echo "<input type='button' value='Annuler' onclick='popup_closed();' class='ui-button'/>";
   }
   else{
-    echo "<input type='button' value='Annuler' onclick='document.location.href=\"index.php?page=plugins/conges/voir.php\";' />";
+    echo "<input type='button' value='Annuler' onclick='document.location.href=\"index.php?page=plugins/conges/voir.php\";' class='ui-button'/>";
   }
 
   if((!$valide and $admin) or ($data['valide']==0 and $data['valideN1']==0)){
-    echo "<input type='submit' value='Enregistrer les modifications' style='margin-left:20px;'/>\n";
+    echo "<input type='button' value='Enregistrer les modifications' style='margin-left:20px;' class='ui-button' onclick='verifConges();'/>\n";
   }
 
   if($admin){
-    echo "<input type='button' value='Supprimer' style='margin-left:20px;' onclick='supprimeConges()'/>\n";
+    echo "<input type='button' value='Supprimer' style='margin-left:20px;' onclick='supprimeConges()' class='ui-button'/>\n";
   }
 
   echo "</td></tr></table>\n";
