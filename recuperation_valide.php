@@ -7,7 +7,7 @@ Copyright (C) 2013-2014 - Jérôme Combes
 
 Fichier : plugins/conges/recuperation_valide.php
 Création : 30 août 2013
-Dernière modification : 4 février 2014
+Dernière modification : 21 février 2014
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -94,18 +94,18 @@ if(isset($update)){
   if(isset($update['valide']) and $update['valide']>0){
     $sujet="Demande de récupération validée";
     $message="Demande de récupération du ".dateFr($recup['date'])." validée pour $prenom $nom";
-    $notifications=$config['Absences-notifications3'];
+    $notifications=$config['Absences-notifications4'];
   }
   elseif(isset($update['valide']) and $update['valide']<0){
     $sujet="Demande de récupération refusée";
     $message="Demande de récupération du ".dateFr($recup['date'])." refusée pour $prenom $nom";
     $message.="<br/><br/>".str_replace("\n","<br/>",$update['refus']);
-    $notifications=$config['Absences-notifications3'];
+    $notifications=$config['Absences-notifications4'];
   }
   else{
     $sujet="Demande de récupération modifiée";
     $message="Demande de récupération du ".dateFr($recup['date'])." modifiée pour $prenom $nom";
-    $notifications=$config['Absences-notifications'];
+    $notifications=$config['Absences-notifications2'];
   }
 
   // Choix des destinataires en fonction de la configuration
