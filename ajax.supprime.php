@@ -1,6 +1,6 @@
 <?php
 /*
-Planning Biblio, Plugin Congés Version 1.4.3
+Planning Biblio, Plugin Congés Version 1.4.5
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.txt et COPYING.txt
 Copyright (C) 2013-2014 - Jérôme Combes
@@ -17,7 +17,7 @@ Appelé en Ajax via la fonction supprimeConges à partir de la page modif.php
 
 session_start();
 
-$version="1.4.3";
+$version="1.4.5";
 
 ini_set('display_errors',0);
 error_reporting(0);
