@@ -7,7 +7,7 @@ Copyright (C) 2013-2014 - Jérôme Combes
 
 Fichier : plugins/conges/modif.php
 Création : 1er août 2013
-Dernière modification : 21 février 2014
+Dernière modification : 24 février 2014
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -72,6 +72,7 @@ if(isset($_GET['confirm'])){
   $c=new conges();
   $c->update($_GET);
 
+  // Envoi d'une notification par email
   // Récupération des adresses e-mails de l'agent et des responsables pour m'envoi des alertes
   $c=new conges();
   $c->getResponsables($debutSQL,$finSQL,$perso_id);
@@ -141,7 +142,12 @@ if(isset($_GET['confirm'])){
       break;
   }
 
-  // Envoi d'une notification par email
+  // Construction du lien permettant de rebondir sur la demande via l'email
+  $port=strtolower(substr($_SERVER['SERVER_PROTOCOL'],0,strpos($_SERVER['SERVER_PROTOCOL'],"/",0)));
+  $url="$port://{$_SERVER['SERVER_NAME']}".substr($_SERVER['REQUEST_URI'],0,strpos($_SERVER['REQUEST_URI'],"/",1));
+  $url.="/index.php?page=plugins/conges/modif.php&id=$id";
+
+  // Message qui sera envoyé par email
   $message="$sujet : <br/>$prenom $nom<br/>Début : $debut";
   if($hre_debut!="00:00:00")
     $message.=" ".heure3($hre_debut);
@@ -153,6 +159,7 @@ if(isset($_GET['confirm'])){
   if($refus and $_GET['valide']==-1){
     $message.="<br/>Motif du refus :<br/>$refus<br/>";
   }
+  $message.="<br/><br/>Lien vers la demande de cong&eacute; :<br/><a href='$url'>$url</a><br/><br/>";
 
   sendmail($sujet,$message,$destinataires);
   if($menu=="off"){

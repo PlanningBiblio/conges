@@ -7,7 +7,7 @@ Copyright (C) 2013-2014 - Jérôme Combes
 
 Fichier : plugins/conges/enregistrer.php
 Création : 24 juillet 2013
-Dernière modification : 13 février 2014
+Dernière modification : 24 février 2014
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -48,6 +48,7 @@ if(isset($_GET['confirm'])){	// Confirmation
   // Enregistrement du congés
   $c=new conges();
   $c->add($_GET);
+  $id=$c->id;
 
   // Récupération des adresses e-mails de l'agent et des responsables pour l'envoi des alertes
   $c=new conges();
@@ -91,6 +92,12 @@ if(isset($_GET['confirm'])){	// Confirmation
       break;
   }
 
+  // Construction du lien permettant de rebondir sur la demande via l'email
+  $port=strtolower(substr($_SERVER['SERVER_PROTOCOL'],0,strpos($_SERVER['SERVER_PROTOCOL'],"/",0)));
+  $url="$port://{$_SERVER['SERVER_NAME']}".substr($_SERVER['REQUEST_URI'],0,strpos($_SERVER['REQUEST_URI'],"/",1));
+  $url.="/index.php?page=plugins/conges/modif.php&id=$id";
+
+  // Message qui sera envoyé par email
   $message="Nouveau congés: <br/>$prenom $nom<br/>Début : $debut";
   if($hre_debut!="00:00:00")
     $message.=" ".heure3($hre_debut);
@@ -99,6 +106,8 @@ if(isset($_GET['confirm'])){	// Confirmation
     $message.=" ".heure3($hre_fin);
   if($commentaires)
     $message.="<br/><br/>Commentaire :<br/>$commentaires<br/>";
+  $message.="<br/><br/>Lien vers la demande de cong&eacute; :<br/><a href='$url'>$url</a><br/><br/>";
+
   sendmail("Nouveau congés",$message,$destinataires);
 
   if($menu=="off"){

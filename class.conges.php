@@ -7,7 +7,7 @@ Copyright (C) 2013-2014 - Jérôme Combes
 
 Fichier : plugins/conges/class.conges.php
 Création : 24 juillet 2013
-Dernière modification : 13 février 2014
+Dernière modification : 24 février 2014
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -54,10 +54,20 @@ class conges{
     $data['debut']=dateSQL($data['debut']);
     $data['fin']=dateSQL($data['fin']);
 
+    // Enregistrement du congé
     $insert=array("debut"=>$data['debut']." ".$data['hre_debut'], "fin"=>$data['fin']." ".$data['hre_fin'],
       "commentaires"=>$data['commentaires'],"heures"=>$data['heures'],"debit"=>$data['debit'],"perso_id"=>$data['perso_id']);
     $db=new db();
     $db->insert2("conges",$insert);
+
+    // Récupération de l'id du congé enregistré
+    $this->id=0;
+    $db=new db();
+    $db->select("conges","MAX(id) AS id","debut='{$data['debut']} {$data['hre_debut']}' AND fin='{$data['fin']} {$data['hre_fin']}' 
+      AND heures='{$data['heures']}' AND perso_id='{$data['perso_id']}'");
+    if($db->result){
+      $this->id=$db->result[0]['id'];
+    }
   }
 
   public function calculCredit($debut,$hre_debut,$fin,$hre_fin,$perso_id){
