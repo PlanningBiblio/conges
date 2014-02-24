@@ -6,7 +6,7 @@ Copyright (C) 2013-2014 - Jérôme Combes
 
 Fichier : plugins/conges/js/script.conges.js
 Création : 2 août 2013
-Dernière modification : 14 février 2014
+Dernière modification : 24 février 2014
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -65,6 +65,8 @@ function calculRestes(){
   credit=document.form.elements["credit"].value;
   anticipation=document.form.elements["anticipation"].value;
   debit=document.form.elements["debit"].value
+  jours=heures/7;
+  $("#nbJours").text(jours.toFixed(2));
 
   // Calcul du reliquat après décompte
   reste=0;
@@ -255,8 +257,11 @@ function checkDate2( date1, date2, n ) {
   }
 }
 
-function checkDateAge( o, limit, n ) {
+function checkDateAge( o, limit, n, tip ) {
   // Calcul de la différence entre aujourd'hui et la date demandée
+  if(tip==undefined){
+    tip=true;
+  }
   var today=new Date();
   var d=new Date();
   tmp=o.val().split("/");
@@ -265,8 +270,10 @@ function checkDateAge( o, limit, n ) {
   d.setFullYear(parseInt(tmp[2]));
   diff=dateDiff(d,today);
   if(diff.day>limit){
-    o.addClass( "ui-state-error" );
-    updateTips( n );
+    if(tip){
+      o.addClass( "ui-state-error" );
+      updateTips( n );
+    }
     return false;
   } else {
     return true;

@@ -249,8 +249,10 @@ $(function() {
     buttons: {
       "Enregistrer": function() {
 	// Calcul du delai limit pour la demande de récup en fonction de la catégorie de l'agent
+	var admin=false;
 	if($("#agent option:selected").val()){
 	  perso_id=$("#agent option:selected").val();
+	  admin=true;
 	}
 	if(categories[perso_id]=="Titulaire"){
 	  if($("#date2").val()){
@@ -300,7 +302,13 @@ $(function() {
 	  }
 	}
 	bValid = bValid && checkLength( heures, "heures", 4, 5 );
-	bValid = bValid && checkDateAge( date, limitJours, "La demande de récupération doit être effectuée dans les "+limitJours+" jours");
+	if(admin && checkDateAge( date, limitJours, "La demande de récupération doit être effectuée dans les "+limitJours+" jours",false)==false){
+	  res=confirm("Attention, la demande de récupération doit être effectuée dans les "+limitJours+" jours.\nEn tant qu'administrateur, vous pouvez outrepasser cette règle.\nVoulez-vous continuer ?");
+	  bValid = bValid && res;
+	}
+	else{
+	  bValid = bValid && checkDateAge( date, limitJours, "La demande de récupération doit être effectuée dans les "+limitJours+" jours");
+	}
 
 	bValid = bValid && verifRecup($("#date"));
 

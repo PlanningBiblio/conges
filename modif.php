@@ -190,6 +190,7 @@ else{	// Formulaire
     $allday="checked='checked'";
     $displayHeures="style='display:none;'";
   }
+  $jours=number_format(($data['heures']/7),2,"."," ");
   $tmp=explode(".",$data['heures']);
   $heures=$tmp[0];
   $minutes=$tmp[1];
@@ -298,6 +299,9 @@ EOD;
 	<option value='75' $select75 >45</option>
 	</select>
       <input type='button' value='Calculer' onclick='calculCredit();' style='width:30%;'></td></tr>
+
+  <tr><td>Nombre de jours (7h/jour) : </td>
+    <td id='nbJours'>$jours</td></tr>
 
   <tr><td colspan='2' style='padding-top:20px;'>
 EOD;

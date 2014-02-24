@@ -219,6 +219,9 @@ EOD;
 	</select>
       <input type='button' value='Calculer' onclick='calculCredit();' style='width:30%;'></td></tr>
 
+  <tr><td>Nombre de jours (7h/jour) : </td>
+    <td id='nbJours'>&nbsp;</td></tr>
+
   <tr><td colspan='2' style='padding-top:20px;'>
 EOD;
   if($reliquat){
