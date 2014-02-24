@@ -334,6 +334,15 @@ EOD;
   echo "<textarea name='commentaires' cols='16' rows='5' style='width:97%;'>{$data['commentaires']}</textarea>\n";
   echo "</td></tr><tr><td>&nbsp;\n";
 
+  echo "<tr style='vertical-align:top;'><td style='padding-top:15px;padding-bottom:15px;'>\n";
+  echo "Demande : \n";
+  echo "</td><td style='padding-top:15px;padding-bottom:15px;'>\n";
+  echo dateFr($data['saisie'],true);
+  if($data['saisie_par'] and $data['saisie_par']!=$data['perso_id']){
+    echo " par ".nom($data['saisie_par']);
+  }
+  echo "</td></tr>\n";
+
   echo "<tr><td>Validation</td>\n";
   // Affichage de l'état de validation dans un menu déroulant si l'agent a le droit de le modifié et si le congé n'est pas validé
   if(($adminN2 and !$valide) or ($admin and $data['valide']==0)){

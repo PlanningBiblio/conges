@@ -7,7 +7,7 @@ Copyright (C) 2013-2014 - Jérôme Combes
 
 Fichier : plugins/conges/index.php
 Création : 24 juillet 2013
-Dernière modification : 31 octobre 2013
+Dernière modification : 24 février 2014
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -38,9 +38,9 @@ elseif(isset($_GET['suppression'])){
   echo "<input type='hidden' name='suppression' value='oui'/>\n";
   echo "<input type='hidden' name='validation' value='oui'/>\n";
   echo "<input type='hidden' name='id' value='".$_GET['id']."'/>\n";
-  echo "<input type='button' value='Non' onclick='history.back();'/>\n";
+  echo "<input type='button' value='Non' onclick='history.back();' class='ui-button'/>\n";
   echo "&nbsp;&nbsp;&nbsp;";
-  echo "<input type='submit' value='Oui' />\n";
+  echo "<input type='submit' value='Oui' class='ui-button'/>\n";
   echo "</form>\n";
 }
 
@@ -73,9 +73,9 @@ elseif(isset($_GET['debut'])){
   echo "<input type='hidden' name='texte' value='$texte'/>\n";
   echo "<input type='hidden' name='id' value='".$_GET['id']."'/>\n";
   echo "<input type='hidden' name='validation' value='validation'/>\n";
-  echo "<input type='button' value='Annuler' onclick='history.back();'/>";
+  echo "<input type='button' value='Annuler' onclick='history.back();' class='ui-button'/>";
   echo "&nbsp;&nbsp;&nbsp;\n";
-  echo "<input type='submit' value='Valider'/>\n";
+  echo "<input type='submit' value='Valider' class='ui-button'/>\n";
   echo "</form>";
 }
 // FIN Validation du formulaire
@@ -119,12 +119,12 @@ else{
   </td></tr>
   <tr><td colspan='2'>\n";
   if(isset($_GET['id'])){
-    echo "<input type='button' value='Supprimer' onclick='document.location.href=\"index.php?page=plugins/conges/infos.php&amp;id=$id&amp;suppression=oui\";'/>\n";
+    echo "<input type='button' value='Supprimer' onclick='document.location.href=\"index.php?page=plugins/conges/infos.php&amp;id=$id&amp;suppression=oui\";'  class='ui-button'/>\n";
     echo "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\n";
   }
-  echo "<input type='button' value='Annuler' onclick='document.location.href=\"index.php?page=plugins/conges/index.php\";'/>
+  echo "<input type='button' value='Annuler' onclick='document.location.href=\"index.php?page=plugins/conges/index.php\";' class='ui-button'/>
   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-  <input type='submit' value='Valider'/>
+  <input type='submit' value='Valider' class='ui-button'/>
   </td></tr></table>
   </form>";
 }

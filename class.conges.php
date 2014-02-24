@@ -55,8 +55,9 @@ class conges{
     $data['fin']=dateSQL($data['fin']);
 
     // Enregistrement du congé
-    $insert=array("debut"=>$data['debut']." ".$data['hre_debut'], "fin"=>$data['fin']." ".$data['hre_fin'],
-      "commentaires"=>$data['commentaires'],"heures"=>$data['heures'],"debit"=>$data['debit'],"perso_id"=>$data['perso_id']);
+    $insert=array("debut"=>$data['debut']." ".$data['hre_debut'], "fin"=>$data['fin']." ".$data['hre_fin'], 
+      "commentaires"=>$data['commentaires'],"heures"=>$data['heures'],"debit"=>$data['debit'],"perso_id"=>$data['perso_id'],
+      "saisie_par"=>$_SESSION['login_id']);
     $db=new db();
     $db->insert2("conges",$insert);
 

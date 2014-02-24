@@ -7,7 +7,7 @@ Copyright (C) 2013-2014 - Jérôme Combes
 
 Fichier : plugins/conges/voir.php
 Création : 24 juillet 2013
-Dernière modification : 14 février 2014
+Dernière modification : 24 février 2014
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -123,8 +123,11 @@ echo "<tbody>\n";
 foreach($c->elements as $elem){
   $debut=str_replace("00h00","",dateFr($elem['debut'],true));
   $fin=str_replace("23h59","",dateFr($elem['fin'],true));
-  $validation="Demand&eacute;";
+  $validation="Demand&eacute;, ".dateFr($elem['saisie'],true);
   $validationStyle="font-weight:bold;";
+  if($elem['saisie_par'] and $elem['perso_id']!=$elem['saisie_par']){
+      $validation.=" par ".nom($elem['saisie_par']);
+  }
   $credits=null;
   $recuperations=null;
   $reliquat=null;

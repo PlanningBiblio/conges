@@ -7,7 +7,7 @@ Copyright (C) 2013-2014 - Jérôme Combes
 
 Fichier : plugins/conges/recuperations.php
 Création : 27 août 2013
-Dernière modification : 8 janvier 2014
+Dernière modification : 24 février 2014
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -84,6 +84,7 @@ echo <<<EOD
 <div id='liste'>
 <h4 class='noprint'>Liste des demandes de récupération</h4>
 <form name='form' method='get' action='index.php' class='noprint'>
+<p>
 <input type='hidden' name='page' value='plugins/conges/recuperations.php' />
 Ann&eacute;e : <select name='annee'>
 EOD;
@@ -105,8 +106,9 @@ if($admin){
   echo "</select>\n";
 }
 echo <<<EOD
-&nbsp;&nbsp;<input type='submit' value='OK' id='button-OK' />
-&nbsp;&nbsp;<input type='button' value='Reset' id='button-Effacer' onclick='location.href="index.php?page=plugins/conges/recuperations.php&reset"' />
+&nbsp;&nbsp;<input type='submit' value='OK' id='button-OK' class='ui-button'/>
+&nbsp;&nbsp;<input type='button' value='Reset' id='button-Effacer' class='ui-button' onclick='location.href="index.php?page=plugins/conges/recuperations.php&reset"' />
+</p>
 </form>
 <table id='tableRecup'>
 <thead>
@@ -120,17 +122,23 @@ echo "</thead>\n";
 echo "<tbody>\n";
 
 foreach($recup as $elem){
-  $validation="En attente";
+  $validation="Demand&eacute;e, ".dateFr($elem['saisie'],true);
+  $validationStyle="font-weight:bold;";
+  if($elem['saisie_par'] and $elem['saisie_par']!=$elem['perso_id']){
+    $validation.=" par ".nom($elem['saisie_par']);
+  }
   $credits=null;
   if($elem['valide']>0){
     $validation=nom($elem['valide']).", ".dateFr($elem['validation'],true);
+    $validationStyle=null;
     if($elem['solde_prec']!=null and $elem['solde_actuel']!=null){
       $credits=heure4($elem['solde_prec'])." &rarr; ".heure4($elem['solde_actuel']);
     }
 
   }
   elseif($elem['valide']<0){
-    $validation="<font style='color:red;font-weight:bold;'>Refus&eacute;, ".nom(-$elem['valide']).", ".dateFr($elem['validation'],true)."</font>";
+    $validation="Refus&eacute;, ".nom(-$elem['valide']).", ".dateFr($elem['validation'],true);
+    $validationStyle="color:red;font-weight:bold;";
   }
 
   echo "<tr>";
@@ -140,7 +148,7 @@ foreach($recup as $elem){
   }
   $date2=($elem['date2'] and $elem['date2']!="0000-00-00")?" &amp; ".dateFr($elem['date2']):null;
   echo "<td>".dateFr($elem['date'])."$date2</td><td>".heure4($elem['heures'])."</td>";
-  echo "<td>".str_replace("\n","<br/>",$elem['commentaires'])."</td><td>$validation</td><td>$credits</td></tr>\n";
+  echo "<td>".str_replace("\n","<br/>",$elem['commentaires'])."</td><td style='$validationStyle'>$validation</td><td>$credits</td></tr>\n";
 }
 
 echo <<<EOD

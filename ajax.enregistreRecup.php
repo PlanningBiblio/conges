@@ -7,7 +7,7 @@ Copyright (C) 2013-2014 - Jérôme Combes
 
 Fichier : plugins/conges/ajax.verifRecup.php
 Création : 11 octobre 2013
-Dernière modification : 4 février 2014
+Dernière modification : 24 février 2014
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -39,9 +39,10 @@ $date=dateFr($_GET['date']);
 $date2=dateFr($_GET['date2']);
 $perso_id=is_numeric($_GET['perso_id'])?$_GET['perso_id']:$_SESSION['login_id'];
 
-$update=array("perso_id"=>$perso_id,"date"=>$date,"date2"=>$date2,"heures"=>$_GET['heures'],"commentaires"=>$_GET['commentaires']);
+$insert=array("perso_id"=>$perso_id,"date"=>$date,"date2"=>$date2,"heures"=>$_GET['heures'],"commentaires"=>$_GET['commentaires'],
+  "saisie_par"=>$_SESSION['login_id']);
 $db=new db();
-$db->insert2("recuperations",$update);
+$db->insert2("recuperations",$insert);
 if($db->error){
   echo "###Demande-Erreur###";
 }

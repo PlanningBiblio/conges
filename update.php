@@ -7,7 +7,7 @@ Copyright (C) 2013-2014 - Jérôme Combes
 
 Fichier : plugins/conges/update.php
 Création : 26 août 2013
-Dernière modification : 30 janvier 2014
+Dernière modification : 24 février 2014
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -105,7 +105,12 @@ $sql[]="UPDATE `{$dbprefix}cron` SET `mon`='9' WHERE `command`='plugins/conges/c
 */
 
 // Modification du 30 janvier 2014
-$sql[]="UPDATE `{$dbprefix}pl_poste` SET `absent`='0' WHERE `absent`='2';";
+// $sql[]="UPDATE `{$dbprefix}pl_poste` SET `absent`='0' WHERE `absent`='2';";
+
+// 24 février 2014
+$sql[]="ALTER TABLE `{$dbprefix}conges` ADD `saisie_par` INT NOT NULL AFTER `saisie`;";
+$sql[]="ALTER TABLE `{$dbprefix}recuperations` ADD `saisie_par` INT NOT NULL AFTER `saisie`;";
+
 
 ?>
 <!-- Entête HTML -->

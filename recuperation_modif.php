@@ -7,7 +7,7 @@ Copyright (C) 2013-2014 - Jérôme Combes
 
 Fichier : plugins/conges/recuperation_modif.php
 Création : 29 août 2013
-Dernière modification : 11 octobre 2013
+Dernière modification : 24 février 2014
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -62,10 +62,14 @@ if($config['Recup-DeuxSamedis']){
 }else{
   echo "<tr><td>Date concernée : </td><td>$dateAlpha</td></td></tr>\n";
 }
-echo <<<EOD
-<tr><td>Date de la demande : </td><td>$saisie</td></td></tr>
-<tr><td>Heures demandées : </td>
-EOD;
+echo "<tr><td>Date de la demande : </td><td>$saisie";
+if($recup['saisie_par'] and $recup['saisie_par']!=$recup['perso_id']){
+  echo " par ".nom($recup['saisie_par']);
+}
+
+echo "</td></td></tr>\n";
+echo "<tr><td>Heures demandées : </td>";
+
 if(!$valide){
     echo "<td><select id='heures' name='heures' style='font-weight:bold;' >\n";
     echo "<option value=''>&nbsp;</option>\n";
@@ -113,10 +117,10 @@ EOD;
 }
 echo <<<EOD
 <tr><td colspan='2' class='td_validation'>
-<input type='button' value='Retour' onclick='location.href="index.php?page=plugins/conges/recuperations.php";' />
+<input type='button' class='ui-button' value='Retour' onclick='location.href="index.php?page=plugins/conges/recuperations.php";' />
 EOD;
 if(($admin and !$valide) or $recup['valide']==0){
-  echo "<input type='submit' value='Enregistrer'/>";
+  echo "<input type='submit' class='ui-button' value='Enregistrer'/>";
 }
 ?>
 </td></tr>

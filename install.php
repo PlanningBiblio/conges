@@ -7,7 +7,7 @@ Copyright (C) 2013-2014 - Jérôme Combes
 
 Fichier : plugins/conges/install.php
 Création : 24 juillet 2013
-Dernière modification : 16 janvier 2014
+Dernière modification : 24 février 2014
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -51,7 +51,7 @@ $sql[]="INSERT INTO `{$dbprefix}acces` (`nom`,`groupe_id`,`groupe`) VALUES ('Con
 // Création de la table conges
 $sql[]="CREATE TABLE `{$dbprefix}conges` (`id` INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY, `perso_id` INT(11) NOT NULL, 
   `debut` DATETIME NOT NULL, `fin` DATETIME NOT NULL, `commentaires` TEXT, `refus` TEXT, `heures` VARCHAR(20), `debit` VARCHAR(20), 
-  `saisie` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, `modif` INT(11) NOT NULL DEFAULT '0',`modification` TIMESTAMP, 
+  `saisie` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, `saisie_par` INT NOT NULL, `modif` INT(11) NOT NULL DEFAULT '0',`modification` TIMESTAMP, 
   `valide` INT(11) NOT NULL DEFAULT '0',`validation` TIMESTAMP,`solde_prec` FLOAT(10), `solde_actuel` FLOAT(10)),
   `recup_prec` FLOAT(10), `recup_actuel` FLOAT(10)),`reliquat_prec` FLOAT(10), `reliquat_actuel` FLOAT(10), 
   `anticipation_prec` FLOAT(10), `anticipation_actuel` FLOAT(10), `supprime` INT(11) NOT NULL DEFAULT 0, 
@@ -62,7 +62,11 @@ $sql[]="CREATE TABLE `{$dbprefix}conges` (`id` INT(11) NOT NULL AUTO_INCREMENT P
 $sql[]="CREATE TABLE `{$dbprefix}conges_infos` (`id` INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY, `debut` DATE NULL, `fin` DATE NULL, `texte` TEXT NULL, `saisie` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP);";
 
 // Création de la table récupérations
-$sql[]="CREATE TABLE `{$dbprefix}recuperations` (`id` INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY, `perso_id` INT(11) NOT NULL, `date` DATE NULL, `date2` DATE NULL, `heures` FLOAT(5), `etat` VARCHAR(20), `commentaires` TEXT, `saisie` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, `modif` INT(11) NOT NULL DEFAULT '0',`modification` TIMESTAMP, `valide` INT(11) NOT NULL DEFAULT '0',`validation` TIMESTAMP,`refus` TEXT,`solde_prec` FLOAT(10), `solde_actuel` FLOAT(10));";
+$sql[]="CREATE TABLE `{$dbprefix}recuperations` (`id` INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY, `perso_id` INT(11) NOT NULL, 
+  `date` DATE NULL, `date2` DATE NULL, `heures` FLOAT(5), `etat` VARCHAR(20), `commentaires` TEXT, 
+  `saisie` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, `saisie_par` INT NOT NULL, `modif` INT(11) NOT NULL DEFAULT '0', 
+  `modification` TIMESTAMP, `valide` INT(11) NOT NULL DEFAULT '0',`validation` TIMESTAMP,`refus` TEXT, 
+  `solde_prec` FLOAT(10), `solde_actuel` FLOAT(10));";
 
 // Menu
 $sql[]="INSERT INTO `{$dbprefix}menu` (`niveau1`,`niveau2`,`titre`,`url`) VALUES (15,0,'Cong&eacute;s','plugins/conges/index.php');";
