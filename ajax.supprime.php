@@ -2,7 +2,7 @@
 /*
 Planning Biblio, Plugin Congés Version 1.4.5
 Licence GNU/GPL (version 2 et au dela)
-Voir les fichiers README.txt et COPYING.txt
+Voir les fichiers README.md et LICENSE
 Copyright (C) 2013-2014 - Jérôme Combes
 
 Fichier : plugins/conges/ajax.supprime.php
