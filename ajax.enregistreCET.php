@@ -5,9 +5,9 @@ Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
 Copyright (C) 2013-2014 - Jérôme Combes
 
-Fichier : plugins/conges/ajax.enregistreRecup.php
-Création : 11 octobre 2013
-Dernière modification : 24 février 2014
+Fichier : plugins/conges/ajax.enregistreCet.php
+Création : 7 mars 2014
+Dernière modification : 12 mars 2014
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -15,34 +15,55 @@ Enregistre la demande de récupération
 */
 
 session_start();
-
-$version="1.4.5";
+ini_set('display_errors',0);
 include "../../include/config.php";
-
-ini_set('display_errors',$config['display_errors']);
-switch($config['error_reporting']){
-  case 0: error_reporting(0); break;
-  case 1: error_reporting(E_ERROR | E_WARNING | E_PARSE); break;
-  case 2: error_reporting(E_ERROR | E_WARNING | E_PARSE | E_NOTICE); break;
-  case 3: error_reporting(E_ALL ^ (E_NOTICE | E_WARNING)); break;
-  case 4: error_reporting(E_ALL ^ E_NOTICE); break;
-  case 5: error_reporting(E_ALL); break;
-  default: error_reporting(E_ALL ^ E_NOTICE); break;
-}
-
 include "../../include/function.php";
 include "../../personnel/class.personnel.php";
 include "class.conges.php";
 
-// Les dates sont au format DD/MM/YYYY et converti en YYYY-MM-DD
-$date=dateFr($_GET['date']);
-$date2=dateFr($_GET['date2']);
-$perso_id=is_numeric($_GET['perso_id'])?$_GET['perso_id']:$_SESSION['login_id'];
+$id=$_GET['id'];
+$perso_id=$_GET['perso_id'];
+$validation=$_GET['validation'];
+$valideN1=null;
+$valideN2=null;
+$validationN1=null;
+$validationN2=null;
 
-$insert=array("perso_id"=>$perso_id,"date"=>$date,"date2"=>$date2,"heures"=>$_GET['heures'],"commentaires"=>$_GET['commentaires'],
-  "saisie_par"=>$_SESSION['login_id']);
-$db=new db();
-$db->insert2("recuperations",$insert);
+switch($validation){
+  case -2 : $valideN2=-$_SESSION['login_id']; $validationN2=date("Y-m-d H:i:s"); break;
+  case -1 : $valideN1=-$_SESSION['login_id']; $validationN1=date("Y-m-d H:i:s"); break;
+  case 1 : $valideN1=$_SESSION['login_id']; $validationN1=date("Y-m-d H:i:s"); break;
+  case 2 : $valideN2=$_SESSION['login_id']; $validationN2=date("Y-m-d H:i:s"); break;
+}
+
+$data=array("perso_id"=>$perso_id,"jours"=>$_GET['jours'],"commentaires"=>$_GET['commentaires']);
+if($valideN1){
+  $data['valideN1']=$valideN1;
+  $data['validationN1']=$validationN1;
+}
+if($valideN2){
+  $data['valideN2']=$valideN2;
+  $data['validationN2']=$validationN2;
+}
+
+
+if(is_numeric($id)){
+  // Modifie la demande d'alimentation du CET
+  $data["modif"]=$_SESSION['login_id'];
+  $data["modification"]=date("Y-m-d H:i:s");
+
+  $db=new db();
+  $db->update2("conges_CET",$data,array("id"=>$id));
+}
+else{
+  // Enregistrement de la demande d'alimentation du CET
+  $data["saisie"]=date("Y-m-d H:i:s");
+  $data["saisie_par"]=$_SESSION['login_id'];
+
+  $db=new db();
+  $db->insert2("conges_CET",$data);
+}
+
 if($db->error){
   echo "###Demande-Erreur###";
 }
@@ -58,7 +79,7 @@ else{
   $mailResponsable=$p->elements[0]['mailResponsable'];
 
   $c=new conges();
-  $c->getResponsables($date,$date,$perso_id);
+  $c->getResponsables(null,null,$perso_id);
   $responsables=$c->responsables;
 
   // Choix des destinataires en fonction de la configuration
@@ -89,8 +110,8 @@ else{
   }
 
   if(!empty($destinataires)){
-    $sujet="Nouvelle demande de récupération";
-    $message="Demande de récupération du ".dateFr($date)." enregistrée pour $prenom $nom<br/><br/>";
+    $sujet="Nouvelle demande de CET";
+    $message="Demande de CET a été enregistrée pour $prenom $nom<br/><br/>";
     if($_GET['commentaires']){
       $message.="Commentaires : ".str_replace("\n","<br/>",$_GET['commentaires']);
     }

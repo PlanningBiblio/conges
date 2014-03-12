@@ -7,7 +7,7 @@ Copyright (C) 2013-2014 - Jérôme Combes
 
 Fichier : plugins/conges/class.conges.php
 Création : 24 juillet 2013
-Dernière modification : 24 février 2014
+Dernière modification : 10 mars 2014
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -364,6 +364,20 @@ class conges{
       if($db->result){
 	$this->elements=array("credit"=>$db->result[0]['congesCredit'],"reliquat"=>$db->result[0]['congesReliquat'],"anticipation"=>$db->result[0]['congesAnticipation'],"recupSamedi"=>$db->result[0]['recupSamedi']);
       }
+    }
+  }
+
+  public function getCET(){
+    $where=$this->perso_id?"perso_id='{$this->perso_id}'":null;
+
+    if($this->id){
+      $where="id='{$this->id}'";
+    }
+
+    $db=new db();
+    $db->select("conges_CET",null,$where);
+    if($db->result){
+      $this->elements=$db->result;
     }
   }
 

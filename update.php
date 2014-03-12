@@ -7,7 +7,7 @@ Copyright (C) 2013-2014 - Jérôme Combes
 
 Fichier : plugins/conges/update.php
 Création : 26 août 2013
-Dernière modification : 24 février 2014
+Dernière modification : 11 mars 2014
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -108,11 +108,21 @@ $sql[]="UPDATE `{$dbprefix}cron` SET `mon`='9' WHERE `command`='plugins/conges/c
 // $sql[]="UPDATE `{$dbprefix}pl_poste` SET `absent`='0' WHERE `absent`='2';";
 
 // 24 février 2014
-$sql[]="ALTER TABLE `{$dbprefix}conges` ADD `saisie_par` INT NOT NULL AFTER `saisie`;";
-$sql[]="ALTER TABLE `{$dbprefix}recuperations` ADD `saisie_par` INT NOT NULL AFTER `saisie`;";
+// $sql[]="ALTER TABLE `{$dbprefix}conges` ADD `saisie_par` INT NOT NULL AFTER `saisie`;";
+// $sql[]="ALTER TABLE `{$dbprefix}recuperations` ADD `saisie_par` INT NOT NULL AFTER `saisie`;";
 
+// 11 mars 2014
+$sql[]="INSERT INTO `{$dbprefix}menu` (`niveau1`,`niveau2`,`titre`,`url`) VALUES (15,28,'Compte &Eacute;pargne Temps','plugins/conges/cet.php');";
+$sql[]="INSERT INTO `{$dbprefix}acces` (`nom`,`groupe_id`,`page`) VALUES ('Congés - Compte &Eacute;pargne Temps','100','plugins/conges/cet.php');";
 
+// Création de la table conges_CET
+$sql[]="CREATE TABLE `{$dbprefix}conges_CET` (`id` INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY, `perso_id` INT(11) NOT NULL, 
+  `jours` INT(11) NOT NULL DEFAULT '0', `commentaires` TEXT, `saisie` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, 
+  `saisie_par` INT NOT NULL, `modif` INT(11) NOT NULL DEFAULT '0', `modification` TIMESTAMP, `valideN1` INT(11) NOT NULL DEFAULT '0', 
+  `validationN1` TIMESTAMP, `valideN2` INT(11) NOT NULL DEFAULT '0',`validationN2` TIMESTAMP, `refus` TEXT, 
+  `solde_prec` FLOAT(10), `solde_actuel` FLOAT(10));";
 ?>
+
 <!-- Entête HTML -->
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>

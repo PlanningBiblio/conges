@@ -6,7 +6,7 @@ Copyright (C) 2013-2014 - Jérôme Combes
 
 Fichier : plugins/conges/js/script.conges.js
 Création : 2 août 2013
-Dernière modification : 24 février 2014
+Dernière modification : 7 mars 2014
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -218,6 +218,16 @@ function checkLength( o, n, min, max ) {
   if ( o.val().length > max || o.val().length < min ) {
     o.addClass( "ui-state-error" );
     updateTips( "Veuillez sélectionner le nombre d'heures.");
+  return false;
+  } else {
+    return true;
+  }
+}
+
+function checkInt( o, n, min, max, tips ) {
+  if ( o.val() > max || o.val() < min ) {
+    o.addClass("ui-state-error");
+    updateTips(tips);
   return false;
   } else {
     return true;

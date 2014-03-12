@@ -92,11 +92,6 @@ if(isset($_GET['confirm'])){	// Confirmation
       break;
   }
 
-  // Construction du lien permettant de rebondir sur la demande via l'email
-  $port=strtolower(substr($_SERVER['SERVER_PROTOCOL'],0,strpos($_SERVER['SERVER_PROTOCOL'],"/",0)));
-  $url="$port://{$_SERVER['SERVER_NAME']}".substr($_SERVER['REQUEST_URI'],0,strpos($_SERVER['REQUEST_URI'],"/",1));
-  $url.="/index.php?page=plugins/conges/modif.php&id=$id";
-
   // Message qui sera envoyé par email
   $message="Nouveau congés: <br/>$prenom $nom<br/>Début : $debut";
   if($hre_debut!="00:00:00")
@@ -106,6 +101,9 @@ if(isset($_GET['confirm'])){	// Confirmation
     $message.=" ".heure3($hre_fin);
   if($commentaires)
     $message.="<br/><br/>Commentaire :<br/>$commentaires<br/>";
+
+  // ajout d'un lien permettant de rebondir sur la demande
+  $url=createURL("plugins/conges/modif.php&id=$id");
   $message.="<br/><br/>Lien vers la demande de cong&eacute; :<br/><a href='$url'>$url</a><br/><br/>";
 
   sendmail("Nouveau congés",$message,$destinataires);

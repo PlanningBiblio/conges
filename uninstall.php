@@ -7,7 +7,7 @@ Copyright (C) 2013-2014 - Jérôme Combes
 
 Fichier : plugins/conges/uninstall.php
 Création : 24 juillet 2013
-Dernière modification : 15 novembre 2013
+Dernière modification : 11 mars 2014
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -29,18 +29,16 @@ include_once "../../include/config.php";
 $sql=array();
 
 // Droits d'accès
-$sql[]="DELETE FROM `{$dbprefix}acces` WHERE `page`='plugins/conges/index.php';";
-$sql[]="DELETE FROM `{$dbprefix}acces` WHERE `page`='plugins/conges/voir.php';";
-$sql[]="DELETE FROM `{$dbprefix}acces` WHERE `page`='plugins/conges/enregistrer.php';";
-$sql[]="DELETE FROM `{$dbprefix}acces` WHERE `page`='plugins/conges/modif.php';";
-$sql[]="DELETE FROM `{$dbprefix}acces` WHERE `page`='plugins/conges/ajax.calculCredit.php';";
-$sql[]="DELETE FROM `{$dbprefix}acces` WHERE `groupe_id`='2';";
+$sql[]="DELETE FROM `{$dbprefix}acces` WHERE `page` LIKE 'plugins/conges%';";
 
 // Suppression de la table conges
 $sql[]="DROP TABLE `{$dbprefix}conges`;";
 
 // Suppression de la table conges_infos
 $sql[]="DROP TABLE `{$dbprefix}conges_infos`;";
+
+// Suppression de la table conges_CET
+$sql[]="DROP TABLE `{$dbprefix}conges_CET`;";
 
 // Suppression du menu
 $sql[]="DELETE FROM `{$dbprefix}menu` WHERE `url` LIKE 'plugins/conges/%';";
