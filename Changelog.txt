@@ -1,3 +1,34 @@
+***	En cours								***
+- Améliorations :
+Enregistrement des CET
+
+***	Version 1.4.8	(Jérôme Combes, 17 mars 2014)				***
+- Améliorations :
+Intègre les congés dans les agendas
+
+***	Version 1.4.7	(Jérôme Combes, 4 mars 2014)				***
+- Améliorations :
+Ajout de la licence et du README.md
+
+***	Version 1.4.6	(Jérôme Combes, 25 février 2014)			***
+- Améliorations :
+Ajout d'un lien dans les notifications permettant de rebondir sur la fiche du congé
+Affiche le nom de la personne qui a demandé le congé (si admin demande pour un autre agent)
+Affiche l'équivalent en jours des heures de congé lors de la demande
+
+***	Version 1.4.5	(Jérôme Combes, 21 février 2014)			***
+- Corrections :
+Modification de l'envoi des notifications suite à MAJ Planning 1.7.2
+
+***	Version 1.4.4	(Jérôme Combes, 14 février 2014)			***
+- Améliorations :
+Contrôle si les dates sont cohérentes et si trop congés sont posés lors de la demande de congés
+Affiche les congés payés dans la liste des absences en bas des plannings même si des absences sont déjà enregistrées
+
+***	Version 1.4.3	(Jérôme Combes, 4 février 2014)				***
+- Corrections :
+Correction de l'envoi des notifications
+
 ***	Version 1.4.2	(Jérôme Combes, 30 janvier 2014)			***
 - Améliorations :
 Modification du filtre de recherche des conges validés (pour ne pas compter les lignes d'informations)
@@ -6,7 +37,7 @@ le champ absent de pl_poste n'est plus marqué par les congés validés)
 
 ***	Version 1.4.1	(Jérôme Combes, 23 janvier 2014)			***
 - Améliorations :
-Congés à partit de 7h du matin
+Congés à partir de 7h du matin
 
 - Corrections :
 Correction pour l'envoi des notifications
