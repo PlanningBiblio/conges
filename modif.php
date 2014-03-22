@@ -7,7 +7,7 @@ Copyright (C) 2013-2014 - Jérôme Combes
 
 Fichier : plugins/conges/modif.php
 Création : 1er août 2013
-Dernière modification : 24 février 2014
+Dernière modification : 22 mars 2014
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -46,18 +46,26 @@ if(!in_array(2,$droits) and $perso_id!=$_SESSION['login_id']){
   exit;
 }
 
-if($config['Multisites-nombre']>1 and $config['Multisites-agentsMultisites']==0){
+if($config['Multisites-nombre']>1){
   $p=new personnel();
   $p->fetchById($perso_id);
-  $site=$p->elements[0]['site'];
-  $droitsConges=400+$site;
+  // $droitsConges = droits nécessaires pour adminN2 si multisites
+  $droitsConges=array();
+  if(is_array($p->elements[0]['sites'])){
+    foreach($p->elements[0]['sites'] as $site){
+      $droitsConges[]=400+$site;
+    }
+  }
 }
 else{
-  $droitsConges=2;
+  $droitsConges=array(2);
 }
 $admin=in_array(7,$droits)?true:false;
 $admin=in_array(2,$droits)?true:$admin;
-$adminN2=in_array($droitsConges,$droits)?true:false;
+$adminN2=false;
+foreach($droitsConges as $elem){
+  $adminN2=in_array($elem,$droits)?true:$adminN2;
+}
 
 if(isset($_GET['confirm'])){
   $fin=$fin?$fin:$debut;

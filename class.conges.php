@@ -7,7 +7,7 @@ Copyright (C) 2013-2014 - Jérôme Combes
 
 Fichier : plugins/conges/class.conges.php
 Création : 24 juillet 2013
-Dernière modification : 10 mars 2014
+Dernière modification : 22 mars 2014
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -432,13 +432,17 @@ class conges{
   public function getResponsables($debut=null,$fin=null,$perso_id){
     $responsables=array();
     $droitsConges=array();
-    //	Si plusieurs sites et agents autorisés à travailler sur plusieurs sites, vérifions dans l'emploi du temps quels sont les sites concernés par le conges
-    if($GLOBALS['config']['Multisites-nombre']>1 and $GLOBALS['config']['Multisites-agentsMultisites']){
+    //	Si plusieurs sites, vérifions dans l'emploi du temps quels sont les sites concernés par le conges
+    if($GLOBALS['config']['Multisites-nombre']>1){
       $db=new db();
       $db->select("personnel","temps","id='$perso_id'");
       $temps=unserialize($db->result[0]['temps']);
       $date=$debut;
       while($date<=$fin){
+	// Emploi du temps si plugin planningHebdo
+	if(in_array("plannningHebdo",$GLOBALS['plugins'])){
+	  include "plugins/planningHebdo/absences.php";
+	}
 	// Vérifions le numéro de la semaine de façon à contrôler le bon planning de présence hebdomadaire
 	$d=new datePl($date);
 	$jour=$d->position?$d->position:7;
@@ -458,13 +462,6 @@ class conges{
       if(empty($droitsConges)){
 	$droitsConges=array(301,302);
       }
-    }
-    //	Si plusieurs sites et agents non autorisés à travailler sur plusieurs sites, vérifions dans les infos générales quels sont les sites concernés par le conges
-    elseif($GLOBALS['config']['Multisites-nombre']>1 and !$GLOBALS['config']['Multisites-agentsMultisites']){
-      $db=new db();
-      $db->select("personnel","site","id='$perso_id'");
-      $site=$db->result[0]['site'];
-      $droitsConges=array("30".$site);
     }
     // Si un seul site, le droit de gestion des conges est 2
     else{
