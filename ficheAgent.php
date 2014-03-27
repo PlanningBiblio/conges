@@ -1,13 +1,13 @@
 <?php
 /*
-Planning Biblio, Plugin Congés Version 1.4.5
+Planning Biblio, Plugin Congés Version 1.4.9
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
 Copyright (C) 2013-2014 - Jérôme Combes
 
 Fichier : plugins/conges/ficheAgent.php
 Création : 26 juillet 2013
-Dernière modification : 13 août 2013
+Dernière modification : 27 mars 2014
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -29,7 +29,7 @@ $conges['recupSamedi']=heure4($conges['recupSamedi']);
 
 $p=new personnel();
 $p->fetchById($id);
-$conges['annuel']=heure4($p->elements[0]['congesAnnuel']);
+$conges['annuel']=array_key_exists("congesAnnuel",$p->elements[0])?heure4($p->elements[0]['congesAnnuel']):null;
 
 // Affichage
 
