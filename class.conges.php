@@ -1,13 +1,13 @@
 <?php
 /*
-Planning Biblio, Plugin Congés Version 1.4.9
+Planning Biblio, Plugin Congés Version 1.5
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
 Copyright (C) 2013-2014 - Jérôme Combes
 
 Fichier : plugins/conges/class.conges.php
 Création : 24 juillet 2013
-Dernière modification : 27 mars 2014
+Dernière modification : 31 mars 2014
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -24,6 +24,7 @@ $path=substr($_SERVER['SCRIPT_NAME'],-9)=="index.php"?null:"../../";
 require_once "{$path}plugins/planningHebdo/class.planningHebdo.php";
 require_once "{$path}joursFeries/class.joursFeries.php";
 require_once "{$path}personnel/class.personnel.php";
+require_once "{$path}absences/class.absences.php";
 
 class conges{
   public $agent=null;
@@ -247,31 +248,9 @@ class conges{
     $responsables=$this->responsables;
 
     // Choix des destinataires en fonction de la configuration
-    $destinataires=array();
-    switch($GLOBALES['config']['Absences-notifications']){
-      case 1 :
-	foreach($responsables as $elem){
-	  $destinataires[]=$elem['mail'];
-	}
-	break;
-      case 2 :
-	$destinataires[]=$mailResponsable;
-	break;
-      case 3 :
-	$destinataires=explode(";",$GLOBALS['config']['Mail-Planning']);
-	break;
-      case 4 :
-	$destinataires=explode(";",$GLOBALS['config']['Mail-Planning']);
-	$destinataires[]=$mail;
-	$destinataires[]=$mailResponsable;
-	foreach($responsables as $elem){
-	  $destinataires[]=$elem['mail'];
-	}
-	break;
-      case 5 :
-	$destinataires[]=$mail;
-	break;
-    }
+    $a=new absences();
+    $a->getRecipients($GLOBALS['config']['Absences-notifications'],$responsables,$mail,$mailResponsable);
+    $destinataires=$a->recipients;
 
     if(!empty($destinataires)){
       $sujet="Nouvelle demande de récupération";
@@ -469,7 +448,7 @@ class conges{
     }
 
     $db=new db();
-    $db->select("personnel");
+    $db->select("personnel",null,"supprime='0'");
     foreach($db->result as $elem){
       $d=unserialize($elem['droits']);
       foreach($droitsConges as $elem2){

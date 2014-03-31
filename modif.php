@@ -1,13 +1,13 @@
 <?php
 /*
-Planning Biblio, Plugin Congés Version 1.4.9
+Planning Biblio, Plugin Congés Version 1.5
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
 Copyright (C) 2013-2014 - Jérôme Combes
 
 Fichier : plugins/conges/modif.php
 Création : 1er août 2013
-Dernière modification : 27 mars 2014
+Dernière modification : 31 mars 2014
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -17,7 +17,6 @@ Inclus dans le fichier index.php
 */
 
 require_once "class.conges.php";
-require_once "personnel/class.personnel.php";
 
 // Initialisation des variables
 $id=$_GET['id'];
@@ -121,31 +120,9 @@ if(isset($_GET['confirm'])){
   }
 
   // Choix des destinataires en fonction de la configuration
-  $destinataires=array();
-  switch($notifications){
-    case 1 :
-      foreach($responsables as $elem){
-	$destinataires[]=$elem['mail'];
-      }
-      break;
-    case 2 :
-      $destinataires[]=$mailResponsable;
-      break;
-    case 3 :
-      $destinataires=explode(";",$config['Mail-Planning']);
-      break;
-    case 4 :
-      $destinataires=explode(";",$config['Mail-Planning']);
-      $destinataires[]=$mail;
-      $destinataires[]=$mailResponsable;
-      foreach($responsables as $elem){
-	$destinataires[]=$elem['mail'];
-      }
-      break;
-    case 5 :
-      $destinataires[]=$mail;
-      break;
-  }
+  $a=new absences();
+  $a->getRecipients($notifications,$responsables,$mail,$mailResponsable);
+  $destinataires=$a->recipients;
 
   // Message qui sera envoyé par email
   $message="$sujet : <br/>$prenom $nom<br/>Début : $debut";

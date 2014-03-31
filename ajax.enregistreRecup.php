@@ -1,13 +1,13 @@
 <?php
 /*
-Planning Biblio, Plugin Congés Version 1.4.9
+Planning Biblio, Plugin Congés Version 1.5
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
 Copyright (C) 2013-2014 - Jérôme Combes
 
 Fichier : plugins/conges/ajax.enregistreRecup.php
 Création : 11 octobre 2013
-Dernière modification : 27 février 2014
+Dernière modification : 31 mars 2014
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -16,22 +16,13 @@ Enregistre la demande de récupération
 
 session_start();
 
-$version="1.4.5";
+$version="1.5";
 include "../../include/config.php";
 
-ini_set('display_errors',$config['display_errors']);
-switch($config['error_reporting']){
-  case 0: error_reporting(0); break;
-  case 1: error_reporting(E_ERROR | E_WARNING | E_PARSE); break;
-  case 2: error_reporting(E_ERROR | E_WARNING | E_PARSE | E_NOTICE); break;
-  case 3: error_reporting(E_ALL ^ (E_NOTICE | E_WARNING)); break;
-  case 4: error_reporting(E_ALL ^ E_NOTICE); break;
-  case 5: error_reporting(E_ALL); break;
-  default: error_reporting(E_ALL ^ E_NOTICE); break;
-}
+ini_set('display_errors',0);
+error_reporting(E_ALL ^ E_NOTICE);
 
 include "../../include/function.php";
-include "../../personnel/class.personnel.php";
 include "class.conges.php";
 
 // Les dates sont au format DD/MM/YYYY et converti en YYYY-MM-DD
@@ -62,31 +53,9 @@ else{
   $responsables=$c->responsables;
 
   // Choix des destinataires en fonction de la configuration
-  $destinataires=array();
-  switch($config['Absences-notifications']){
-    case 1 :
-      foreach($responsables as $elem){
-	$destinataires[]=$elem['mail'];
-      }
-      break;
-    case 2 :
-      $destinataires[]=$mailResponsable;
-      break;
-    case 3 :
-      $destinataires=explode(";",$config['Mail-Planning']);
-      break;
-    case 4 :
-      $destinataires=explode(";",$config['Mail-Planning']);
-      $destinataires[]=$mail;
-      $destinataires[]=$mailResponsable;
-      foreach($responsables as $elem){
-	$destinataires[]=$elem['mail'];
-      }
-      break;
-    case 5 :
-      $destinataires[]=$mail;
-      break;
-  }
+  $a=new absences();
+  $a->getRecipients($config['Absences-notifications'],$responsables,$mail,$mailResponsable);
+  $destinataires=$a->recipients;
 
   if(!empty($destinataires)){
     $sujet="Nouvelle demande de récupération";
