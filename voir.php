@@ -175,7 +175,7 @@ foreach($c->elements as $elem){
   }
   else{
     echo "<a href='index.php?page=plugins/conges/modif.php&amp;id={$elem['id']}'/>";
-    echo "<img src='img/modif.png' alt='Voir' border='0'/></a>";
+    echo "<img src='themes/default/images/modif.png' alt='Voir' border='0'/></a>";
   }
   echo "</td>";
   echo "<td>$debut</td><td>$fin</td>$nom<td style='$validationStyle'>$validation</td><td>$credits</td><td>$reliquat</td>";

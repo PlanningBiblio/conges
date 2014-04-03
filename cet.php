@@ -148,8 +148,8 @@ foreach($cet as $elem){
   }
 
   echo "<tr>";
-//   echo "<td><a href='index.php?page=plugins/conges/cet_modif.php&amp;id={$elem['id']}'><img src='img/modif.png' alt='Modifier' /></a></td>\n";
-  echo "<td><a href='javascript:getCET({$elem['id']});'><img src='img/modif.png' alt='Modifier' /></a></td>\n";
+//   echo "<td><a href='index.php?page=plugins/conges/cet_modif.php&amp;id={$elem['id']}'><img src='themes/default/images/modif.png' alt='Modifier' /></a></td>\n";
+  echo "<td><a href='javascript:getCET({$elem['id']});'><img src='themes/default/images/modif.png' alt='Modifier' /></a></td>\n";
   if($adminN1){
     echo "<td>".nom($elem['perso_id'])."</td>";
   }

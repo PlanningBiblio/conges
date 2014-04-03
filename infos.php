@@ -105,12 +105,12 @@ else{
   Date de début :
   </td><td>
   <input type='text' name='debut' value='".$debut."'/>
-  <img src='img/calendrier.gif' onclick='calendrier(\"debut\");' alt='début' />
+  <img src='themes/default/images/calendrier.gif' onclick='calendrier(\"debut\");' alt='début' />
   </td></tr><tr><td>
   Date de fin :
   </td><td>
   <input type='text' name='fin' value='".$fin."'/>
-  <img src='img/calendrier.gif' onclick='calendrier(\"fin\");' alt='fin' />
+  <img src='themes/default/images/calendrier.gif' onclick='calendrier(\"fin\");' alt='fin' />
   </td></tr><tr><td>
   Texte : 
   </td><td>
