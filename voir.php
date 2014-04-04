@@ -1,13 +1,13 @@
 <?php
 /*
-Planning Biblio, Plugin Congés Version 1.4.5
+Planning Biblio, Plugin Congés Version 1.5
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
 Copyright (C) 2013-2014 - Jérôme Combes
 
 Fichier : plugins/conges/voir.php
 Création : 24 juillet 2013
-Dernière modification : 24 février 2014
+Dernière modification : 4 avril 2014
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -117,7 +117,7 @@ EOD;
 if($admin){
   echo "<th>Nom</th>";
 }
-echo "<th>Validation</th><th>Crédits</th><th>Reliquat</th><th>Récupérations</th><th>Anticipation</th></tr></thead>\n";
+echo "<th>Validation</th><th>Crédits</th><th>Reliquat</th><th>Récupérations</th><th>Solde Débiteur</th></tr></thead>\n";
 echo "<tbody>\n";
 
 foreach($c->elements as $elem){

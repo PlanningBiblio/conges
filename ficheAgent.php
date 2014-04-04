@@ -1,13 +1,13 @@
 <?php
 /*
-Planning Biblio, Plugin Congés Version 1.4.9
+Planning Biblio, Plugin Congés Version 1.5
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
 Copyright (C) 2013-2014 - Jérôme Combes
 
 Fichier : plugins/conges/ficheAgent.php
 Création : 26 juillet 2013
-Dernière modification : 27 mars 2014
+Dernière modification : 4 avril 2014
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -71,7 +71,7 @@ echo "</td></tr>";
 
 // Anticipation
 echo "<tr><td>";
-echo "Congés pris par anticipation :";
+echo "Solde débiteur :";
 echo "</td><td>";
 if(in_array(21,$droits)){
   echo "<input type='text' name='congesAnticipation' value='{$conges['anticipation']}'  style='width:400px'>\n";
