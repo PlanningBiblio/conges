@@ -6,7 +6,7 @@ Copyright (C) 2013-2014 - Jérôme Combes
 
 Fichier : plugins/conges/js/script.conges.js
 Création : 2 août 2013
-Dernière modification : 7 mars 2014
+Dernière modification : 10 mars 2014
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -204,16 +204,6 @@ function verifRecup(o){
 
 // Dialog, récupérations
 
-function updateTips( t ) {
-  var tips=$( ".validateTips" );
-  tips
-    .text( t )
-    .addClass( "ui-state-highlight" );
-  setTimeout(function() {
-    tips.removeClass( "ui-state-highlight", 1500 );
-  }, 500 );
-}
-
 function checkLength( o, n, min, max ) {
   if ( o.val().length > max || o.val().length < min ) {
     o.addClass( "ui-state-error" );
@@ -229,39 +219,6 @@ function checkInt( o, n, min, max, tips ) {
     o.addClass("ui-state-error");
     updateTips(tips);
   return false;
-  } else {
-    return true;
-  }
-}
-
-function checkRegexp( o, regexp, n ) {
-  if ( !( regexp.test( o.val() ) ) ) {
-    o.addClass( "ui-state-error" );
-    updateTips( n );
-    return false;
-  } else {
-    return true;
-  }
-}
-
-function checkDate2( date1, date2, n ) {
-  var d1=new Date();
-  tmp=date1.val().split("/");
-  d1.setDate(parseInt(tmp[0]));
-  d1.setMonth(parseInt(tmp[1])-1);
-  d1.setFullYear(parseInt(tmp[2]));
-
-  var d2=new Date();
-  tmp=date2.val().split("/");
-  d2.setDate(parseInt(tmp[0]));
-  d2.setMonth(parseInt(tmp[1])-1);
-  d2.setFullYear(parseInt(tmp[2]));
-
-  diff=dateDiff(d1,d2);
-  if(diff.day<0){
-    date2.addClass( "ui-state-error" );
-    updateTips( n );
-    return false;
   } else {
     return true;
   }
@@ -293,7 +250,8 @@ function checkDateAge( o, limit, n, tip ) {
 function checkSamedi( o, n ) {
   var d=new Date();
   tmp=o.val().split("/");
-  d.setDate(parseInt(tmp[0]));
+  var date=tmp[0]==31?24:parseInt(tmp[0]);	// Ceci car getDay erroné à chaque fois que le samedi tombe un 31
+  d.setDate(date);
   d.setMonth(parseInt(tmp[1])-1);
   d.setFullYear(parseInt(tmp[2]));
   if(d.getDay()!=6){
