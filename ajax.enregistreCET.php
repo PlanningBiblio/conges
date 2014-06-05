@@ -1,13 +1,13 @@
 <?php
 /*
-Planning Biblio, Plugin Congés Version 1.5
+Planning Biblio, Plugin Congés Version 1.5.1
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
 Copyright (C) 2013-2014 - Jérôme Combes
 
 Fichier : plugins/conges/ajax.enregistreCet.php
 Création : 7 mars 2014
-Dernière modification : 31 mars 2014
+Dernière modification : 3 juin 2014
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -17,7 +17,6 @@ Enregistre la demande de récupération
 session_start();
 ini_set('display_errors',0);
 include "../../include/config.php";
-include "../../include/function.php";
 include "class.conges.php";
 
 $id=$_GET['id'];

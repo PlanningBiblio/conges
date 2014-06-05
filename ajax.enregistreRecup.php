@@ -1,13 +1,13 @@
 <?php
 /*
-Planning Biblio, Plugin Congés Version 1.5
+Planning Biblio, Plugin Congés Version 1.5.1
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
 Copyright (C) 2013-2014 - Jérôme Combes
 
 Fichier : plugins/conges/ajax.enregistreRecup.php
 Création : 11 octobre 2013
-Dernière modification : 31 mars 2014
+Dernière modification : 3 juin 2014
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -16,13 +16,12 @@ Enregistre la demande de récupération
 
 session_start();
 
-$version="1.5";
+$version="1.5.1";
 include "../../include/config.php";
 
 ini_set('display_errors',0);
 error_reporting(E_ALL ^ E_NOTICE);
 
-include "../../include/function.php";
 include "class.conges.php";
 
 // Les dates sont au format DD/MM/YYYY et converti en YYYY-MM-DD

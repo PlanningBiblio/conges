@@ -1,13 +1,13 @@
 <?php
 /*
-Planning Biblio, Plugin Congés Version 1.4.5
+Planning Biblio, Plugin Congés Version 1.5.1
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
 Copyright (C) 2013-2014 - Jérôme Combes
 
 Fichier : plugins/conges/ajax.verifRecup.php
 Création : 18 septembre 2013
-Dernière modification : 11 ocotbre 2013
+Dernière modification : 3 juin 2014
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -19,9 +19,8 @@ session_start();
 ini_set('display_errors',0);
 ini_set('error_reporting',E_ERROR | E_WARNING | E_PARSE | E_NOTICE);
 
-$version="1.4.5";
+$version="1.5.1";
 include "../../include/config.php";
-include "../../include/function.php";
 include "../../personnel/class.personnel.php";
 include "class.conges.php";
 

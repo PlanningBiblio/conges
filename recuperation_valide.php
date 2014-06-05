@@ -1,13 +1,13 @@
 <?php
 /*
-Planning Biblio, Plugin Congés Version 1.5
+Planning Biblio, Plugin Congés Version 1.5.1
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
 Copyright (C) 2013-2014 - Jérôme Combes
 
 Fichier : plugins/conges/recuperation_valide.php
 Création : 30 août 2013
-Dernière modification : 31 mars 2014
+Dernière modification : 3 juin 2014
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -16,7 +16,7 @@ Fichier permettant de modifier et valider les demandes de récupérations des sa
 
 session_start();
 
-$version="1.4.5";
+$version="1.5.1";
 include "../../include/config.php";
 
 ini_set('display_errors',$config['display_errors']);
@@ -30,7 +30,6 @@ switch($config['error_reporting']){
   default: error_reporting(E_ALL ^ E_NOTICE); break;
 }
 
-include "../../include/function.php";
 include "class.conges.php";
 
 // Initialisation des variables
