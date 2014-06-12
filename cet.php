@@ -1,13 +1,13 @@
 <?php
 /*
-Planning Biblio, Plugin Congés Version 1.4.5
+Planning Biblio, Plugin Congés Version 1.5.2
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
 Copyright (C) 2013-2014 - Jérôme Combes
 
 Fichier : plugins/conges/cet.php
 Création : 6 mars 2014
-Dernière modification : 12 mars 2014
+Dernière modification : 12 juin 2014
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -148,7 +148,6 @@ foreach($cet as $elem){
   }
 
   echo "<tr>";
-//   echo "<td><a href='index.php?page=plugins/conges/cet_modif.php&amp;id={$elem['id']}'><img src='themes/default/images/modif.png' alt='Modifier' /></a></td>\n";
   echo "<td><a href='javascript:getCET({$elem['id']});'><img src='themes/default/images/modif.png' alt='Modifier' /></a></td>\n";
   if($adminN1){
     echo "<td>".nom($elem['perso_id'])."</td>";
