@@ -1,13 +1,13 @@
 <?php
 /*
-Planning Biblio, Plugin Congés Version 1.4.5
+Planning Biblio, Plugin Congés Version 1.5.3
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
 Copyright (C) 2013-2014 - Jérôme Combes
 
-Fichier : plugins/conges/index.php
+Fichier : plugins/conges/infos.php
 Création : 24 juillet 2013
-Dernière modification : 24 février 2014
+Dernière modification : 12 juin 2014
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -50,10 +50,10 @@ elseif(isset($_GET['validation'])){
   echo "<br/><br/><a href='index.php?page=plugins/conges/index.php'>Retour</a>\n";
   $db=new db();
   if(isset($_GET['id']) and $_GET['id']!=null){
-    $db->update2("conges_infos",array("debut"=>$_GET['debut'],"fin"=>$_GET['fin'],"texte"=>$_GET['texte']),array("id"=>$_GET['id']));
+    $db->update2("conges_infos",array("debut"=>dateSQL($_GET['debut']),"fin"=>dateSQL($_GET['fin']),"texte"=>$_GET['texte']),array("id"=>$_GET['id']));
   }
   else{
-    $db->insert2("conges_infos",array("debut"=>$_GET['debut'],"fin"=>$_GET['fin'],"texte"=>$_GET['texte']));
+    $db->insert2("conges_infos",array("debut"=>dateSQL($_GET['debut']),"fin"=>dateSQL($_GET['fin']),"texte"=>$_GET['texte']));
   }
 }
 // Vérification
@@ -61,9 +61,7 @@ elseif(isset($_GET['debut'])){
   $texte=htmlentities($_GET['texte'],ENT_QUOTES|ENT_IGNORE,"UTF-8");
   $_GET['fin']=$_GET['fin']?$_GET['fin']:$_GET['debut'];
   echo "<h4>Confirmation</h4>";
-  echo "Du ".dateFr($_GET['debut']);
-  echo " au ".dateFr($_GET['fin']);
-  echo "<br/>";
+  echo "Du {$_GET['debut']} au {$_GET['fin']}<br/>";
   echo str_replace("\n","<br/>",$texte);
   echo "<br/><br/>";
   echo "<form method='get' action='index.php' name='form'>";
@@ -83,8 +81,8 @@ else{
   if(isset($_GET['id'])){
     $db=new db();
     $db->select("conges_infos","*","id='$id'");
-    $debut=$db->result[0]['debut'];
-    $fin=$db->result[0]['fin'];
+    $debut=dateFr($db->result[0]['debut']);
+    $fin=dateFr($db->result[0]['fin']);
     $texte=$db->result[0]['texte'];
     echo "<h4>Modifications des informations sur les congés</h4>\n";
   }
@@ -100,21 +98,19 @@ else{
   <form method='get' action='index.php' name='form' onsubmit='return verif_form(\"debut=date1;fin=date2;texte\");'>\n
   <input type='hidden' name='page' value='plugins/conges/infos.php'/>\n
   <input type='hidden' name='id' value='$id'/>\n
-  <table>
+  <table class='tableauFiches'>
   <tr><td>
   Date de début :
   </td><td>
-  <input type='text' name='debut' value='".$debut."'/>
-  <img src='themes/default/images/calendrier.gif' onclick='calendrier(\"debut\");' alt='début' />
+  <input type='text' name='debut' value='$debut' class='datepicker'/>
   </td></tr><tr><td>
   Date de fin :
   </td><td>
-  <input type='text' name='fin' value='".$fin."'/>
-  <img src='themes/default/images/calendrier.gif' onclick='calendrier(\"fin\");' alt='fin' />
+  <input type='text' name='fin' value='$fin' class='datepicker'/>
   </td></tr><tr><td>
   Texte : 
   </td><td>
-  <textarea name='texte' rows='3' cols='16'>".$texte."</textarea>
+  <textarea name='texte' rows='3' cols='16'>$texte</textarea>
   </td></tr><tr><td>&nbsp;
   </td></tr>
   <tr><td colspan='2'>\n";
