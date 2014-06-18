@@ -1,13 +1,13 @@
 <?php
 /*
-Planning Biblio, Plugin Congés Version 1.5
+Planning Biblio, Plugin Congés Version 1.5.4
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
 Copyright (C) 2013-2014 - Jérôme Combes
 
 Fichier : plugins/conges/class.conges.php
 Création : 24 juillet 2013
-Dernière modification : 31 mars 2014
+Dernière modification : 18 juin 2014
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -656,6 +656,46 @@ class conges{
 
   }
 
+  function updateDB($oldVersion,$newVersion){
+    $sql=array();	// Liste des requêtes SQL à executer
+    $prefix=$GLOBALS['config']['dbprefix'];
+    $version=$oldVersion;
+
+    echo "Mise à jour du plugin congés : $oldVersion -> $newVersion<br/>";
+
+    if($version < "1.5.4"){
+      $db=new db();
+      $db->select("menu","*","url='plugins/conges/cet.php'");
+      if(!$db->result){
+	$sql[]="INSERT INTO `{$dbprefix}menu` (`niveau1`,`niveau2`,`titre`,`url`) VALUES (15,28,'Compte &Eacute;pargne Temps','plugins/conges/cet.php');";
+      }
+      $db=new db();
+      $db->select("acces","*","page='plugins/conges/cet.php'");
+      if(!$db->result){
+	$sql[]="INSERT INTO `{$dbprefix}acces` (`nom`,`groupe_id`,`page`) VALUES ('Congés - Compte &Eacute;pargne Temps','100','plugins/conges/cet.php');";
+      }
+
+      // Création de la table conges_CET
+      $sql[]="CREATE TABLE IF NOT EXISTS `{$dbprefix}conges_CET` (`id` INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY, `perso_id` INT(11) NOT NULL, 
+	`jours` INT(11) NOT NULL DEFAULT '0', `commentaires` TEXT, `saisie` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, 
+	`saisie_par` INT NOT NULL, `modif` INT(11) NOT NULL DEFAULT '0', `modification` TIMESTAMP, `valideN1` INT(11) NOT NULL DEFAULT '0', 
+	`validationN1` TIMESTAMP, `valideN2` INT(11) NOT NULL DEFAULT '0',`validationN2` TIMESTAMP, `refus` TEXT, 
+	`solde_prec` FLOAT(10), `solde_actuel` FLOAT(10));";
+
+      $sql[]="UPDATE `{$prefix}plugins` SET `version`='1.5.4' WHERE `nom`='conges';";
+    }
+
+    foreach($sql as $elem){
+      $db=new db();
+      $db->query($elem);
+      if(!$db->error)
+	echo "$elem : <font style='color:green;'>OK</font><br/>\n";
+      else
+	echo "$elem : <font style='color:red;'>Erreur</font><br/>\n";
+    }
+    echo "<a href='index.php'>Continuer</a>\n";
+
+  }
 
 }
 ?>
