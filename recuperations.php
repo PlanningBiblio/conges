@@ -142,7 +142,7 @@ foreach($recup as $elem){
   }
 
   echo "<tr>";
-  echo "<td><a href='index.php?page=plugins/conges/recuperation_modif.php&amp;id={$elem['id']}'><img src='themes/default/images/modif.png' alt='Modifier' /></a></td>\n";
+  echo "<td><a href='index.php?page=plugins/conges/recuperation_modif.php&amp;id={$elem['id']}'><span class='pl-icon pl-icon-edit' title='Modifier'></span></a></td>\n";
   if($admin){
     echo "<td>".nom($elem['perso_id'])."</td>";
   }

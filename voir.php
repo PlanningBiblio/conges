@@ -1,13 +1,13 @@
 <?php
 /*
-Planning Biblio, Plugin Congés Version 1.5
+Planning Biblio, Plugin Congés Version 1.5.4
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
 Copyright (C) 2013-2014 - Jérôme Combes
 
 Fichier : plugins/conges/voir.php
 Création : 24 juillet 2013
-Dernière modification : 4 avril 2014
+Dernière modification : 24 juin 2014
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -175,7 +175,7 @@ foreach($c->elements as $elem){
   }
   else{
     echo "<a href='index.php?page=plugins/conges/modif.php&amp;id={$elem['id']}'/>";
-    echo "<img src='themes/default/images/modif.png' alt='Voir' border='0'/></a>";
+    echo "<span class='pl-icon pl-icon-edit' title='Voir'></span></a>";
   }
   echo "</td>";
   echo "<td>$debut</td><td>$fin</td>$nom<td style='$validationStyle'>$validation</td><td>$credits</td><td>$reliquat</td>";
