@@ -1,12 +1,12 @@
 /*
-Planning Biblio, Plugin Congés Version 1.4.5
+Planning Biblio, Plugin Congés Version 1.5.5
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
 Copyright (C) 2013-2014 - Jérôme Combes
 
 Fichier : plugins/conges/js/script.conges.js
 Création : 2 août 2013
-Dernière modification : 10 mars 2014
+Dernière modification : 4 septembre 2014
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -262,3 +262,30 @@ function checkSamedi( o, n ) {
     return true;
   }
 }
+
+
+$(document).ready(function() {
+  
+  // Initialisation de la dataTable Conges (voir les conges, voir.php)
+  if($("#tableConges").length){
+    var tableCongesCols=$("#tableConges thead th").length-1;
+    var tableCongesColumns= [{"bSortable":false},{"sType": "date-fr"},{"sType": "date-fr-fin"},{"bSortable":true},{"bSortable":true},
+      {"sType": "date-fr"},{"bSortable":true},{"bSortable":true},{"bSortable":true}];
+       
+    if(tableCongesCols==10){
+      tableCongesColumns.push({"bSortable":true});
+    }
+
+    $("#tableConges").dataTable({
+      "bJQueryUI": true,
+      "sPaginationType": "full_numbers",
+      "bStateSave": true,
+      "aaSorting" : [[1,"asc"],[2,"asc"]],
+      "aoColumns" : tableCongesColumns,
+      "aLengthMenu" : [[25,50,75,100,-1],[25,50,75,100,"Tous"]],
+      "iDisplayLength" : 25,
+      "oLanguage" : {"sUrl" : "js/dataTables/french.txt"}
+    });
+  }
+
+});

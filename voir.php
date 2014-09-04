@@ -1,13 +1,13 @@
 <?php
 /*
-Planning Biblio, Plugin Congés Version 1.5.4
+Planning Biblio, Plugin Congés Version 1.5.5
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
 Copyright (C) 2013-2014 - Jérôme Combes
 
 Fichier : plugins/conges/voir.php
 Création : 24 juillet 2013
-Dernière modification : 24 juin 2014
+Dernière modification : 4 septembre 2014
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -23,7 +23,7 @@ require_once "personnel/class.personnel.php";
 // Gestion des congés niveaux 1 et 2
 $admin=in_array(7,$droits)?true:false;
 $admin=in_array(2,$droits)?true:$admin;
-
+$admin=false;
 $annee=isset($_GET['annee'])?$_GET['annee']:(isset($_SESSION['oups']['conges_annee'])?$_SESSION['oups']['conges_annee']:(date("m")<9?date("Y")-1:date("Y")));
 $congesAffiches=isset($_GET['congesAffiches'])?$_GET['congesAffiches']:(isset($_SESSION['oups']['congesAffiches'])?$_SESSION['oups']['congesAffiches']:"aVenir");
 if($admin){
@@ -112,18 +112,21 @@ echo <<<EOD
 </form>
 <br/>
 <table id='tableConges'>
-<thead><tr><th>&nbsp;</th><th>Début</th><th>Fin</th>
+<thead><tr><th rowspan='2'>&nbsp;</th><th rowspan='2'>Début</th><th rowspan='2'>Fin</th>
 EOD;
 if($admin){
-  echo "<th>Nom</th>";
+  echo "<th rowspan='2'>Nom</th>";
 }
-echo "<th>Validation</th><th>Crédits</th><th>Reliquat</th><th>Récupérations</th><th>Solde Débiteur</th></tr></thead>\n";
+echo "<th colspan='2' class='ui-state-default'>Validation</th>\n";
+echo "<th rowspan='2'>Crédits</th><th rowspan='2'>Reliquat</th><th rowspan='2'>Récupérations</th><th rowspan='2'>Solde Débiteur</th></tr>\n";
+echo "<tr><th>&Eacute;tat</th><th>Date</th></tr></thead>\n";
 echo "<tbody>\n";
 
 foreach($c->elements as $elem){
   $debut=str_replace("00h00","",dateFr($elem['debut'],true));
   $fin=str_replace("23h59","",dateFr($elem['fin'],true));
   $validation="Demand&eacute;, ".dateFr($elem['saisie'],true);
+  $validationDate=dateFr($elem['saisie'],true);
   $validationStyle="font-weight:bold;";
   if($elem['saisie_par'] and $elem['perso_id']!=$elem['saisie_par']){
       $validation.=" par ".nom($elem['saisie_par']);
@@ -134,11 +137,13 @@ foreach($c->elements as $elem){
   $anticipation=null;
 
   if($elem['valide']<0){
-    $validation="Refus&eacute;, ".nom(-$elem['valide']).", ".dateFr($elem['validation'],true);
+    $validation="Refus&eacute;, ".nom(-$elem['valide']);
+    $validationDate=dateFr($elem['validation'],true);
     $validationStyle="color:red;";
   }
   elseif($elem['valide'] or $elem['information']){
-    $validation="Valid&eacute;, ".nom($elem['valide']).", ".dateFr($elem['validation'],true);
+    $validation="Valid&eacute;, ".nom($elem['valide']);
+    $validationDate=dateFr($elem['validation'],true);
     $validationStyle=null;
     if($elem['solde_prec']!=null and $elem['solde_actuel']!=null){
       $credits=heure4($elem['solde_prec'])." &rarr; ".heure4($elem['solde_actuel']);
@@ -154,16 +159,19 @@ foreach($c->elements as $elem){
     }
   }
   elseif($elem['valideN1']){
-    $validation="En attente de validation hi&eacute;rarchique,<br/>".dateFr($elem['validationN1'],true);
+    $validation="En attente de validation hi&eacute;rarchique";
+    $validationDate=dateFr($elem['validationN1'],true);
     $validationStyle="font-weight:bold;";
   }
   if($elem['information']){
     $nom=$elem['information']<999999999?nom($elem['information']).", ":null;	// >999999999 = cron
-    $validation="Mise à jour des cr&eacute;dits, $nom".dateFr($elem['infoDate'],true);
+    $validation="Mise à jour des cr&eacute;dits, $nom";
+    $validationDate=dateFr($elem['infoDate'],true);
     $validationStyle=null;
   }
   elseif($elem['supprime']){
-    $validation="Supprim&eacute;, ".nom($elem['supprime']).", ".dateFr($elem['supprDate'],true);
+    $validation="Supprim&eacute;, ".nom($elem['supprime']);
+    $validationDate=dateFr($elem['supprDate'],true);
     $validationStyle=null;
   }
 
@@ -178,34 +186,11 @@ foreach($c->elements as $elem){
     echo "<span class='pl-icon pl-icon-edit' title='Voir'></span></a>";
   }
   echo "</td>";
-  echo "<td>$debut</td><td>$fin</td>$nom<td style='$validationStyle'>$validation</td><td>$credits</td><td>$reliquat</td>";
+  echo "<td>$debut</td><td>$fin</td>$nom<td style='$validationStyle'>$validation</td><td>$validationDate</td>\n";
+  echo "<td>$credits</td><td>$reliquat</td>";
   echo "<td>$recuperations</td><td>$anticipation</td></tr>\n";
 }
 
 ?>
 </tbody>
 </table>
-
-<script type='text/JavaScript'>
-$(document).ready(function() {
-  $(".datepicker").datepicker();
-
-  $("#tableConges").dataTable({
-    "bJQueryUI": true,
-    "sPaginationType": "full_numbers",
-    "bStateSave": true,
-    "aaSorting" : [[1,"asc"],[2,"asc"]],
-    "aoColumns" : [{"bSortable":false},{"sType": "date-fr"},{"sType": "date-fr-fin"},{"bSortable":true},{"bSortable":true},{"bSortable":true},
-      {"bSortable":true},{"bSortable":true},
-    <?php
-    if($admin){
-      echo "{\"bSortable\":true},";
-    }
-    ?>
-      ],
-    "aLengthMenu" : [[25,50,75,100,-1],[25,50,75,100,"Tous"]],
-    "iDisplayLength" : 25,
-    "oLanguage" : {"sUrl" : "js/dataTables/french.txt"}
-  });
-});
-</script>
