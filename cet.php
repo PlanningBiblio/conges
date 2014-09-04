@@ -1,13 +1,13 @@
 <?php
 /*
-Planning Biblio, Plugin Congés Version 1.5.2
+Planning Biblio, Plugin Congés Version 1.5.5
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
 Copyright (C) 2013-2014 - Jérôme Combes
 
 Fichier : plugins/conges/cet.php
 Création : 6 mars 2014
-Dernière modification : 12 juin 2014
+Dernière modification : 3 juillet 2014
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -24,29 +24,26 @@ $displayValidation=$adminN1?null:"style='display:none;'";
 $displayValidationN2=$adminN2?null:"style='display:none;'";
 $agent=isset($_GET['agent'])?$_GET['agent']:null;
 $tri=isset($_GET['tri'])?$_GET['tri']:"`debut`,`fin`,`nom`,`prenom`";
-$annee=isset($_GET['annee'])?$_GET['annee']:(isset($_SESSION['oups']['recup_annee'])?$_SESSION['oups']['recup_annee']:(date("m")<9?date("Y")-1:date("Y")));
+$annee=isset($_GET['annee'])?$_GET['annee']:(isset($_SESSION['oups']['cet_annee'])?$_SESSION['oups']['cet_annee']:date("Y")+1);
 if($adminN1){
-  $perso_id=isset($_GET['perso_id'])?$_GET['perso_id']:(isset($_SESSION['oups']['recup_perso_id'])?$_SESSION['oups']['recup_perso_id']:$_SESSION['login_id']);
+  $perso_id=isset($_GET['perso_id'])?$_GET['perso_id']:(isset($_SESSION['oups']['cet_perso_id'])?$_SESSION['oups']['cet_perso_id']:$_SESSION['login_id']);
 }
 else{
   $perso_id=$_SESSION['login_id'];
 }
 if(isset($_GET['reset'])){
-  $annee=date("m")<9?date("Y")-1:date("Y");
+  $annee=date("Y")+1;
   $perso_id=$_SESSION['login_id'];
 }
-$_SESSION['oups']['recup_annee']=$annee;
-$_SESSION['oups']['recup_perso_id']=$perso_id;
+$_SESSION['oups']['cet_annee']=$annee;
+$_SESSION['oups']['cet_perso_id']=$perso_id;
 
-$debut=$annee."-09-01";
-$fin=($annee+1)."-08-31";
 $message=null;
 
 // Recherche des demandes de récupérations enregistrées
 $c=new conges();
 $c->admin=$adminN1;
-$c->debut=$debut;
-$c->fin=$fin;
+$c->annee=$annee;
 if($perso_id!=0){
   $c->perso_id=$perso_id;
 }
@@ -61,7 +58,7 @@ $agents=$p->elements;
 // Années universitaires
 $annees=array();
 for($d=date("Y")+2;$d>date("Y")-11;$d--){
-  $annees[]=array($d,$d."-".($d+1));
+  $annees[]=array($d,$d);
 }
 
 // Notifications
@@ -90,7 +87,7 @@ echo <<<EOD
 <input type='hidden' name='page' value='plugins/conges/cet.php' />
 <input type='hidden' id='adminN1' value='$adminN1' />
 <input type='hidden' id='adminN2' value='$adminN2' />
-Ann&eacute;e : <select name='annee'>
+Pour l'ann&eacute;e : <select name='annee'>
 EOD;
 foreach($annees as $elem){
   $selected=$annee==$elem[0]?"selected='selected'":null;
@@ -113,7 +110,7 @@ if($adminN1){
 }
 echo <<<EOD
 &nbsp;&nbsp;<input type='submit' value='OK' id='button-OK' class='ui-button'/>
-&nbsp;&nbsp;<input type='button' value='Reset' id='button-Effacer' class='ui-button' onclick='location.href="index.php?page=plugins/conges/recuperations.php&reset"' />
+&nbsp;&nbsp;<input type='button' value='Reset' id='button-Effacer' class='ui-button' onclick='location.href="index.php?page=plugins/conges/cet.php&reset"' />
 </p>
 </form>
 <table id='tableCET'>
@@ -123,37 +120,48 @@ EOD;
 if($adminN1){
   echo "<th>Agent</th>";
 }
-echo "<th>Jours</th><th>Demande</th><th>Commentaires</th><th>Validation</th><th>Crédits</th></tr>\n";
+echo "<th>Jours</th><th>Crédits</th><th>Demande</th><th>Validation</th><th>Date validation</th></tr>\n";
 echo "</thead>\n";
 echo "<tbody>\n";
 
 foreach($cet as $elem){
-  $validation="Demand&eacute;e, ".dateFr($elem['saisie'],true);
-  $validationStyle="font-weight:bold;";
+  $saisie_par=null;
   if($elem['saisie_par'] and $elem['saisie_par']!=$elem['perso_id']){
-    $validation.=" par ".nom($elem['saisie_par']);
+    $saisie_par=", ".nom($elem['saisie_par']);
   }
+  $validation="Demand&eacute;e";
+  $validationStyle="font-weight:bold;";
+  $validationDate=null;
   $credits=null;
+
   if($elem['valideN2']>0){
-    $validation=nom($elem['valideN2']).", ".dateFr($elem['validation'],true);
+    $validation="Accept&eacute;, ".nom($elem['valideN2']);
     $validationStyle=null;
+    $validationDate=dateFr($elem['validationN2'],true);
     if($elem['solde_prec']!=null and $elem['solde_actuel']!=null){
-      $credits=heure4($elem['solde_prec'])." &rarr; ".heure4($elem['solde_actuel']);
+      $credits="{$elem['solde_prec']} &rarr; {$elem['solde_actuel']}";
     }
 
   }
   elseif($elem['valideN2']<0){
-    $validation="Refus&eacute;, ".nom(-$elem['valideN2']).", ".dateFr($elem['validation'],true);
+    $validation="Refus&eacute;, ".nom(-$elem['valideN2']);
     $validationStyle="color:red;font-weight:bold;";
+    $validationDate=dateFr($elem['validationN2'],true);
+  }
+  elseif($elem['valideN1']!=0){
+    $validation="En attente de validation hierarchique, ".nom($elem['valideN1']);
+    $validationStyle="font-weight:bold;";
+    $validationDate=dateFr($elem['validationN1'],true);
   }
 
+
   echo "<tr>";
-  echo "<td><a href='javascript:getCET({$elem['id']});'><img src='themes/default/images/modif.png' alt='Modifier' /></a></td>\n";
+  echo "<td><a href='javascript:getCET({$elem['id']});'><span class='pl-icon pl-icon-edit' title='Modifier'></span></a></td>\n";
   if($adminN1){
     echo "<td>".nom($elem['perso_id'])."</td>";
   }
-  echo "<td>{$elem['jours']}</td><td>".dateFr($elem['saisie'])."</td>";
-  echo "<td>".str_replace("\n","<br/>",$elem['commentaires'])."</td><td style='$validationStyle'>$validation</td><td>$credits</td></tr>\n";
+  echo "<td>{$elem['jours']}</td><td>$credits</td><td>".dateFr($elem['saisie'],true)."$saisie_par</td>";
+  echo "<td style='$validationStyle'>$validation</td><td>$validationDate</td></tr>\n";
 }
 
 $button=$adminN1?"Alimenter un CET":"Alimenter mon CET";

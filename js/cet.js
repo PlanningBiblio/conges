@@ -1,12 +1,12 @@
 /*
-Planning Biblio, Plugin Congés Version 1.4.5
+Planning Biblio, Plugin Congés Version 1.5.4
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
 Copyright (C) 2013-2014 - Jérôme Combes
 
 Fichier : plugins/conges/js/cet.js
 Création : 6 mars 2014
-Dernière modification : 11 mars 2014
+Dernière modification : 19 juin 2014
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -97,6 +97,8 @@ $(document).ready(function(){
 
   $("#cet-dialog-button")
     .click(function() {
+      // On affiche le bouton "enregistrer s'il a été caché avant
+      $("button.ui-button:nth-child(1)").show()
       $("#cet-reliquat").html("&nbsp;");
       $("#cet-jours").html("");
       $( "#cet-dialog-form" ).dialog( "open" );
@@ -131,6 +133,9 @@ function cetReliquat(perso_id){
 
 // Affiche les informations d'un CET dans le formulaire afin de le modifier ou de le valider
 function getCET(id){
+  // On affiche le bouton "enregistrer s'il a été caché avant
+  $("button.ui-button:nth-child(1)").show();
+
   $.ajax({
     url: "plugins/conges/ajax.getCET.php",
     type: "get",
@@ -148,6 +153,27 @@ function getCET(id){
       }
       jours=data["jours"];
       setTimeout(function(){$("#cet-jours").val(jours);},500);
+      
+      var validation=0;
+      if(data["valideN2"]>0){
+	validation=2;
+      }
+      else if(data["valideN2"]<0){
+	validation=-2;
+      }
+      else if(data["valideN1"]>0){
+	validation=1;
+      }
+      else if(data["valideN1"]<0){
+	validation=-1;
+      }
+      
+      // S'il y a déjà une validation de niveau, on cache le bouton enregistrer
+      if(validation==2 || validation==-2){
+	$("button.ui-button:nth-child(1)").hide();
+      }
+      
+      $("#cet-validation").val(validation);
       $("#cet-commentaires").html(data["commentaires"]);
       $("#cet-dialog-form").dialog("open");
     }

@@ -7,7 +7,7 @@ Copyright (C) 2013-2014 - Jérôme Combes
 
 Fichier : plugins/conges/class.conges.php
 Création : 24 juillet 2013
-Dernière modification : 18 juin 2014
+Dernière modification : 19 juin 2014
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -29,6 +29,8 @@ require_once "{$path}absences/class.absences.php";
 class conges{
   public $agent=null;
   public $admin=false;
+  public $annee=null;
+  public $data=array();
   public $debut=null;
   public $elements=array();
   public $error=false;
@@ -347,7 +349,11 @@ class conges{
   }
 
   public function getCET(){
-    $where=$this->perso_id?"perso_id='{$this->perso_id}'":null;
+    $where=$this->perso_id?"perso_id='{$this->perso_id}'":"1";
+
+    if($this->annee){
+      $where.=" AND `annee`='{$this->annee}'";
+    }
 
     if($this->id){
       $where="id='{$this->id}'";
@@ -656,6 +662,22 @@ class conges{
 
   }
 
+  function updateCETCredits(){
+    $data=$this->data;
+    if(!empty($data) and $data['valideN2']>0){
+      $jours=$data['jours'];
+      $heures=intval($jours)*7;
+      $db=new db();
+      $db->query("UPDATE `{$GLOBALS['dbprefix']}personnel` SET `congesReliquat`=(`congesReliquat`-$heures) 
+	WHERE `id`='{$data['perso_id']}'");
+
+      // METTRE A JOUR LES CHAMPS solde_prec et solde_actuel
+      // Les afficher dans le tableau si demande validée
+
+
+    }
+  }
+
   function updateDB($oldVersion,$newVersion){
     $sql=array();	// Liste des requêtes SQL à executer
     $prefix=$GLOBALS['config']['dbprefix'];
@@ -682,6 +704,7 @@ class conges{
 	`validationN1` TIMESTAMP, `valideN2` INT(11) NOT NULL DEFAULT '0',`validationN2` TIMESTAMP, `refus` TEXT, 
 	`solde_prec` FLOAT(10), `solde_actuel` FLOAT(10));";
 
+      $sql[]="ALTER TABLE `{$dbprefix}conges_CET` ADD annee VARCHAR(10);";
       $sql[]="UPDATE `{$prefix}plugins` SET `version`='1.5.4' WHERE `nom`='conges';";
     }
 
