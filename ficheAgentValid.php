@@ -1,13 +1,13 @@
  <?php
 /*
-Planning Biblio, Plugin Congés Version 1.4.5
+Planning Biblio, Plugin Congés Version 1.5.5
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
 Copyright (C) 2013-2014 - Jérôme Combes
 
 Fichier : plugins/conges/ficheAgentValid.php
 Création : 15 janvier 2014
-Dernière modification : 15 janvier 2014
+Dernière modification : 11 septembre 2014
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -20,11 +20,11 @@ include_once "plugins/conges/class.conges.php";
 
 // Mise à jour des crédits dans la table personnel
 $credits=array();
-$credits["congesCredit"]=heure4($_POST['congesCredit']);
-$credits["congesReliquat"]=heure4($_POST['congesReliquat']);
-$credits["congesAnticipation"]=heure4($_POST['congesAnticipation']);
-$credits["recupSamedi"]=heure4($_POST['recupSamedi']);
-$credits["congesAnnuel"]=heure4($_POST['congesAnnuel']);
+$credits["congesCredit"]=$_POST['congesCredit'].".".$_POST['congesCreditMin'];
+$credits["congesReliquat"]=$_POST['congesReliquat'].".".$_POST['congesReliquatMin'];
+$credits["congesAnticipation"]=$_POST['congesAnticipation'].".".$_POST['congesAnticipationMin'];
+$credits["recupSamedi"]=$_POST['recupSamedi'].".".$_POST['recupSamediMin'];
+$credits["congesAnnuel"]=$_POST['congesAnnuel'].".".$_POST['congesAnnuelMin'];
 
 if($action=="modif"){
   $update=array_merge($update,$credits);

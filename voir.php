@@ -7,7 +7,7 @@ Copyright (C) 2013-2014 - Jérôme Combes
 
 Fichier : plugins/conges/voir.php
 Création : 24 juillet 2013
-Dernière modification : 4 septembre 2014
+Dernière modification : 11 septembre 2014
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -23,7 +23,7 @@ require_once "personnel/class.personnel.php";
 // Gestion des congés niveaux 1 et 2
 $admin=in_array(7,$droits)?true:false;
 $admin=in_array(2,$droits)?true:$admin;
-$admin=false;
+
 $annee=isset($_GET['annee'])?$_GET['annee']:(isset($_SESSION['oups']['conges_annee'])?$_SESSION['oups']['conges_annee']:(date("m")<9?date("Y")-1:date("Y")));
 $congesAffiches=isset($_GET['congesAffiches'])?$_GET['congesAffiches']:(isset($_SESSION['oups']['congesAffiches'])?$_SESSION['oups']['congesAffiches']:"aVenir");
 if($admin){

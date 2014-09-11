@@ -1,13 +1,13 @@
 <?php
 /*
-Planning Biblio, Plugin Congés Version 1.5
+Planning Biblio, Plugin Congés Version 1.5.5
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
 Copyright (C) 2013-2014 - Jérôme Combes
 
 Fichier : plugins/conges/ficheAgent.php
 Création : 26 juillet 2013
-Dernière modification : 4 avril 2014
+Dernière modification : 11 septembre 2014
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -22,75 +22,110 @@ $c=new conges();
 $c->perso_id=$id;
 $c->fetchCredit();
 $conges=$c->elements;
-$conges['credit']=heure4($conges['credit']);
-$conges['reliquat']=heure4($conges['reliquat']);
-$conges['anticipation']=heure4($conges['anticipation']);
-$conges['recupSamedi']=heure4($conges['recupSamedi']);
-
-$p=new personnel();
-$p->fetchById($id);
-$conges['annuel']=array_key_exists("congesAnnuel",$p->elements[0])?heure4($p->elements[0]['congesAnnuel']):null;
 
 // Affichage
 
+echo "<div id='conges' style='margin-left:80px;padding-top:30px;'>\n";
 // Nombre d'heures de congés par an
-echo "<tr><td>";
+echo "<table class='tableauFiches'><tr><td>";
 echo "Nombre d'heures de congés par an :";
-echo "</td><td>";
-if(in_array(21,$droits)){
-  echo "<input type='text' name='congesAnnuel' value='{$conges['annuel']}'  style='width:400px'>\n";
+echo "</td><td style='text-align:right;'>";
+if($admin){
+  echo "<input type='text' name='congesAnnuel' value='{$conges['annuelHeures']}'  style='width:70px;text-align:right;'>\n";
+  echo "<label style='text-align:center;padding:5px;'>h</label>";
+  echo "<select name='congesAnnuelMin' style='width:50px;'>\n";
+  for($min=0;$min<=75;$min=$min+25){
+    $minutes=sprintf("%02s",$min*0.6);
+    $selected=$min==$conges['annuelCents']?"selected='selected'":null;
+    echo "<option value='$min' $selected>$minutes</option>\n";
+  }
+  echo "</select>\n";
 }
 else{
-  echo $conges['credit'];
+  echo heure4($conges['annuel']);
 }
 echo "</td></tr>";
 
 // Crédit d'heures de congés
 echo "<tr><td>";
 echo "Crédit d'heures de congés actuel :";
-echo "</td><td>";
-if(in_array(21,$droits)){
-  echo "<input type='text' name='congesCredit' value='{$conges['credit']}'  style='width:400px'>\n";
+echo "</td><td style='text-align:right;'>";
+if($admin){
+  echo "<input type='text' name='congesCredit' value='{$conges['creditHeures']}'  style='width:70px;text-align:right;'>\n";
+  echo "<label style='text-align:center;padding:5px;'>h</label>";
+  echo "<select name='congesCreditMin' style='width:50px;'>\n";
+  for($min=0;$min<=75;$min=$min+25){
+    $minutes=sprintf("%02s",$min*0.6);
+    $selected=$min==$conges['creditCents']?"selected='selected'":null;
+    echo "<option value='$min' $selected>$minutes</option>\n";
+  }
+  echo "</select>\n";
 }
 else{
-  echo $conges['credit'];
+  echo heure4($conges['credit']);
 }
 echo "</td></tr>";
 
 // Reliquat
 echo "<tr><td>";
 echo "Reliquat de congés :";
-echo "</td><td>";
-if(in_array(21,$droits)){
-  echo "<input type='text' name='congesReliquat' value='{$conges['reliquat']}'  style='width:400px'>\n";
+echo "</td><td style='text-align:right;'>";
+if($admin){
+  echo "<input type='text' name='congesReliquat' value='{$conges['reliquatHeures']}'  style='width:70px;text-align:right;'>\n";
+  echo "<label style='text-align:center;padding:5px;'>h</label>";
+  echo "<select name='congesReliquatMin' style='width:50px;'>\n";
+  for($min=0;$min<=75;$min=$min+25){
+    $minutes=sprintf("%02s",$min*0.6);
+    $selected=$min==$conges['reliquatCents']?"selected='selected'":null;
+    echo "<option value='$min' $selected>$minutes</option>\n";
+  }
+  echo "</select>\n";
 }
 else{
-  echo $conges['reliquat'];
+  echo heure4($conges['reliquat']);
 }
 echo "</td></tr>";
 
 // Anticipation
 echo "<tr><td>";
 echo "Solde débiteur :";
-echo "</td><td>";
-if(in_array(21,$droits)){
-  echo "<input type='text' name='congesAnticipation' value='{$conges['anticipation']}'  style='width:400px'>\n";
+echo "</td><td style='text-align:right;'>";
+if($admin){
+  echo "<input type='text' name='congesAnticipation' value='{$conges['anticipationHeures']}'  style='width:70px;text-align:right;'>\n";
+  echo "<label style='text-align:center;padding:5px;'>h</label>";
+  echo "<select name='congesAnticipationMin' style='width:50px;'>\n";
+  for($min=0;$min<=75;$min=$min+25){
+    $minutes=sprintf("%02s",$min*0.6);
+    $selected=$min==$conges['anticipationCents']?"selected='selected'":null;
+    echo "<option value='$min' $selected>$minutes</option>\n";
+  }
+  echo "</select>\n";
 }
 else{
-  echo $conges['anticipation'];
+  echo heure4($conges['anticipation']);
 }
 echo "</td></tr>";
 
-// Anticipation
+// Récupération
 echo "<tr><td>";
 echo "Récupération du samedi :";
-echo "</td><td>";
-if(in_array(21,$droits)){
-  echo "<input type='text' name='recupSamedi' value='{$conges['recupSamedi']}'  style='width:400px'>\n";
+echo "</td><td style='text-align:right;'>";
+if($admin){
+  echo "<input type='text' name='recupSamedi' value='{$conges['recupHeures']}'  style='width:70px;text-align:right;'>\n";
+  echo "<label style='text-align:center;padding:5px;'>h</label>";
+  echo "<select name='recupSamediMin' style='width:50px;'>\n";
+  for($min=0;$min<=75;$min=$min+25){
+    $minutes=sprintf("%02s",$min*0.6);
+    $selected=$min==$conges['recupCents']?"selected='selected'":null;
+    echo "<option value='$min' $selected>$minutes</option>\n";
+  }
+  echo "</select>\n";
 }
 else{
-  echo $conges['recupSamedi'];
+  echo heure4($conges['recupSamedi']);
 }
 echo "</td></tr>";
-
 ?>
+</table>
+</div>
+<!--	FIN Droits d'accès		-->

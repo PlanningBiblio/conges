@@ -1,13 +1,13 @@
 <?php
 /*
-Planning Biblio, Plugin Congés Version 1.5.4
+Planning Biblio, Plugin Congés Version 1.5.5
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
 Copyright (C) 2013-2014 - Jérôme Combes
 
 Fichier : plugins/conges/class.conges.php
 Création : 24 juillet 2013
-Dernière modification : 19 juin 2014
+Dernière modification : 11 septembre 2014
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -337,13 +337,43 @@ class conges{
 
   public function fetchCredit(){
     if(!$this->perso_id){
-      $this->elements=array("credit"=>null,"reliquat"=>null,"anticipation"=>null,"recupSamedi"=>null);
+      $this->elements=array("annuel"=>null,"anticipation"=>null,"credit"=>null,"recupSamedi"=>null,"reliquat"=>null,
+	"annuelHeures"=>null, "anticipationHeures"=>null, "creditHeures"=>null, "recupHeures"=>null, "reliquatHeures"=>null,
+	"annuelMinutes"=>null, "anticipationMinutes"=>null, "creditMinutes"=>null, "recupMinutes"=>null, "reliquatMinutes"=>null,
+	"annuelCents"=>null, "anticipationCents"=>null, "creditCents"=>null, "recupCents"=>null, "reliquatCents"=>null );
     }
     else{
       $db=new db();
-      $db->select("personnel","congesCredit,congesReliquat,congesAnticipation,recupSamedi","`id`='{$this->perso_id}'");
+      $db->select("personnel","congesCredit,congesReliquat,congesAnticipation,recupSamedi,congesAnnuel","`id`='{$this->perso_id}'");
       if($db->result){
-	$this->elements=array("credit"=>$db->result[0]['congesCredit'],"reliquat"=>$db->result[0]['congesReliquat'],"anticipation"=>$db->result[0]['congesAnticipation'],"recupSamedi"=>$db->result[0]['recupSamedi']);
+	$annuel=$db->result[0]['congesAnnuel'];
+	$anticipation=$db->result[0]['congesAnticipation'];
+	$credit=$db->result[0]['congesCredit'];
+	$recup=$db->result[0]['recupSamedi'];
+	$reliquat=$db->result[0]['congesReliquat'];
+
+	$annuelHeures=floor($annuel);
+	$anticipationHeures=floor($anticipation);
+	$creditHeures=floor($credit);
+	$recupHeures=floor($recup);
+	$reliquatHeures=floor($reliquat);
+
+	$annuelCents=($annuel-$annuelHeures)*100;
+	$anticipationCents=($anticipation-$anticipationHeures)*100;
+	$creditCents=($credit-$creditHeures)*100;
+	$recupCents=($recup-$recupHeures)*100;
+	$reliquatCents=($reliquat-$reliquatHeures)*100;
+
+	$annuelMinutes=$annuelCents*0.6;
+	$anticipationMinutes=$anticipationCents*0.6;
+	$creditMinutes=$creditCents*0.6;
+	$recupMinutes=$recupCents*0.6;
+	$reliquatMinutes=$reliquatCents*0.6;
+
+	$this->elements=array("annuel"=>$annuel, "anticipation"=>$anticipation, "credit"=>$credit, "recupSamedi"=>$recup, "reliquat"=>$reliquat,
+	  "annuelHeures"=>$annuelHeures, "anticipationHeures"=>$anticipationHeures, "creditHeures"=>$creditHeures, "recupHeures"=>$recupHeures, "reliquatHeures"=>$reliquatHeures,
+	  "annuelMinutes"=>$annuelMinutes, "anticipationMinutes"=>$anticipationMinutes, "creditMinutes"=>$creditMinutes, "recupMinutes"=>$recupMinutes, "reliquatMinutes"=>$reliquatMinutes,
+	  "annuelCents"=>$annuelCents, "anticipationCents"=>$anticipationCents, "creditCents"=>$creditCents, "recupCents"=>$recupCents, "reliquatCents"=>$reliquatCents );
       }
     }
   }
