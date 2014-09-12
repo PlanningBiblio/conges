@@ -1,3 +1,8 @@
+***	Version 1.5.5	(Jérôme Combes, 12 septembre 2014)			***
+- Améliorations :
+Amélioration de l'affichage des crédits de congés dans les fiches agents
+Amélioration de l'affichage de la liste des congés, séparation de la colonnes validation en état et date
+
 ***	En cours								***
 - Améliorations :
 Enregistrement des CET
