@@ -1,13 +1,13 @@
 <?php
 /*
-Planning Biblio, Plugin Congés Version 1.4.5
+Planning Biblio, Plugin Congés Version 1.5.5
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
 Copyright (C) 2013-2014 - Jérôme Combes
 
 Fichier : plugins/conges/install.php
 Création : 24 juillet 2013
-Dernière modification : 11 mars 2014
+Dernière modification : 12 septembre 2014
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -23,7 +23,7 @@ if($_SESSION['login_id']!=1){
   exit;
 }
 
-$version="1.4.5";
+$version="1.5.5";
 include_once "../../include/config.php";
 
 $sql=array();
@@ -53,8 +53,8 @@ $sql[]="INSERT INTO `{$dbprefix}acces` (`nom`,`groupe_id`,`page`) VALUES ('Cong�
 $sql[]="CREATE TABLE `{$dbprefix}conges` (`id` INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY, `perso_id` INT(11) NOT NULL, 
   `debut` DATETIME NOT NULL, `fin` DATETIME NOT NULL, `commentaires` TEXT, `refus` TEXT, `heures` VARCHAR(20), `debit` VARCHAR(20), 
   `saisie` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, `saisie_par` INT NOT NULL, `modif` INT(11) NOT NULL DEFAULT '0',`modification` TIMESTAMP, 
-  `valide` INT(11) NOT NULL DEFAULT '0',`validation` TIMESTAMP,`solde_prec` FLOAT(10), `solde_actuel` FLOAT(10)),
-  `recup_prec` FLOAT(10), `recup_actuel` FLOAT(10)),`reliquat_prec` FLOAT(10), `reliquat_actuel` FLOAT(10), 
+  `valide` INT(11) NOT NULL DEFAULT '0',`validation` TIMESTAMP,`solde_prec` FLOAT(10), `solde_actuel` FLOAT(10),
+  `recup_prec` FLOAT(10), `recup_actuel` FLOAT(10),`reliquat_prec` FLOAT(10), `reliquat_actuel` FLOAT(10), 
   `anticipation_prec` FLOAT(10), `anticipation_actuel` FLOAT(10), `supprime` INT(11) NOT NULL DEFAULT 0, 
   `supprDate` TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00', `information` INT(11) NOT NULL DEFAULT 0, 
   `infoDate` TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00');";
@@ -87,7 +87,7 @@ $sql[]="INSERT INTO `{$dbprefix}cron` (m,h,dom,mon,dow,command,comments) VALUES 
 $sql[]="INSERT INTO `{$dbprefix}cron` (m,h,dom,mon,dow,command,comments) VALUES (0,0,1,9,'*','plugins/conges/cron.sept1.php','Cron Congés 1er Septembre');";
 
 // Inscription du plugin Congés dans la base
-$sql[]="INSERT INTO `{$dbprefix}plugins` (`nom`) VALUES ('conges');";
+$sql[]="INSERT INTO `{$dbprefix}plugins` (`nom`,`version`) VALUES ('conges','1.5.5');";
 
 // Création de la table conges_CET
 $sql[]="CREATE TABLE `{$dbprefix}conges_CET` (`id` INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY, `perso_id` INT(11) NOT NULL, 
