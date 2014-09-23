@@ -1,13 +1,13 @@
 <?php
 /*
-Planning Biblio, Plugin Congés Version 1.5.5
+Planning Biblio, Plugin Congés Version 1.5.6
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
 Copyright (C) 2013-2014 - Jérôme Combes
 
 Fichier : plugins/conges/class.conges.php
 Création : 24 juillet 2013
-Dernière modification : 11 septembre 2014
+Dernière modification : 23 septembre 2014
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -473,9 +473,11 @@ class conges{
 	}
 	$date=date("Y-m-d",strtotime("+1 day",strtotime($date)));
       }
-      // Si les jours de conges ne concernent aucun site, on ajoute les responsables des 2 sites par sécurité
+      // Si les jours de conges ne concernent aucun site, on ajoute les responsables de tous les sites par sécurité
       if(empty($droitsConges)){
-	$droitsConges=array(301,302);
+	for($i=1;$i<=$GLOBALS['config']['Multisites-nombre'];$i++){
+	  $droitsConges[]=300+$i;
+	}
       }
     }
     // Si un seul site, le droit de gestion des conges est 2
