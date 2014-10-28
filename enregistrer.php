@@ -234,6 +234,14 @@ EOD;
   }
   echo "&nbsp;&nbsp;\n";
   echo "<input type='button' value='Valider' class='ui-button' onclick='verifConges();' style='margin-left:20px;'/>\n";
+  
+$debuttransf=str_replace('-','',substr($data['debut'],0,10))."T".str_replace(':','',substr($data['debut'],-8));
+   $debuttransf=str_replace('T000000','',$debuttransf);
+   $fintransf=str_replace('-','',substr($data['fin'],0,10))."T".str_replace(':','',substr($data['fin'],-8));
+   $fintransf=str_replace('T235959','',$fintransf);
+   echo "<a style='margin-left: 40px;' target='_blank' id='Inscrire_dans_mon_agenda_Google_$id' title='Ajouter dans mon agenda Google' href='https://www.google.com/calendar/event?action=TEMPLATE&hl=fr&text=Congés  $prenom $nom&dates=$debuttransf/$fintransf&location=Nice&ctz=Europe%2FParis&amp;details='>
+<img width='20' height='20' style='border: none; text-align: right' src='img/gcal.jpg' alt='Ajouter dans mon agenda Google'/>
+</a>\n"; 
 
   echo "</td></tr></table>\n";
   echo "</form>\n";
