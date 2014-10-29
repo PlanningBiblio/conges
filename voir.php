@@ -7,7 +7,7 @@ Copyright (C) 2013-2014 - Jérôme Combes
 
 Fichier : plugins/conges/voir.php
 Création : 24 juillet 2013
-Dernière modification : 11 septembre 2014
+Dernière modification : 29 octobre 2014
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -26,6 +26,11 @@ $admin=in_array(2,$droits)?true:$admin;
 
 $annee=isset($_GET['annee'])?$_GET['annee']:(isset($_SESSION['oups']['conges_annee'])?$_SESSION['oups']['conges_annee']:(date("m")<9?date("Y")-1:date("Y")));
 $congesAffiches=isset($_GET['congesAffiches'])?$_GET['congesAffiches']:(isset($_SESSION['oups']['congesAffiches'])?$_SESSION['oups']['congesAffiches']:"aVenir");
+
+$agents_supprimes=isset($_SESSION['oups']['conges_agents_supprimes'])?$_SESSION['oups']['conges_agents_supprimes']:false;
+$agents_supprimes=(isset($_GET['annee']) and isset($_GET['supprimes']))?true:$agents_supprimes;
+$agents_supprimes=(isset($_GET['annee']) and !isset($_GET['supprimes']))?false:$agents_supprimes;
+
 if($admin){
   $perso_id=isset($_GET['perso_id'])?$_GET['perso_id']:(isset($_SESSION['oups']['conges_perso_id'])?$_SESSION['oups']['conges_perso_id']:$_SESSION['login_id']);
 }
@@ -35,10 +40,12 @@ else{
 if(isset($_GET['reset'])){
   $annee=date("m")<9?date("Y")-1:date("Y");
   $perso_id=$_SESSION['login_id'];
+  $agents_supprimes=false;
 }
 $_SESSION['oups']['conges_annee']=$annee;
 $_SESSION['oups']['congesAffiches']=$congesAffiches;
 $_SESSION['oups']['conges_perso_id']=$perso_id;
+$_SESSION['oups']['conges_agents_supprimes']=$agents_supprimes;
 
 
 $debut=$annee."-09-01";
@@ -54,11 +61,17 @@ $c->fin=$fin;
 if($perso_id!=0){
   $c->perso_id=$perso_id;
 }
+if($agents_supprimes){
+  $c->agents_supprimes=array(0,1);
+}
 $c->fetch();
 
 // Recherche des agents
 if($admin){
   $p=new personnel();
+  if($agents_supprimes){
+    $p->supprime=array(0,1);
+  }
   $p->fetch();
   $agents=$p->elements;
 }
@@ -80,24 +93,25 @@ echo <<<EOD
 <h3 class='noprint'>Liste des congés</h3>
 <form name='form' method='get' action='index.php' class='noprint'>
 <input type='hidden' name='page' value='plugins/conges/voir.php' />
-Ann&eacute;e : <select name='annee'>
+<table class='tableauStandard'><tbody><tr>
+<td>Ann&eacute;e : <select name='annee'>
 EOD;
 foreach($annees as $elem){
   $selected=$annee==$elem[0]?"selected='selected'":null;
   echo "<option value='{$elem[0]}' $selected >{$elem[1]}</option>";
 }
-echo "</select>\n";
+echo "</select></td>\n";
 
 $selected=$congesAffiches=="aVenir"?"selected='selected'":null;
-echo "&nbsp;&nbsp;Congés : ";
+echo "<td>Congés : ";
 echo "<select name='congesAffiches'>";
 echo "<option value='tous'>Tous</option>";
 echo "<option value='aVenir' $selected>A venir</option>";
-echo "</select>\n";
+echo "</select></td>\n";
 
 if($admin){
-  echo "&nbsp;&nbsp;Agent : ";
-  echo "<select name='perso_id'>";
+  echo "<td style='text-align:left;'>Agents : ";
+  echo "<select name='perso_id' id='perso_id'>";
   $selected=$perso_id==0?"selected='selected'":null;
   echo "<option value='0' $selected >Tous</option>";
   foreach($agents as $agent){
@@ -105,10 +119,19 @@ if($admin){
     echo "<option value='{$agent['id']}' $selected >{$agent['nom']} {$agent['prenom']}</option>";
   }
   echo "</select>\n";
+
+  $checked=$agents_supprimes?"checked='checked'":null;
+
+  echo "<br/>\n";
+  echo "Agents supprim&eacute;s : ";
+  echo "<input type='checkbox' $checked name='supprimes' onclick='updateAgentsList(this);'/>\n";
+  echo "</td>\n";
+  
 }
 echo <<<EOD
-&nbsp;&nbsp;<input type='submit' value='OK' id='button-OK' class='ui-button'/>
-&nbsp;&nbsp;<input type='button' value='Effacer' onclick='location.href="index.php?page=plugins/conges/voir.php&reset"' class='ui-button'/>
+<td><input type='submit' value='OK' id='button-OK' class='ui-button'/></td>
+<td><input type='button' value='Effacer' onclick='location.href="index.php?page=plugins/conges/voir.php&reset"' class='ui-button'/></td>
+</tr></tbody></table>
 </form>
 <br/>
 <table id='tableConges'>

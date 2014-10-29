@@ -1,13 +1,13 @@
 <?php
 /*
-Planning Biblio, Plugin Congés Version 1.5.6
+Planning Biblio, Plugin Congés Version 1.5.5
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
 Copyright (C) 2013-2014 - Jérôme Combes
 
 Fichier : plugins/conges/class.conges.php
 Création : 24 juillet 2013
-Dernière modification : 23 septembre 2014
+Dernière modification : 23 octobre 2014
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -28,6 +28,7 @@ require_once "{$path}absences/class.absences.php";
 
 class conges{
   public $agent=null;
+  public $agents_supprimes=array(0);
   public $admin=false;
   public $annee=null;
   public $data=array();
@@ -287,6 +288,8 @@ class conges{
     // Recherche des agents actifs seulement
     $perso_ids=array(0);
     $p=new personnel();
+    // Si précisé, recherche également les agents supprimés
+    $p->supprime=$this->agents_supprimes; 	// array(0,1,2), default : array(0);
     $p->fetch("nom");
     foreach($p->elements as $elem){
       $perso_ids[]=$elem['id'];

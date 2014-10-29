@@ -6,7 +6,7 @@ Copyright (C) 2013-2014 - Jérôme Combes
 
 Fichier : plugins/conges/js/script.conges.js
 Création : 2 août 2013
-Dernière modification : 4 septembre 2014
+Dernière modification : 29 octobre 2014
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -263,6 +263,26 @@ function checkSamedi( o, n ) {
   }
 }
 
+function updateAgentsList(me){
+  var deleted=me.checked?"yes":"no";
+
+  $.ajax({
+    url: "plugins/conges/ajax.updateAgentsList.php",
+    type: "get",
+    data: "deleted="+deleted,
+    success: function(result){
+      result=JSON.parse(result);
+      $("#perso_id").html("<option value='0'>Tous</option>");
+      for(key in result){
+	$("#perso_id").append("<option value='"+result[key]["id"]+"'>"+result[key]["nom"]+" "+result[key]["prenom"]+"</option>");
+      }
+    },
+    error: function(){
+      information("Une erreur est survenue lors de la mise à jour de la liste des agents.","error");
+    }
+  });
+
+}
 
 $(document).ready(function() {
   
