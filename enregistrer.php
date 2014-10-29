@@ -7,8 +7,8 @@ Copyright (C) 2013-2014 - Jérôme Combes
 
 Fichier : plugins/conges/enregistrer.php
 Création : 24 juillet 2013
-Dernière modification : 4 avril 2014
-Auteur : Jérôme Combes, jerome@planningbilbio.fr
+Dernière modification : 29 octobre 2014
+Auteurs : Jérôme Combes jerome@planningbilbio.fr, Etienne Cavalié etienne.cavalie@unice.fr
 
 Description :
 Fichier permettant de poser un congé
@@ -235,14 +235,12 @@ EOD;
   echo "&nbsp;&nbsp;\n";
   echo "<input type='button' value='Valider' class='ui-button' onclick='verifConges();' style='margin-left:20px;'/>\n";
   
-$debuttransf=str_replace('-','',substr($data['debut'],0,10))."T".str_replace(':','',substr($data['debut'],-8));
-   $debuttransf=str_replace('T000000','',$debuttransf);
-   $fintransf=str_replace('-','',substr($data['fin'],0,10))."T".str_replace(':','',substr($data['fin'],-8));
-   $fintransf=str_replace('T235959','',$fintransf);
-   echo "<a style='margin-left: 40px;' target='_blank' id='Inscrire_dans_mon_agenda_Google_$id' title='Ajouter dans mon agenda Google' href='https://www.google.com/calendar/event?action=TEMPLATE&hl=fr&text=Congés  $prenom $nom&dates=$debuttransf/$fintransf&location=Nice&ctz=Europe%2FParis&amp;details='>
-<img width='20' height='20' style='border: none; text-align: right' src='img/gcal.jpg' alt='Ajouter dans mon agenda Google'/>
-</a>\n"; 
-
+  $debuttransf=str_replace('-','',substr($data['debut'],0,10))."T".str_replace(':','',substr($data['debut'],-8));
+  $debuttransf=str_replace('T000000','',$debuttransf);
+  $fintransf=str_replace('-','',substr($data['fin'],0,10))."T".str_replace(':','',substr($data['fin'],-8));
+  $fintransf=str_replace('T235959','',$fintransf);
+  echo "<a style='margin-left: 30px;' target='_blank' id='Inscrire_dans_mon_agenda_Google_$id' title='Ajouter dans mon agenda Google' href='https://www.google.com/calendar/event?action=TEMPLATE&hl=fr&text=Congés  $prenom $nom&dates=$debuttransf/$fintransf&location=&ctz=Europe%2FParis&amp;details='>
+  <span class='pl-icon pl-icon-google-calendar'></span></a>\n";
   echo "</td></tr></table>\n";
   echo "</form>\n";
 }
