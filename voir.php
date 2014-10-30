@@ -7,7 +7,7 @@ Copyright (C) 2013-2014 - Jérôme Combes
 
 Fichier : plugins/conges/voir.php
 Création : 24 juillet 2013
-Dernière modification : 29 octobre 2014
+Dernière modification : 30 octobre 2014
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -110,7 +110,8 @@ echo "<option value='aVenir' $selected>A venir</option>";
 echo "</select></td>\n";
 
 if($admin){
-  echo "<td style='text-align:left;'>Agents : ";
+  echo "<td style='text-align:left;'>\n";
+  echo "<span style='padding:5px;'>Agents : ";
   echo "<select name='perso_id' id='perso_id'>";
   $selected=$perso_id==0?"selected='selected'":null;
   echo "<option value='0' $selected >Tous</option>";
@@ -119,12 +120,14 @@ if($admin){
     echo "<option value='{$agent['id']}' $selected >{$agent['nom']} {$agent['prenom']}</option>";
   }
   echo "</select>\n";
+  echo "</span>\n";
 
   $checked=$agents_supprimes?"checked='checked'":null;
 
   echo "<br/>\n";
-  echo "Agents supprim&eacute;s : ";
-  echo "<input type='checkbox' $checked name='supprimes' onclick='updateAgentsList(this);'/>\n";
+  echo "<span style='padding:5px;'>Agents supprim&eacute;s : ";
+  echo "<input type='checkbox' $checked name='supprimes' onclick='updateAgentsList(this,\"perso_id\");'/>\n";
+  echo "</span>\n";
   echo "</td>\n";
   
 }
