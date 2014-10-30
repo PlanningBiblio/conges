@@ -7,7 +7,7 @@ Copyright (C) 2013-2014 - Jérôme Combes
 
 Fichier : plugins/conges/class.conges.php
 Création : 24 juillet 2013
-Dernière modification : 23 octobre 2014
+Dernière modification : 30 octobre 2014
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -719,6 +719,10 @@ class conges{
     $version=$oldVersion;
 
     echo "Mise à jour du plugin congés : $oldVersion -> $newVersion<br/>";
+
+    if($version < "1.5.5"){
+      $sql[]="UPDATE `{$prefix}plugins` SET `version`='1.5.5' WHERE `nom`='conges';";
+    }
 
     if($version < "1.5.4"){
       $db=new db();
