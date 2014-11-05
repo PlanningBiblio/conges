@@ -1,13 +1,13 @@
 <?php
 /*
-Planning Biblio, Plugin Congés Version 1.5.5
+Planning Biblio, Plugin Congés Version 1.5.6
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
 Copyright (C) 2013-2014 - Jérôme Combes
 
 Fichier : plugins/conges/class.conges.php
 Création : 24 juillet 2013
-Dernière modification : 30 octobre 2014
+Dernière modification : 5 novembre 2014
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -715,13 +715,17 @@ class conges{
 
   function updateDB($oldVersion,$newVersion){
     $sql=array();	// Liste des requêtes SQL à executer
-    $prefix=$GLOBALS['config']['dbprefix'];
+    $dbprefix=$GLOBALS['config']['dbprefix'];
     $version=$oldVersion;
 
     echo "Mise à jour du plugin congés : $oldVersion -> $newVersion<br/>";
+    if($version < "1.5.6"){
+      $sql[]="DELETE FROM `{$dbprefix}acces` WHERE `page`='plugins/conges/ajax.calculCredit.php';";
+      $sql[]="UPDATE `{$dbprefix}plugins` SET `version`='1.5.6' WHERE `nom`='conges';";
+    }
 
     if($version < "1.5.5"){
-      $sql[]="UPDATE `{$prefix}plugins` SET `version`='1.5.5' WHERE `nom`='conges';";
+      $sql[]="UPDATE `{$dbprefix}plugins` SET `version`='1.5.5' WHERE `nom`='conges';";
     }
 
     if($version < "1.5.4"){
@@ -744,7 +748,7 @@ class conges{
 	`solde_prec` FLOAT(10), `solde_actuel` FLOAT(10));";
 
       $sql[]="ALTER TABLE `{$dbprefix}conges_CET` ADD annee VARCHAR(10);";
-      $sql[]="UPDATE `{$prefix}plugins` SET `version`='1.5.4' WHERE `nom`='conges';";
+      $sql[]="UPDATE `{$dbprefix}plugins` SET `version`='1.5.4' WHERE `nom`='conges';";
     }
 
     foreach($sql as $elem){

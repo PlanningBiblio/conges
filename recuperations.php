@@ -1,13 +1,13 @@
 <?php
 /*
-Planning Biblio, Plugin Congés Version 1.4.5
+Planning Biblio, Plugin Congés Version 1.5.6
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
 Copyright (C) 2013-2014 - Jérôme Combes
 
 Fichier : plugins/conges/recuperations.php
 Création : 27 août 2013
-Dernière modification : 24 février 2014
+Dernière modification : 5 novembre 2014
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -321,11 +321,20 @@ $(function() {
 
 	if ( bValid ) {
 	  // Enregistre la demande
-	  f=file("plugins/conges/ajax.enregistreRecup.php?date="+date.val()+"&date2="+date2.val()+"&heures="+heures.val()+"&commentaires="+commentaires.val()+"&perso_id="+perso_id);
-	  // Affiche la liste des demandes après enregistrement
-	  document.location.href="index.php?page=plugins/conges/recuperations.php&message=Demande-OK";
-	  // Ferme le dialog
-	  $( this ).dialog( "close" );
+	  $.ajax({
+	    url: "plugins/conges/ajax.enregistreRecup.php",
+	    data: "date="+date.val()+"&date2="+date2.val()+"&heures="+heures.val()+"&commentaires="+commentaires.val()+"&perso_id="+perso_id,
+	    type: "get",
+	    success: function(){
+	      // Affiche la liste des demandes après enregistrement
+	      document.location.href="index.php?page=plugins/conges/recuperations.php&message=Demande-OK";
+	      // Ferme le dialog
+	      $( this ).dialog( "close" );
+	    },
+	    error: function (){
+	      updateTips("Erreur lors de l'enregistrement de la récupération");
+	    },
+	  });
 	}
       },
 

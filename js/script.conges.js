@@ -1,12 +1,12 @@
 /*
-Planning Biblio, Plugin Congés Version 1.5.5
+Planning Biblio, Plugin Congés Version 1.5.6
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
 Copyright (C) 2013-2014 - Jérôme Combes
 
 Fichier : plugins/conges/js/script.conges.js
 Création : 2 août 2013
-Dernière modification : 30 octobre 2014
+Dernière modification : 5 novembre 2014
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -40,20 +40,31 @@ function calculCredit(){
   hre_debut=hre_debut?hre_debut:"00:00:00";
   hre_fin=hre_fin?hre_fin:"23:59:59";
   
-  tmp=file("index.php?page=plugins/conges/ajax.calculCredit.php&debut="+debut+"&fin="+fin+"&hre_debut="+hre_debut+"&hre_fin="+hre_fin+"&perso_id="+perso_id);
-  tmp=tmp.split("###");
-  msg=tmp[1];
-  heures=tmp[3];
-  tmp=heures.split(".");
-  heures=tmp[0];
-  minutes=tmp[1];
-  document.form.elements["heures"].value=heures;
-  document.form.elements["minutes"].value=minutes;
-  if(msg=="error"){
-    document.form.elements["heures"].value=0;
-    document.form.elements["minutes"].value=0;
-    alert("Impossible de calculer le nombre d'heures correspondant au congé demandé.");
-  }
+  $.ajax({
+    url: "plugins/conges/ajax.calculCredit.php",
+    data: "debut="+debut+"&fin="+fin+"&hre_debut="+hre_debut+"&hre_fin="+hre_fin+"&perso_id="+perso_id,
+    type: "get",
+    async: false,
+    success: function(result){
+      result=JSON.parse(result);
+      var msg=result[0];
+      if(msg=="error"){
+	document.form.elements["heures"].value=0;
+	document.form.elements["minutes"].value=0;
+	information("Manque d'information pour calculer le nombre d'heures correspondant au congé demandé.","error");
+      }else{
+	var tmp=result[1].split(".");
+	var heures=tmp[0];
+	var minutes=tmp[1];
+	document.form.elements["heures"].value=heures;
+	document.form.elements["minutes"].value=minutes;
+      }
+    },
+    error: function(){
+      information("Impossible de calculer le nombre d'heures correspondant au congé demandé.","error");
+    },
+  });
+ 
 
   calculRestes();
 }
@@ -190,15 +201,25 @@ function verifConges(){
 
 function verifRecup(o){
   var perso_id=$("#agent").val();
-
-  f=file("plugins/conges/ajax.verifRecup.php?date="+o.val()+"&perso_id="+perso_id);
-  tmp=f.split("###");
-  if(tmp[1]=="Demande"){
-    o.addClass( "ui-state-error" );
-    updateTips( "Une demande a déjà été enregistrée pour le "+o.val()+"." );
-    return false;
-  }
-  return true;
+  var retour=false;
+  $.ajax({
+    url: "plugins/conges/ajax.verifRecup.php",
+    data: "date="+o.val()+"&perso_id="+perso_id,
+    type: "get",
+    async: false,
+    success: function(result){
+      if(result=="Demande"){
+	o.addClass( "ui-state-error" );
+	updateTips( "Une demande a déjà été enregistrée pour le "+o.val()+"." );
+      }else{
+	retour=true;
+      }
+    },
+    error: function(result){
+      updateTips( "Une erreur s'est produite lors de la vérification des récupérations enregistrées");
+    }
+  });
+  return retour;
 }
 
 
