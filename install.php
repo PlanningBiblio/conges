@@ -7,7 +7,7 @@ Copyright (C) 2013-2014 - Jérôme Combes
 
 Fichier : plugins/conges/install.php
 Création : 24 juillet 2013
-Dernière modification : 5 novembre 2014
+Dernière modification : 7 novembre 2014
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -73,7 +73,6 @@ $sql[]="INSERT INTO `{$dbprefix}menu` (`niveau1`,`niveau2`,`titre`,`url`) VALUES
 $sql[]="INSERT INTO `{$dbprefix}menu` (`niveau1`,`niveau2`,`titre`,`url`) VALUES (15,10,'Liste des cong&eacute;s','plugins/conges/voir.php');";
 $sql[]="INSERT INTO `{$dbprefix}menu` (`niveau1`,`niveau2`,`titre`,`url`) VALUES (15,20,'Poser des cong&eacute;s','plugins/conges/enregistrer.php');";
 $sql[]="INSERT INTO `{$dbprefix}menu` (`niveau1`,`niveau2`,`titre`,`url`) VALUES (15,26,'R&eacute;cup&eacute;rations','plugins/conges/recuperations.php');";
-$sql[]="INSERT INTO `{$dbprefix}menu` (`niveau1`,`niveau2`,`titre`,`url`) VALUES (15,28,'Compte &Eacute;pargne Temps','plugins/conges/cet.php');";
 $sql[]="INSERT INTO `{$dbprefix}menu` (`niveau1`,`niveau2`,`titre`,`url`) VALUES (15,30,'Informations','plugins/conges/infos.php');";
 
 // Modification de la table personnel

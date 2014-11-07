@@ -7,7 +7,7 @@ Copyright (C) 2013-2014 - Jérôme Combes
 
 Fichier : plugins/conges/class.conges.php
 Création : 24 juillet 2013
-Dernière modification : 5 novembre 2014
+Dernière modification : 7 novembre 2014
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -720,6 +720,7 @@ class conges{
 
     echo "Mise à jour du plugin congés : $oldVersion -> $newVersion<br/>";
     if($version < "1.5.6"){
+      $sql[]="DELETE FROM `{$dbprefix}menu` WHERE `url`='plugins/conges/cet.php';";
       $sql[]="DELETE FROM `{$dbprefix}acces` WHERE `page`='plugins/conges/ajax.calculCredit.php';";
       $sql[]="UPDATE `{$dbprefix}plugins` SET `version`='1.5.6' WHERE `nom`='conges';";
     }
