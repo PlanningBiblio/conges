@@ -1,13 +1,13 @@
 <?php
 /*
-Planning Biblio, Plugin Congés Version 1.5
+Planning Biblio, Plugin Congés Version 1.5.6
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
 Copyright (C) 2013-2014 - Jérôme Combes
 
 Fichier : plugins/conges/modif.php
 Création : 1er août 2013
-Dernière modification : 29 octobre 2014
+Dernière modification : 12 novembre 2014
 Auteurs : Jérôme Combes jerome@planningbilbio.fr, Etienne Cavalié etienne.cavalie@unice.fr
 
 Description :
@@ -196,7 +196,7 @@ else{	// Formulaire
 
   // Affichage du formulaire
   echo "<h3>Congés</h3>\n";
-  echo "<form name='form' action='index.php' method='get' id='form'>\n";
+  echo "<form name='form' action='index.php' method='get' id='form' class='googleCalendarForm'>\n";
   echo "<input type='hidden' name='page' value='plugins/conges/modif.php' />\n";
   echo "<input type='hidden' name='menu' value='$menu' />\n";
   echo "<input type='hidden' name='confirm' value='confirm' />\n";
@@ -206,6 +206,7 @@ else{	// Formulaire
   echo "<input type='hidden' name='anticipation' value='$anticipation' />\n";
   echo "<input type='hidden' name='id' value='$id' id='id' />\n";
   echo "<input type='hidden' name='valide' value='0' />\n";
+  echo "<input type='hidden' id='agent' value='{$_SESSION['login_nom']} {$_SESSION['login_prenom']}' />\n";
   echo "<table border='0'>\n";
   echo "<tr><td style='width:300px;'>\n";
   echo "Nom, prénom : \n";
@@ -213,7 +214,7 @@ else{	// Formulaire
   if($admin){
     $db_perso=new db();
     $db_perso->query("select * from {$dbprefix}personnel where actif='Actif' order by nom,prenom;");
-    echo "<select name='perso_id' id='perso_id' style='width:98%;'>\n";
+    echo "<select name='perso_id' id='perso_id' style='width:98%;' class='googleCalendarTrigger'>\n";
     foreach($db_perso->result as $elem){
       if($perso_id==$elem['id']){
 	echo "<option value='".$elem['id']."' selected='selected'>".$elem['nom']." ".$elem['prenom']."</option>\n";
@@ -237,24 +238,24 @@ else{	// Formulaire
   echo "<tr><td>\n";
   echo "Date de début : \n";
   echo "</td><td>";
-  echo "<input type='text' name='debut' id='debut' value='$debut' class='datepicker' style='width:97%;'/>\n";
+  echo "<input type='text' name='debut' id='debut' value='$debut' class='datepicker googleCalendarTrigger' style='width:97%;'/>\n";
   echo "</td></tr>\n";
   echo "<tr id='hre_debut' $displayHeures ><td>\n";
   echo "Heure de début : \n";
   echo "</td><td>\n";
-  echo "<select name='hre_debut' id='hre_debut_select' style='width:98%;'>\n";
+  echo "<select name='hre_debut' id='hre_debut_select' style='width:98%;' class='googleCalendarTrigger'>\n";
   selectHeure(7,23,true,$quartDHeure,$hre_debut);
   echo "</select>\n";
   echo "</td></tr>\n";
   echo "<tr><td>\n";
   echo "Date de fin : \n";
   echo "</td><td>";
-  echo "<input type='text' name='fin' id='fin' value='$fin'  class='datepicker' style='width:97%;'/>\n";
+  echo "<input type='text' name='fin' id='fin' value='$fin'  class='datepicker googleCalendarTrigger' style='width:97%;'/>\n";
   echo "</td></tr>\n";
   echo "<tr id='hre_fin' $displayHeures ><td>\n";
   echo "Heure de fin : \n";
   echo "</td><td>\n";
-  echo "<select name='hre_fin' id='hre_fin_select' style='width:98%;'>\n";
+  echo "<select name='hre_fin' id='hre_fin_select' style='width:98%;' class='googleCalendarTrigger'>\n";
   selectHeure(7,23,true,$quartDHeure,$hre_fin);
   echo "</select>\n";
   echo "</td></tr>\n";
@@ -376,13 +377,7 @@ EOD;
     echo "<input type='button' value='Supprimer' style='margin-left:20px;' onclick='supprimeConges()' class='ui-button'/>\n";
   }
   
-  $debuttransf=str_replace('-','',substr($data['debut'],0,10))."T".str_replace(':','',substr($data['debut'],-8));
-  $debuttransf=str_replace('T000000','',$debuttransf);
-  $fintransf=str_replace('-','',substr($data['fin'],0,10))."T".str_replace(':','',substr($data['fin'],-8));
-  $fintransf=str_replace('T235959','',$fintransf);
-  echo "<a style='margin-left: 30px;' target='_blank' id='Inscrire_dans_mon_agenda_Google_$id' title='Ajouter dans mon agenda Google' href='https://www.google.com/calendar/event?action=TEMPLATE&hl=fr&text=Congés  $prenom $nom&dates=$debuttransf/$fintransf&location=&ctz=Europe%2FParis&amp;details='>
-  <span class='pl-icon pl-icon-google-calendar'></span></a>\n";
-
+  echo "<div id='google-calendar-div' class='inline'>\n";
   echo "</td></tr></table>\n";
   echo "</form>\n";
 

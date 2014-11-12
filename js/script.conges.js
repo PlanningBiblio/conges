@@ -6,8 +6,8 @@ Copyright (C) 2013-2014 - Jérôme Combes
 
 Fichier : plugins/conges/js/script.conges.js
 Création : 2 août 2013
-Dernière modification : 5 novembre 2014
-Auteur : Jérôme Combes, jerome@planningbilbio.fr
+Dernière modification : 12 novembre 2014
+Auteurs : Jérôme Combes jerome@planningbilbio.fr, Etienne Cavalié etienne.cavalie@unice.fr
 
 Description :
 Fichier regroupant les fonctions JavaScript utiles à la gestion des congés
@@ -135,6 +135,42 @@ function calculRestes(){
   document.getElementById("credit4").innerHTML=heure4(credit);
   document.getElementById("anticipation4").innerHTML=heure4(anticipation);
 }
+
+
+function googleCalendarIcon(){
+  var debut=$("#debut").val();
+  var debut_hre=$("#hre_debut_select").val();
+  var fin=$("#fin").val();
+  var fin_hre=$("#hre_fin_select").val();
+  var agent=$("#agent").val();
+  var location="";
+
+  $("#google-calendar-div").html("");
+
+  if(!debut){
+    return false;
+  }
+
+  if($("select#perso_id").length>0){
+    agent=$("select#perso_id").find(":selected").text();
+  }
+
+  debut=debut.replace(/([0-9]*)\/([0-9]*)\/([0-9]*)/g,"$3$2$1");
+  fin=fin?fin.replace(/([0-9]*)\/([0-9]*)\/([0-9]*)/g,"$3$2$1"):debut;
+  
+  debut_hre=debut_hre?debut_hre.replace(/:/g,""):"000000";
+  fin_hre=fin_hre?fin_hre.replace(/:/g,""):"235959";
+
+  debut=debut+"T"+debut_hre;
+  fin=fin+"T"+fin_hre;
+
+  var link="<a style='margin-left: 30px;' target='_blank' id='googleCalendarLink' title='Ajouter dans mon agenda Google' ";
+  link+="href='https://www.google.com/calendar/event?action=TEMPLATE&hl=fr&text=Congés "+agent+"&dates="+debut+"/"+fin+"&location="+location+"&ctz=Europe%2FParis&amp;details='>";
+  link+="<span class='pl-icon pl-icon-google-calendar'></span></a>";
+  
+  $("#google-calendar-div").append(link);
+}
+
 
 function supprimeConges(){
   conf=confirm("Etes-vous sûr(e) de vouloir supprimer ce congé ?");
@@ -308,4 +344,14 @@ $(document).ready(function() {
     });
   }
 
+});
+
+$(function(){
+  $(".googleCalendarTrigger").change(function(){
+    googleCalendarIcon();
+  });
+
+  $(".googleCalendarForm").ready(function(){
+    googleCalendarIcon();
+  });
 });
