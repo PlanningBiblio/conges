@@ -7,7 +7,7 @@ Copyright (C) 2013-2014 - Jérôme Combes
 
 Fichier : plugins/conges/enregistrer.php
 Création : 24 juillet 2013
-Dernière modification : 12 novembre 2014
+Dernière modification : 13 novembre 2014
 Auteurs : Jérôme Combes jerome@planningbilbio.fr, Etienne Cavalié etienne.cavalie@unice.fr
 
 Description :
@@ -176,24 +176,16 @@ else{
   echo <<<EOD
     <tr><td style='padding-top:15px;'>Nombre d'heures : </td>
       <td style='padding-top:15px;'>
-      <select name='heures' style='width:30%;' onchange='calculRestes();'>
-EOD;
-      for($i=0;$i<1000;$i++){
-	echo "<option value='$i'>$i</option>\n";
-      }
-  echo <<<EOD
-	</select>
-      h
-      <select name='minutes' style='width:30%;' onchange='calculRestes();'>
-	<option value='00'>00</option>
-	<option value='25'>15</option>
-	<option value='50'>30</option>
-	<option value='75'>45</option>
-	</select>
-      <input type='button' value='Calculer' onclick='calculCredit();' style='width:30%;'></td></tr>
+      <div id='nbHeures' style='padding:0 5px; width:50px;'></div>
+      <input type='hidden' name='heures' value='0' />
+      <input type='hidden' name='minutes' value='0' />
+      <input type='hidden' id='erreurCalcul' value='false' />
+      </td></tr>
 
   <tr><td>Nombre de jours (7h/jour) : </td>
-    <td id='nbJours'>&nbsp;</td></tr>
+    <td>
+      <div id='nbJours' style='padding:0 5px; width:50px;'></div>
+    </td></tr>
 
   <tr><td colspan='2' style='padding-top:20px;'>
 EOD;
@@ -235,7 +227,7 @@ EOD;
   }
   echo "&nbsp;&nbsp;\n";
   echo "<input type='button' value='Valider' class='ui-button' onclick='verifConges();' style='margin-left:20px;'/>\n";
-  echo "<div id='google-calendar-div' class='inline'>\n";
+  echo "<div id='google-calendar-div' class='inline'></div>\n";
   echo "</td></tr></table>\n";
   echo "</form>\n";
 }

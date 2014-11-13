@@ -6,7 +6,7 @@ Copyright (C) 2013-2014 - Jérôme Combes
 
 Fichier : plugins/conges/js/script.conges.js
 Création : 2 août 2013
-Dernière modification : 12 novembre 2014
+Dernière modification : 13 novembre 2014
 Auteurs : Jérôme Combes jerome@planningbilbio.fr, Etienne Cavalié etienne.cavalie@unice.fr
 
 Description :
@@ -30,10 +30,8 @@ function calculCredit(){
   perso_id=document.form.elements["perso_id"].value;
   if(!fin){
     fin=debut;
-    document.form.elements["fin"].value=fin;
   }
   if(!debut){
-    alert("Veuillez saisir les dates de début et de fin");
     return;
   }
     
@@ -49,23 +47,34 @@ function calculCredit(){
       result=JSON.parse(result);
       var msg=result[0];
       if(msg=="error"){
+	$("#erreurCalcul").val("true");
 	document.form.elements["heures"].value=0;
 	document.form.elements["minutes"].value=0;
-	information("Manque d'information pour calculer le nombre d'heures correspondant au congé demandé.","error");
+	$("#nbHeures").text("0h00");
+	$("#nbHeures").effect("highlight",null,3000);
+	$("#nbJours").effect("highlight",null,3000);
+	information("Aucun planning de présence enregistré pour cette période - calcul impossible.","error");
       }else{
+	$("#JSInformation").remove();
 	var tmp=result[1].split(".");
 	var heures=tmp[0];
 	var minutes=tmp[1];
 	document.form.elements["heures"].value=heures;
 	document.form.elements["minutes"].value=minutes;
+	var array={"25":"15","50":"30","75":"45"};
+	for(var val in array){
+	  minutes=minutes.replace(val,array[val]);
+	}
+	$("#nbHeures").text(heures+"h"+minutes);
+	$("#nbHeures").effect("highlight",null,3000);
+	$("#nbJours").effect("highlight",null,3000);
+	$("#erreurCalcul").val("false");
       }
     },
     error: function(){
       information("Impossible de calculer le nombre d'heures correspondant au congé demandé.","error");
     },
   });
- 
-
   calculRestes();
 }
 
@@ -195,6 +204,11 @@ function valideConges(){
 }
 
 function verifConges(){
+  if($("#erreurCalcul").val()=="true"){
+    information("Aucun planning de présence enregistré pour cette période - calcul impossible.","error");
+    return false;
+  }
+
   // Variable, convertion des dates au format YYYY-MM-DD
   var debut=dateFr($("#debut").val());
   var fin=dateFr($("#fin").val());
@@ -349,9 +363,11 @@ $(document).ready(function() {
 $(function(){
   $(".googleCalendarTrigger").change(function(){
     googleCalendarIcon();
+    calculCredit();
   });
 
   $(".googleCalendarForm").ready(function(){
     googleCalendarIcon();
+    calculCredit();
   });
 });
