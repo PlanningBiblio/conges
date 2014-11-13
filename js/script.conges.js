@@ -211,7 +211,7 @@ function verifConges(){
 
   // Variable, convertion des dates au format YYYY-MM-DD
   var debut=dateFr($("#debut").val());
-  var fin=dateFr($("#fin").val());
+  var fin=$("#fin").val()?dateFr($("#fin").val()):debut;
   var hre_debut=$("#hre_debut_select").val();
   var hre_fin=$("#hre_fin_select").val();
   var perso_id=$("#perso_id").val();
@@ -230,7 +230,6 @@ function verifConges(){
     information("La date de fin doit être supérieure à la date de début","error");
     return false;
   }
-    
   // Vérifions si un autre congé a été demandé ou validé
   var result=$.ajax({
     url: "plugins/conges/ajax.verifConges.php",

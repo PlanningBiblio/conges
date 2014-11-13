@@ -82,15 +82,7 @@ if(isset($_GET['confirm'])){	// Confirmation
 
   sendmail("Nouveau congés",$message,$destinataires);
 
-  if($menu=="off"){
-    echo "<script type=text/JavaScript>parent.document.location.reload(false);</script>\n";
-    echo "<script type=text/JavaScript>popup_closed();</script>\n";
-  }
-  else{
-    echo "Le congé a été enregistré";
-    echo "<br/><br/>";
-    echo "<a href='index.php?page=plugins/conges/index.php'>Retour</a>";
-  }
+  echo "<script type='text/JavaScript'>document.location.href='index.php?page=plugins/conges/voir.php&information=".urlencode("La demande de congé a été enregistrée")."';</script>\n";
 }
 
 // Formulaire
