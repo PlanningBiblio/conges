@@ -356,6 +356,21 @@ $(document).ready(function() {
       "oLanguage" : {"sUrl" : "js/dataTables/french.txt"}
     });
   }
+  
+
+  // Initialisation de la dataTable Credits (credits.php)
+  if($("#tableCredits").length){
+    $("#tableCredits").dataTable({
+      "bJQueryUI": true,
+      "sPaginationType": "full_numbers",
+      "bStateSave": true,
+      "aaSorting" : [[1,"asc"],[2,"asc"]],
+      "aoColumns" : [{"bSortable":false},{"bSortable":true},{"bSortable":true},{"sType": "heure-fr"},{"sType": "heure-fr"},{"sType": "heure-fr"},{"sType": "heure-fr"}],
+      "aLengthMenu" : [[25,50,75,100,-1],[25,50,75,100,"Tous"]],
+      "iDisplayLength" : 25,
+      "oLanguage" : {"sUrl" : "js/dataTables/french.txt"}
+    });
+  }
 
 });
 

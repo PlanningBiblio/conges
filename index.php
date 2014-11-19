@@ -1,13 +1,13 @@
 <?php
 /*
-Planning Biblio, Plugin Congés Version 1.5.4
+Planning Biblio, Plugin Congés Version 1.5.6
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
 Copyright (C) 2013-2014 - Jérôme Combes
 
 Fichier : plugins/conges/index.php
 Création : 24 juillet 2013
-Dernière modification : 24 juin 2014
+Dernière modification : 17 novembre 2014
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -32,6 +32,7 @@ require_once "class.conges.php";
 $admin=in_array(2,$droits)?true:false;
 if($admin){
   echo "<li><a href='index.php?page=plugins/conges/infos.php'>Ajouter une information</a></li>\n";
+  echo "<li><a href='index.php?page=plugins/conges/credits.php'>Voir les cr&eacute;dits</a></li>\n";
 }
 echo "</ul>\n";
 echo "</td>\n";

@@ -7,7 +7,7 @@ Copyright (C) 2013-2014 - Jérôme Combes
 
 Fichier : plugins/conges/class.conges.php
 Création : 24 juillet 2013
-Dernière modification : 7 novembre 2014
+Dernière modification : 18 novembre 2014
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -328,8 +328,8 @@ class conges{
     $db->select("conges","*",$filter,"ORDER BY debut,fin,saisie");
     if($db->result){
       foreach($db->result as $elem){
-	$elem['nom']=$agents[$elem['perso_id']]['nom'];
-	$elem['prenom']=$agents[$elem['perso_id']]['prenom'];
+	$elem['nom']=array_key_exists($elem['perso_id'],$agents)?$agents[$elem['perso_id']]['nom']:null;
+	$elem['prenom']=array_key_exists($elem['perso_id'],$agents)?$agents[$elem['perso_id']]['prenom']:null;
 	$elem['debutAff']=dateFr($elem['debut'],true);
 	$elem['finAff']=dateFr($elem['fin'],true);
 	$this->elements[]=$elem;
@@ -337,6 +337,105 @@ class conges{
     }
   }
 
+
+  public function fetchAllCredits(){
+
+    $supprime=join("','",$this->agents_supprimes);
+    $tab=array();
+
+    $db=new db();
+    $db->select("personnel","id,nom,prenom,congesCredit,congesReliquat,congesAnticipation,recupSamedi,congesAnnuel","`supprime` IN ('$supprime') AND `id`<>'2'");
+    if(!$db->result){
+      return false;
+    }
+
+    foreach($db->result as $elem){
+      $tab[$elem['id']]=$elem;
+      $tab[$elem['id']]['recup_en_attente']=$elem['recupSamedi'];
+      $tab[$elem['id']]['credit_en_attente']=$elem['congesCredit'];
+      $tab[$elem['id']]['reliquat_en_attente']=$elem['congesReliquat'];
+      $tab[$elem['id']]['anticipation_en_attente']=$elem['congesAnticipation'];
+    }
+
+    $db=new db();
+    $db->select("conges",null,"`valide`='0' AND `supprime`='0' AND `information`='0'");
+
+    if($db->result){
+      foreach($db->result as $elem){
+	if(!array_key_exists($elem['perso_id'],$tab)){
+	  continue;
+	}
+	$heures=floatval($elem['heures']);
+	// Déduisons en priorité les reliquats
+	if($tab[$elem['perso_id']]['reliquat_en_attente']>0 and floatval($tab[$elem['perso_id']]['reliquat_en_attente'])-$heures<0){
+	  $heures-=floatval($tab[$elem['perso_id']]['reliquat_en_attente']);
+	  $tab[$elem['perso_id']]['reliquat_en_attente']=0;
+	}elseif($tab[$elem['perso_id']]['reliquat_en_attente']>0){
+	  $tab[$elem['perso_id']]['reliquat_en_attente']-=$heures;
+	  continue;
+	}
+
+	// Puis les récupérations
+	if($elem['debit']=="recuperation"){
+	  if($tab[$elem['perso_id']]['recup_en_attente']-$heures<0){
+	    $heures-=$tab[$elem['perso_id']]['recup_en_attente'];
+	    $tab[$elem['perso_id']]['recup_en_attente']=0;
+	    // Et le crédit si récup insuffisantes
+	    if($tab[$elem['perso_id']]['credit_en_attente']-$heures<0){
+	      $heures-=$tab[$elem['perso_id']]['credit_en_attente'];
+	      $tab[$elem['perso_id']]['credit_en_attente']=0;
+	    }else{
+	      $tab[$elem['perso_id']]['credit_en_attente']-=$heures;
+	      continue;
+	    }
+	  }else{
+	    $tab[$elem['perso_id']]['recup_en_attente']-=$heures;
+	    continue;
+	  }
+	// Puis les crédits
+	}else{
+	  if($tab[$elem['perso_id']]['credit_en_attente']-$heures<0){
+	    $heures-=$tab[$elem['perso_id']]['credit_en_attente'];
+	    $tab[$elem['perso_id']]['credit_en_attente']=0;
+	    // Et récup si crédit insuffisant
+	    if($tab[$elem['perso_id']]['recup_en_attente']-$heures<0){
+	      $heures-=$tab[$elem['perso_id']]['recup_en_attente'];
+	      $tab[$elem['perso_id']]['recup_en_attente']=0;
+	    }else{
+	      $tab[$elem['perso_id']]['recup_en_attente']-=$heures;
+	      continue;
+	    }
+	  }else{
+	    $tab[$elem['perso_id']]['credit_en_attente']-=$heures;
+	    continue;
+	  }
+
+	}
+      // Et enfin le solde débiteur
+      $tab[$elem['perso_id']]['anticipation_en_attente']+=$heures;
+      }
+    }
+
+  // Affichage si les soldes prévisionnels et effectifs sont les mêmes
+//     foreach(array_keys($tab) as $elem){
+//       if($tab[$elem]['recup_en_attente']==$tab[$elem]['recupSamedi']){
+// 	$tab[$elem]['recup_en_attente']="-";
+//       }
+//       if($tab[$elem]['credit_en_attente']==$tab[$elem]['congesCredit']){
+// 	$tab[$elem]['credit_en_attente']="-";
+//       }
+//       if($tab[$elem]['anticipation_en_attente']==$tab[$elem]['congesAnticipation']){
+// 	$tab[$elem]['anticipation_en_attente']="-";
+//       }
+//       if($tab[$elem]['reliquat_en_attente']==$tab[$elem]['congesReliquat']){
+// 	$tab[$elem]['reliquat_en_attente']="-";
+//       }
+// 
+//     }
+
+    $this->elements=$tab;
+
+  }
 
   public function fetchCredit(){
     if(!$this->perso_id){
@@ -722,6 +821,8 @@ class conges{
     if($version < "1.5.6"){
       $sql[]="DELETE FROM `{$dbprefix}menu` WHERE `url`='plugins/conges/cet.php';";
       $sql[]="DELETE FROM `{$dbprefix}acces` WHERE `page`='plugins/conges/ajax.calculCredit.php';";
+      $sql[]="INSERT INTO `{$dbprefix}menu` (`niveau1`,`niveau2`,`titre`,`url`) VALUES (15,40,'Cr&eacute;dits','plugins/conges/credits.php');";
+      $sql[]="INSERT INTO `{$dbprefix}acces` (`nom`,`groupe_id`,`groupe`,`page`) VALUES ('Cong&eacute;s - Cr&eacute;dits','7','Gestion des cong&eacute;s, validation N1','plugins/conges/credits.php');";
       $sql[]="UPDATE `{$dbprefix}plugins` SET `version`='1.5.6' WHERE `nom`='conges';";
     }
 
