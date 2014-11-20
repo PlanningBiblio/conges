@@ -1,13 +1,13 @@
 <?php
 /*
-Planning Biblio, Plugin Congés Version 1.5.5
+Planning Biblio, Plugin Congés Version 1.5.6
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
 Copyright (C) 2013-2014 - Jérôme Combes
 
 Fichier : plugins/conges/voir.php
 Création : 24 juillet 2013
-Dernière modification : 30 octobre 2014
+Dernière modification : 20 novembre 2014
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -144,6 +144,7 @@ if($admin){
   echo "<th rowspan='2'>Nom</th>";
 }
 echo "<th colspan='2' class='ui-state-default'>Validation</th>\n";
+echo "<th rowspan='2'>Heures</th>";
 echo "<th rowspan='2'>Crédits</th><th rowspan='2'>Reliquat</th><th rowspan='2'>Récupérations</th><th rowspan='2'>Solde Débiteur</th></tr>\n";
 echo "<tr><th>&Eacute;tat</th><th>Date</th></tr></thead>\n";
 echo "<tbody>\n";
@@ -151,16 +152,23 @@ echo "<tbody>\n";
 foreach($c->elements as $elem){
   $debut=str_replace("00h00","",dateFr($elem['debut'],true));
   $fin=str_replace("23h59","",dateFr($elem['fin'],true));
+  $heures=heure4($elem['heures']);
   $validation="Demand&eacute;, ".dateFr($elem['saisie'],true);
   $validationDate=dateFr($elem['saisie'],true);
   $validationStyle="font-weight:bold;";
+
+  $credits=null;
+  $reliquat=null;
+  $recuperations=null;
+  $anticipation=null;
+  $creditClass=null;
+  $reliquatClass=null;
+  $recuperationsClass=null;
+  $anticipationClass=null;
+
   if($elem['saisie_par'] and $elem['perso_id']!=$elem['saisie_par']){
       $validation.=" par ".nom($elem['saisie_par']);
   }
-  $credits=null;
-  $recuperations=null;
-  $reliquat=null;
-  $anticipation=null;
 
   if($elem['valide']<0){
     $validation="Refus&eacute;, ".nom(-$elem['valide']);
@@ -171,18 +179,35 @@ foreach($c->elements as $elem){
     $validation="Valid&eacute;, ".nom($elem['valide']);
     $validationDate=dateFr($elem['validation'],true);
     $validationStyle=null;
-    if($elem['solde_prec']!=null and $elem['solde_actuel']!=null){
-      $credits=heure4($elem['solde_prec'])." &rarr; ".heure4($elem['solde_actuel']);
+
+    $credits=heure4($elem['solde_prec']);
+    $creditClass="aRight ";
+    if($elem['solde_prec']!=$elem['solde_actuel']){
+      $credits=heure4($elem['solde_prec'],true)." &rarr; ".heure4($elem['solde_actuel'],true);
+      $creditClass.="bold";
     }
-    if($elem['recup_prec']!=null and $elem['recup_actuel']!=null){
-      $recuperations=heure4($elem['recup_prec'])." &rarr; ".heure4($elem['recup_actuel']);
+
+    $recuperations=heure4($elem['recup_prec']);
+    $recuperationsClass="aRight ";
+    if($elem['recup_prec']!=$elem['recup_actuel']){
+      $recuperations=heure4($elem['recup_prec'],true)." &rarr; ".heure4($elem['recup_actuel'],true);
+      $recuperationsClass.="bold";
     }
-    if($elem['reliquat_prec']!=null and $elem['reliquat_actuel']!=null){
-      $reliquat=heure4($elem['reliquat_prec'])." &rarr; ".heure4($elem['reliquat_actuel']);
+
+    $reliquat=heure4($elem['reliquat_prec']);
+    $reliquatClass="aRight ";
+    if($elem['reliquat_prec']!=$elem['reliquat_actuel']){
+      $reliquat=heure4($elem['reliquat_prec'],true)." &rarr; ".heure4($elem['reliquat_actuel'],true);
+      $reliquatClass.="bold";
     }
-    if($elem['anticipation_prec']!=null and $elem['anticipation_actuel']!=null){
-      $anticipation=heure4($elem['anticipation_prec'])." &rarr; ".heure4($elem['anticipation_actuel']);
+
+    $anticipation=heure4($elem['anticipation_prec']);
+    $anticipationClass="aRight ";
+    if($elem['anticipation_prec']!=$elem['anticipation_actuel']){
+      $anticipation=heure4($elem['anticipation_prec'],true)." &rarr; ".heure4($elem['anticipation_actuel'],true);
+      $anticipationClass.="bold";
     }
+
   }
   elseif($elem['valideN1']){
     $validation="En attente de validation hi&eacute;rarchique";
@@ -213,8 +238,9 @@ foreach($c->elements as $elem){
   }
   echo "</td>";
   echo "<td>$debut</td><td>$fin</td>$nom<td style='$validationStyle'>$validation</td><td>$validationDate</td>\n";
-  echo "<td>$credits</td><td>$reliquat</td>";
-  echo "<td>$recuperations</td><td>$anticipation</td></tr>\n";
+  echo "<td class='aRight'>$heures</td>";
+  echo "<td class='$creditClass'>$credits</td><td class='$reliquatClass'>$reliquat</td>";
+  echo "<td class='$recuperationsClass'>$recuperations</td><td class='$anticipationClass'>$anticipation</td></tr>\n";
 }
 
 ?>

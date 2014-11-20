@@ -6,7 +6,7 @@ Copyright (C) 2013-2014 - Jérôme Combes
 
 Fichier : plugins/conges/js/script.conges.js
 Création : 2 août 2013
-Dernière modification : 13 novembre 2014
+Dernière modification : 19 novembre 2014
 Auteurs : Jérôme Combes jerome@planningbilbio.fr, Etienne Cavalié etienne.cavalie@unice.fr
 
 Description :
@@ -339,9 +339,9 @@ $(document).ready(function() {
   if($("#tableConges").length){
     var tableCongesCols=$("#tableConges thead th").length-1;
     var tableCongesColumns= [{"bSortable":false},{"sType": "date-fr"},{"sType": "date-fr-fin"},{"bSortable":true},{"bSortable":true},
-      {"sType": "date-fr"},{"bSortable":true},{"bSortable":true},{"bSortable":true}];
+      {"sType": "date-fr"},{"bSortable":true},{"bSortable":true},{"bSortable":true},{"bSortable":true}];
        
-    if(tableCongesCols==10){
+    if(tableCongesCols==11){
       tableCongesColumns.push({"bSortable":true});
     }
 
