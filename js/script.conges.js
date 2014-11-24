@@ -6,7 +6,7 @@ Copyright (C) 2013-2014 - Jérôme Combes
 
 Fichier : plugins/conges/js/script.conges.js
 Création : 2 août 2013
-Dernière modification : 19 novembre 2014
+Dernière modification : 24 novembre 2014
 Auteurs : Jérôme Combes jerome@planningbilbio.fr, Etienne Cavalié etienne.cavalie@unice.fr
 
 Description :
@@ -353,7 +353,7 @@ $(document).ready(function() {
       "aoColumns" : tableCongesColumns,
       "aLengthMenu" : [[25,50,75,100,-1],[25,50,75,100,"Tous"]],
       "iDisplayLength" : 25,
-      "oLanguage" : {"sUrl" : "js/dataTables/french.txt"}
+      "oLanguage" : {"sUrl" : "vendor/dataTables.french.lang"}
     });
   }
   
@@ -365,23 +365,48 @@ $(document).ready(function() {
       "sPaginationType": "full_numbers",
       "bStateSave": true,
       "aaSorting" : [[1,"asc"],[2,"asc"]],
-      "aoColumns" : [{"bSortable":false},{"bSortable":true},{"bSortable":true},{"sType": "heure-fr"},{"sType": "heure-fr"},{"sType": "heure-fr"},{"sType": "heure-fr"}],
+      "aoColumns" : [{"bSortable":false},{"bSortable":true},{"bSortable":true},{"sType": "heure-fr"},{"sType": "heure-fr"},
+	{"sType": "heure-fr"},{"sType": "heure-fr"},{"sType": "heure-fr"}],
       "aLengthMenu" : [[25,50,75,100,-1],[25,50,75,100,"Tous"]],
       "iDisplayLength" : 25,
-      "oLanguage" : {"sUrl" : "js/dataTables/french.txt"}
+      "oLanguage" : {"sUrl" : "vendor/dataTables.french.lang"},
+      "sDom": '<"H"lfr>t<"F"ip>T',
+      "oTableTools": {
+	"sSwfPath" : "vendor/DataTables-1.10.4/extensions/TableTools/swf/copy_csv_xls.swf",
+	"aButtons": [
+	  {
+	    "sExtends": "xls",
+	    "sButtonText": "Excel",
+	  },
+	  {
+	    "sExtends": "csv",
+	    "sButtonText": "CSV",
+	  },
+	  {
+	    "sExtends": "pdf",
+	    "sButtonText": "PDF",
+	  },
+	  {
+	    "sExtends": "print",
+	    "sButtonText": "Imprimer",
+	  },
+	]
+      }
     });
   }
 
 });
 
 $(function(){
-  $(".googleCalendarTrigger").change(function(){
-    googleCalendarIcon();
-    calculCredit();
-  });
+  if($(".googleCalendarTrigger").length){
+    $(".googleCalendarTrigger").change(function(){
+      googleCalendarIcon();
+      calculCredit();
+    });
 
-  $(".googleCalendarForm").ready(function(){
-    googleCalendarIcon();
-    calculCredit();
-  });
+    $(".googleCalendarForm").ready(function(){
+      googleCalendarIcon();
+      calculCredit();
+    });
+  }
 });

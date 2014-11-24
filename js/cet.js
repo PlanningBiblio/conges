@@ -27,7 +27,7 @@ $(document).ready(function(){
     "aoColumns" : aoColumns,
     "aLengthMenu" : [[25,50,75,100,-1],[25,50,75,100,"Toutes"]],
     "iDisplayLength" : 25,
-    "oLanguage" : {"sUrl" : "js/dataTables/french.txt"}
+    "oLanguage" : {"sUrl" : "vendor/dataTables.french.lang"}
   });
 
   
