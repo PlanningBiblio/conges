@@ -6,7 +6,7 @@ Copyright (C) 2013-2014 - Jérôme Combes
 
 Fichier : plugins/conges/js/script.conges.js
 Création : 2 août 2013
-Dernière modification : 24 novembre 2014
+Dernière modification : 3 décembre 2014
 Auteurs : Jérôme Combes jerome@planningbilbio.fr, Etienne Cavalié etienne.cavalie@unice.fr
 
 Description :
@@ -364,11 +364,14 @@ $(document).ready(function() {
       "bJQueryUI": true,
       "sPaginationType": "full_numbers",
       "bStateSave": true,
-      "aaSorting" : [[1,"asc"],[2,"asc"]],
-      "aoColumns" : [{"bSortable":false},{"bSortable":true},{"bSortable":true},{"sType": "heure-fr"},{"sType": "heure-fr"},
+      "aaSorting" : [[0,"asc"]],
+      "aoColumns" : [{"bSortable":true},
+	{"sType": "heure-fr"},{"sType": "heure-fr"},{"sType": "heure-fr"},{"sType": "heure-fr"},
+	{"sType": "heure-fr"},{"sType": "heure-fr"},{"sType": "heure-fr"},
+	{"sType": "heure-fr"},{"sType": "heure-fr"},{"sType": "heure-fr"},
 	{"sType": "heure-fr"},{"sType": "heure-fr"},{"sType": "heure-fr"}],
-      "aLengthMenu" : [[25,50,75,100,-1],[25,50,75,100,"Tous"]],
-      "iDisplayLength" : 25,
+      "aLengthMenu" : [[30,60,90,120,-1],[30,60,90,120,"Tous"]],
+      "iDisplayLength" : 30,
       "oLanguage" : {"sUrl" : "vendor/dataTables.french.lang"},
       "sDom": '<"H"lfr>t<"F"ip>T',
       "oTableTools": {

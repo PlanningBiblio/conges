@@ -7,7 +7,7 @@ Copyright (C) 2013-2014 - Jérôme Combes
 
 Fichier : plugins/conges/class.conges.php
 Création : 24 juillet 2013
-Dernière modification : 18 novembre 2014
+Dernière modification : 4 décembre 2014
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -339,26 +339,128 @@ class conges{
 
 
   public function fetchAllCredits(){
+    // Recheche de tous les crédits de congés afin de les afficher dans la page congés / Crédits
 
+    // Affichage ou non des crédits des agents supprimés
     $supprime=join("','",$this->agents_supprimes);
-    $tab=array();
 
+    // Recherche des agents
     $db=new db();
-    $db->select("personnel","id,nom,prenom,congesCredit,congesReliquat,congesAnticipation,recupSamedi,congesAnnuel","`supprime` IN ('$supprime') AND `id`<>'2'");
+    $db->select("personnel","id,nom,prenom,congesCredit,congesReliquat,congesAnticipation,recupSamedi,congesAnnuel","`supprime` IN ('$supprime') AND `id`<>'2' AND actif like 'Actif'");
     if(!$db->result){
       return false;
     }
 
+    // Création du tableau avec les noms des agents et les crédits annuels
+    $tab=array();
     foreach($db->result as $elem){
       $tab[$elem['id']]=$elem;
-      $tab[$elem['id']]['recup_en_attente']=$elem['recupSamedi'];
-      $tab[$elem['id']]['credit_en_attente']=$elem['congesCredit'];
-      $tab[$elem['id']]['reliquat_en_attente']=$elem['congesReliquat'];
-      $tab[$elem['id']]['anticipation_en_attente']=$elem['congesAnticipation'];
+      $tab[$elem['id']]["agent"]=$elem["nom"]." ".substr($elem["prenom"],0,1);
+      $tab[$elem['id']]['conge_annuel']=$elem['congesAnnuel'];
     }
 
+    // Crédits initiaux
+    /* Utilise le champ infoDate pour rechercher la première mise à jour des crédits de l'année.
+	Cette mise à jour peut être faite :
+	  - par le cron au 1er septembre
+	  - par un administrateur lors de la création de l'agent en cours d'année
+	  - par un administrateur lors de la 1ere modification de crédits suivant la création de l'agent si les crédits étaient initialement à 0
+    */
+
+    $debut=date("n")<9?date("Y")-1:date("Y");
+    $debut.="-09-01 00:00:00";
     $db=new db();
-    $db->select("conges",null,"`valide`='0' AND `supprime`='0' AND `information`='0'");
+    $db->select("conges",null,"`infoDate` >= '$debut'","ORDER BY `infoDate`");
+
+    if($db->result){
+      foreach($db->result as $elem){
+	if(!array_key_exists($elem['perso_id'],$tab)){
+	  continue;
+	}
+	if(!array_key_exists("conge_initial",$tab[$elem['perso_id']])){
+	  $tab[$elem['perso_id']]['conge_initial']=$elem['solde_actuel'];
+	  $tab[$elem['perso_id']]['reliquat_initial']=$elem['reliquat_actuel'];
+	  $tab[$elem['perso_id']]['recup_initial']=$elem['recup_actuel'];
+	  $tab[$elem['perso_id']]['anticipation_initial']=$elem['anticipation_actuel'];
+	}
+      }
+    }
+
+    // Crédits actuels
+    // Sélection des derniers congés validés
+    $db=new db();
+    $db->select("conges",null,"valide>0","ORDER BY `validation` desc");
+
+    if($db->result){
+      foreach($db->result as $elem){
+	if(!array_key_exists($elem['perso_id'],$tab)){
+	  continue;
+	}
+	if(!array_key_exists("maj1",$tab[$elem['perso_id']])){
+	  $tab[$elem['perso_id']]['conge_restant']=$elem['solde_actuel'];
+	  $tab[$elem['perso_id']]['reliquat_restant']=$elem['reliquat_actuel'];
+	  $tab[$elem['perso_id']]['recup_restant']=$elem['recup_actuel'];
+	  $tab[$elem['perso_id']]['anticipation_restant']=$elem['anticipation_actuel'];
+	  $tab[$elem['perso_id']]['validation']=$elem['validation'];
+	  $tab[$elem['perso_id']]['maj1']=true;
+	}
+      }
+    }
+
+    // Crédits actuels
+    // Sélection des dernières mises à jour de crédits
+    $db=new db();
+    $db->select("conges",null,"information>0","ORDER BY `infoDate` desc");
+
+    if($db->result){
+      foreach($db->result as $elem){
+	if(!array_key_exists($elem['perso_id'],$tab)){
+	  continue;
+	}
+	if(!array_key_exists("maj2",$tab[$elem['perso_id']]) and $elem['infoDate']>$tab[$elem['perso_id']]['validation']){
+	  $tab[$elem['perso_id']]['conge_restant']=$elem['solde_actuel'];
+	  $tab[$elem['perso_id']]['reliquat_restant']=$elem['reliquat_actuel'];
+	  $tab[$elem['perso_id']]['recup_restant']=$elem['recup_actuel'];
+	  $tab[$elem['perso_id']]['anticipation_restant']=$elem['anticipation_actuel'];
+	  $tab[$elem['perso_id']]['validation']=$elem['infoDate'];
+	  $tab[$elem['perso_id']]['maj2']=true;
+	}
+      }
+    }
+
+
+    // Crédits actuels
+    // Sélection des dernières mises à jour de récup
+    $db=new db();
+    $db->select("recuperations",null,"valide>0","ORDER BY `validation` desc");
+
+    if($db->result){
+      foreach($db->result as $elem){
+	if(!array_key_exists($elem['perso_id'],$tab)){
+	  continue;
+	}
+	if(!array_key_exists("maj3",$tab[$elem['perso_id']]) and $elem['validation']>$tab[$elem['perso_id']]['validation']){
+	  $tab[$elem['perso_id']]['recup_restant']=$elem['solde_actuel'];
+	  $tab[$elem['perso_id']]['maj3']=true;
+	}
+      }
+    }
+
+
+    // Calcul des crédits en attente de validation
+    // Les crédits en attente sont égals aux crédits validés, on y ajoutera ensuite les demandes non validées
+    $perso_ids=array_keys($tab);
+    foreach($perso_ids as $perso_id){
+      $tab[$perso_id]['conge_en_attente']=$tab[$perso_id]['conge_restant'];
+      $tab[$perso_id]['reliquat_en_attente']=$tab[$perso_id]['reliquat_restant'];
+      $tab[$perso_id]['recup_en_attente']=$tab[$perso_id]['recup_restant'];
+      $tab[$perso_id]['anticipation_en_attente']=$tab[$perso_id]['anticipation_restant'];
+    }
+
+
+    // Sélection des demandes non validées
+    $db=new db();
+    $db->select("conges",null,"`valide`='0' AND `supprime`='0' AND `information`='0' AND `saisie`>='$debut' AND `heures`>0","ORDER BY `saisie`");
 
     if($db->result){
       foreach($db->result as $elem){
@@ -375,17 +477,18 @@ class conges{
 	  continue;
 	}
 
+	// Reliquats utilisés
 	// Puis les récupérations
 	if($elem['debit']=="recuperation"){
 	  if($tab[$elem['perso_id']]['recup_en_attente']-$heures<0){
 	    $heures-=$tab[$elem['perso_id']]['recup_en_attente'];
 	    $tab[$elem['perso_id']]['recup_en_attente']=0;
 	    // Et le crédit si récup insuffisantes
-	    if($tab[$elem['perso_id']]['credit_en_attente']-$heures<0){
-	      $heures-=$tab[$elem['perso_id']]['credit_en_attente'];
-	      $tab[$elem['perso_id']]['credit_en_attente']=0;
+	    if($tab[$elem['perso_id']]['conge_en_attente']-$heures<0){
+	      $heures-=$tab[$elem['perso_id']]['conge_en_attente'];
+	      $tab[$elem['perso_id']]['conge_en_attente']=0;
 	    }else{
-	      $tab[$elem['perso_id']]['credit_en_attente']-=$heures;
+	      $tab[$elem['perso_id']]['conge_en_attente']-=$heures;
 	      continue;
 	    }
 	  }else{
@@ -394,9 +497,9 @@ class conges{
 	  }
 	// Puis les crédits
 	}else{
-	  if($tab[$elem['perso_id']]['credit_en_attente']-$heures<0){
-	    $heures-=$tab[$elem['perso_id']]['credit_en_attente'];
-	    $tab[$elem['perso_id']]['credit_en_attente']=0;
+	  if($tab[$elem['perso_id']]['conge_en_attente']-$heures<0){
+	    $heures-=$tab[$elem['perso_id']]['conge_en_attente'];
+	    $tab[$elem['perso_id']]['conge_en_attente']=0;
 	    // Et récup si crédit insuffisant
 	    if($tab[$elem['perso_id']]['recup_en_attente']-$heures<0){
 	      $heures-=$tab[$elem['perso_id']]['recup_en_attente'];
@@ -406,7 +509,7 @@ class conges{
 	      continue;
 	    }
 	  }else{
-	    $tab[$elem['perso_id']]['credit_en_attente']-=$heures;
+	    $tab[$elem['perso_id']]['conge_en_attente']-=$heures;
 	    continue;
 	  }
 
@@ -416,26 +519,32 @@ class conges{
       }
     }
 
-  // Affichage si les soldes prévisionnels et effectifs sont les mêmes
-//     foreach(array_keys($tab) as $elem){
-//       if($tab[$elem]['recup_en_attente']==$tab[$elem]['recupSamedi']){
-// 	$tab[$elem]['recup_en_attente']="-";
-//       }
-//       if($tab[$elem]['credit_en_attente']==$tab[$elem]['congesCredit']){
-// 	$tab[$elem]['credit_en_attente']="-";
-//       }
-//       if($tab[$elem]['anticipation_en_attente']==$tab[$elem]['congesAnticipation']){
-// 	$tab[$elem]['anticipation_en_attente']="-";
-//       }
-//       if($tab[$elem]['reliquat_en_attente']==$tab[$elem]['congesReliquat']){
-// 	$tab[$elem]['reliquat_en_attente']="-";
-//       }
-// 
-//     }
+
+    // Calcul des crédits utilisés et demandés en attente de validation
+    $perso_ids=array_keys($tab);
+    foreach($perso_ids as $perso_id){
+      // Crédits utilisés
+      $tab[$perso_id]['conge_utilise']=$tab[$perso_id]['conge_initial']-$tab[$perso_id]['conge_restant'];
+      $tab[$perso_id]['reliquat_utilise']=$tab[$perso_id]['reliquat_initial']-$tab[$perso_id]['reliquat_restant'];
+      $tab[$perso_id]['recup_utilise']=$tab[$perso_id]['recup_initial']-$tab[$perso_id]['recup_restant'];
+      $tab[$perso_id]['anticipation_utilise']=$tab[$perso_id]['anticipation_restant']-$tab[$perso_id]['anticipation_initial'];
+
+      // Crédits demandés en attente
+      $tab[$perso_id]['conge_demande']=$tab[$perso_id]['conge_initial']-$tab[$perso_id]['conge_en_attente'];
+      $tab[$perso_id]['reliquat_demande']=$tab[$perso_id]['reliquat_initial']-$tab[$perso_id]['reliquat_en_attente'];
+      $tab[$perso_id]['recup_demande']=$tab[$perso_id]['recup_initial']-$tab[$perso_id]['recup_en_attente'];
+      $tab[$perso_id]['anticipation_demande']=$tab[$perso_id]['anticipation_en_attente']-$tab[$perso_id]['anticipation_initial'];
+
+      // Classe bold si différence entre crédits validés et demandés
+      $tab[$perso_id]['conge_classe']=$tab[$perso_id]['conge_demande']!=$tab[$perso_id]['conge_utilise']?"bold":null;
+      $tab[$perso_id]['reliquat_classe']=$tab[$perso_id]['reliquat_demande']!=$tab[$perso_id]['reliquat_utilise']?"bold":null;
+      $tab[$perso_id]['recup_classe']=$tab[$perso_id]['recup_demande']!=$tab[$perso_id]['recup_utilise']?"bold":null;
+      $tab[$perso_id]['anticipation_classe']=$tab[$perso_id]['anticipation_demande']!=$tab[$perso_id]['anticipation_utilise']?"bold":null;
+    }
 
     $this->elements=$tab;
-
   }
+
 
   public function fetchCredit(){
     if(!$this->perso_id){
@@ -667,7 +776,7 @@ class conges{
       $insert["recup_actuel"]=$credits['recupSamedi'];
       $insert["reliquat_actuel"]=$credits['congesReliquat'];
       $insert["anticipation_actuel"]=$credits['congesAnticipation'];
-      $insert["information"]=$cron?99999999999:$_SESSION['login_id'];
+      $insert["information"]=$cron?999999999:$_SESSION['login_id'];
       $insert["infoDate"]=date("Y-m-d H:i:s");
 
       $db=new db();
