@@ -7,7 +7,7 @@ Copyright (C) 2013-2014 - Jérôme Combes
 
 Fichier : plugins/conges/class.conges.php
 Création : 24 juillet 2013
-Dernière modification : 4 décembre 2014
+Dernière modification : 6 décembre 2014
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -416,6 +416,9 @@ class conges{
       foreach($db->result as $elem){
 	if(!array_key_exists($elem['perso_id'],$tab)){
 	  continue;
+	}
+	if(!array_key_exists("validation",$tab[$elem['perso_id']])){
+	  $tab[$elem['perso_id']]['validation']="0000-00-00 00:00:00";
 	}
 	if(!array_key_exists("maj2",$tab[$elem['perso_id']]) and $elem['infoDate']>$tab[$elem['perso_id']]['validation']){
 	  $tab[$elem['perso_id']]['conge_restant']=$elem['solde_actuel'];
@@ -927,18 +930,6 @@ class conges{
     $version=$oldVersion;
 
     echo "Mise à jour du plugin congés : $oldVersion -> $newVersion<br/>";
-    if($version < "1.5.6"){
-      $sql[]="DELETE FROM `{$dbprefix}menu` WHERE `url`='plugins/conges/cet.php';";
-      $sql[]="DELETE FROM `{$dbprefix}acces` WHERE `page`='plugins/conges/ajax.calculCredit.php';";
-      $sql[]="INSERT INTO `{$dbprefix}menu` (`niveau1`,`niveau2`,`titre`,`url`) VALUES (15,40,'Cr&eacute;dits','plugins/conges/credits.php');";
-      $sql[]="INSERT INTO `{$dbprefix}acces` (`nom`,`groupe_id`,`groupe`,`page`) VALUES ('Cong&eacute;s - Cr&eacute;dits','7','Gestion des cong&eacute;s, validation N1','plugins/conges/credits.php');";
-      $sql[]="UPDATE `{$dbprefix}plugins` SET `version`='1.5.6' WHERE `nom`='conges';";
-    }
-
-    if($version < "1.5.5"){
-      $sql[]="UPDATE `{$dbprefix}plugins` SET `version`='1.5.5' WHERE `nom`='conges';";
-    }
-
     if($version < "1.5.4"){
       $db=new db();
       $db->select("menu","*","url='plugins/conges/cet.php'");
@@ -960,7 +951,23 @@ class conges{
 
       $sql[]="ALTER TABLE `{$dbprefix}conges_CET` ADD annee VARCHAR(10);";
       $sql[]="UPDATE `{$dbprefix}plugins` SET `version`='1.5.4' WHERE `nom`='conges';";
+      $version="1.5.4";
     }
+
+    if($version < "1.5.5"){
+      $sql[]="UPDATE `{$dbprefix}plugins` SET `version`='1.5.5' WHERE `nom`='conges';";
+      $version="1.5.5";
+    }
+
+    if($version < "1.5.6"){
+      $sql[]="DELETE FROM `{$dbprefix}menu` WHERE `url`='plugins/conges/cet.php';";
+      $sql[]="DELETE FROM `{$dbprefix}acces` WHERE `page`='plugins/conges/ajax.calculCredit.php';";
+      $sql[]="INSERT INTO `{$dbprefix}menu` (`niveau1`,`niveau2`,`titre`,`url`) VALUES (15,40,'Cr&eacute;dits','plugins/conges/credits.php');";
+      $sql[]="INSERT INTO `{$dbprefix}acces` (`nom`,`groupe_id`,`groupe`,`page`) VALUES ('Cong&eacute;s - Cr&eacute;dits','7','Gestion des cong&eacute;s, validation N1','plugins/conges/credits.php');";
+      $sql[]="UPDATE `{$dbprefix}plugins` SET `version`='1.5.6' WHERE `nom`='conges';";
+      $version="1.5.6";
+    }
+
 
     foreach($sql as $elem){
       $db=new db();
