@@ -1,3 +1,9 @@
+***	Version 1.5.6	(Jérôme Combes, 6 décembre 2014)			***
+- Améliorations :
+Nouvelle page permettant de voir les crédits de tous les agents, qu'ils soient validés ou en attente
+Exportation Excel de ce nouveau tableau
+Amélioration de l'affichage de la liste des congés
+
 ***	Version 1.5.5	(Jérôme Combes, 12 septembre 2014)			***
 - Améliorations :
 Amélioration de l'affichage des crédits de congés dans les fiches agents
