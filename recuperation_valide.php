@@ -1,13 +1,13 @@
 <?php
 /*
-Planning Biblio, Plugin Congés Version 1.5.1
+Planning Biblio, Plugin Congés Version 1.5.7
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
 Copyright (C) 2013-2014 - Jérôme Combes
 
 Fichier : plugins/conges/recuperation_valide.php
 Création : 30 août 2013
-Dernière modification : 3 juin 2014
+Dernière modification : 9 décembre 2014
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -85,7 +85,7 @@ if(isset($update)){
   $nom=$p->elements[0]['nom'];
   $prenom=$p->elements[0]['prenom'];
   $mail=$p->elements[0]['mail'];
-  $mailResponsable=$p->elements[0]['mailResponsable'];
+  $mailsResponsables=$p->elements[0]['mailsResponsables'];
 
   $c->getResponsables($recup['date'],$recup['date'],$perso_id);
   $responsables=$c->responsables;
@@ -109,7 +109,7 @@ if(isset($update)){
 
   // Choix des destinataires en fonction de la configuration
   $a=new absences();
-  $a->getRecipients($notifications,$responsables,$mail,$mailResponsable);
+  $a->getRecipients($notifications,$responsables,$mail,$mailsResponsables);
   $destinataires=$a->recipients;
 
   sendmail($sujet,$message,$destinataires);

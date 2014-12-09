@@ -1,13 +1,13 @@
 <?php
 /*
-Planning Biblio, Plugin Congés Version 1.5.6
+Planning Biblio, Plugin Congés Version 1.5.7
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
 Copyright (C) 2013-2014 - Jérôme Combes
 
 Fichier : plugins/conges/modif.php
 Création : 1er août 2013
-Dernière modification : 13 novembre 2014
+Dernière modification : 9 décembre 2014
 Auteurs : Jérôme Combes jerome@planningbilbio.fr, Etienne Cavalié etienne.cavalie@unice.fr
 
 Description :
@@ -85,12 +85,12 @@ if(isset($_GET['confirm'])){
   $c->getResponsables($debutSQL,$finSQL,$perso_id);
   $responsables=$c->responsables;
 
-  $db_perso=new db();
-  $db_perso->query("select nom,prenom,mail,mailResponsable from {$dbprefix}personnel where id=$perso_id;");
-  $nom=$db_perso->result[0]['nom'];
-  $prenom=$db_perso->result[0]['prenom'];
-  $mail=$db_perso->result[0]['mail'];
-  $mailResponsable=$db_perso->result[0]['mailResponsable'];
+  $p=new personnel();
+  $p->fetchById($perso_id);
+  $nom=$p->elements[0]['nom'];
+  $prenom=$p->elements[0]['prenom'];
+  $mail=$p->elements[0]['mail'];
+  $mailsResponsables=$p->elements[0]['mailsResponsables'];
 
   // Choix du sujet et des destinataires en fonction du degré de validation
   switch($_GET['valide']){
@@ -121,7 +121,7 @@ if(isset($_GET['confirm'])){
 
   // Choix des destinataires en fonction de la configuration
   $a=new absences();
-  $a->getRecipients($notifications,$responsables,$mail,$mailResponsable);
+  $a->getRecipients($notifications,$responsables,$mail,$mailsResponsables);
   $destinataires=$a->recipients;
 
   // Message qui sera envoyé par email

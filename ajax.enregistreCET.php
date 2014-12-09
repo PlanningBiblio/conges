@@ -1,13 +1,13 @@
 <?php
 /*
-Planning Biblio, Plugin Congés Version 1.5.4
+Planning Biblio, Plugin Congés Version 1.5.7
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
 Copyright (C) 2013-2014 - Jérôme Combes
 
 Fichier : plugins/conges/ajax.enregistreCet.php
 Création : 7 mars 2014
-Dernière modification : 19 juin 2014
+Dernière modification : 9 décembre 2014
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -108,7 +108,7 @@ else{
   $nom=$p->elements[0]['nom'];
   $prenom=$p->elements[0]['prenom'];
   $mail=$p->elements[0]['mail'];
-  $mailResponsable=$p->elements[0]['mailResponsable'];
+  $mailsResponsables=$p->elements[0]['mailsResponsables'];
 
   $c=new conges();
   $c->getResponsables(null,null,$perso_id);
@@ -116,7 +116,7 @@ else{
 
   // Choix des destinataires en fonction de la configuration
   $a=new absences();
-  $a->getRecipients($config['Absences-notifications'],$responsables,$mail,$mailResponsable);
+  $a->getRecipients($config['Absences-notifications'],$responsables,$mail,$mailsResponsables);
   $destinataires=$a->recipients;
 
   if(!empty($destinataires)){

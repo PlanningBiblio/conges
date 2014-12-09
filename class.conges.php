@@ -1,13 +1,13 @@
 <?php
 /*
-Planning Biblio, Plugin Congés Version 1.5.6
+Planning Biblio, Plugin Congés Version 1.5.7
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
 Copyright (C) 2013-2014 - Jérôme Combes
 
 Fichier : plugins/conges/class.conges.php
 Création : 24 juillet 2013
-Dernière modification : 6 décembre 2014
+Dernière modification : 9 décembre 2014
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -245,14 +245,14 @@ class conges{
     $nom=$p->elements[0]['nom'];
     $prenom=$p->elements[0]['prenom'];
     $mail=$p->elements[0]['mail'];
-    $mailResponsable=$p->elements[0]['mailResponsable'];
+    $mailsResponsables=$p->elements[0]['mailsResponsables'];
 
     $this->getResponsables($date,$date,$perso_id);
     $responsables=$this->responsables;
 
     // Choix des destinataires en fonction de la configuration
     $a=new absences();
-    $a->getRecipients($GLOBALS['config']['Absences-notifications'],$responsables,$mail,$mailResponsable);
+    $a->getRecipients($GLOBALS['config']['Absences-notifications'],$responsables,$mail,$mailsResponsables);
     $destinataires=$a->recipients;
 
     if(!empty($destinataires)){
