@@ -7,7 +7,7 @@ Copyright (C) 2013-2014 - Jérôme Combes
 
 Fichier : plugins/conges/modif.php
 Création : 1er août 2013
-Dernière modification : 9 décembre 2014
+Dernière modification : 16 décembre 2014
 Auteurs : Jérôme Combes jerome@planningbilbio.fr, Etienne Cavalié etienne.cavalie@unice.fr
 
 Description :
@@ -97,25 +97,25 @@ if(isset($_GET['confirm'])){
     // Modification sans validation
     case 0 : 
       $sujet="Modification de congés";
-      $notifications=$config['Absences-notifications2'];
+      $notifications=2;
       break;
     // Validations Niveau 2
     case 1 : 
       $sujet="Validation de congés";
-      $notifications=$config['Absences-notifications4'];
+      $notifications=4;
       break;
     case -1 :
       $sujet="Refus de congés";
-      $notifications=$config['Absences-notifications4'];
+      $notifications=4;
       break;
     // Validations Niveau 1
     case 2 :
       $sujet="Congés en attente de validation hiérarchique";
-      $notifications=$config['Absences-notifications3'];
+      $notifications=3;
       break;
     case -2 :
       $sujet="Congés en attente de validation hiérarchique";
-      $notifications=$config['Absences-notifications3'];
+      $notifications=3;
       break;
   }
 

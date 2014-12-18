@@ -7,7 +7,7 @@ Copyright (C) 2013-2014 - Jérôme Combes
 
 Fichier : plugins/conges/ajax.enregistreCet.php
 Création : 7 mars 2014
-Dernière modification : 9 décembre 2014
+Dernière modification : 16 décembre 2014
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -116,7 +116,7 @@ else{
 
   // Choix des destinataires en fonction de la configuration
   $a=new absences();
-  $a->getRecipients($config['Absences-notifications'],$responsables,$mail,$mailsResponsables);
+  $a->getRecipients(1,$responsables,$mail,$mailsResponsables);
   $destinataires=$a->recipients;
 
   if(!empty($destinataires)){

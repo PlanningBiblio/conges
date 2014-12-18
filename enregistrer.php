@@ -7,7 +7,7 @@ Copyright (C) 2013-2014 - Jérôme Combes
 
 Fichier : plugins/conges/enregistrer.php
 Création : 24 juillet 2013
-Dernière modification : 9 décembre 2014
+Dernière modification : 16 décembre 2014
 Auteurs : Jérôme Combes jerome@planningbilbio.fr, Etienne Cavalié etienne.cavalie@unice.fr
 
 Description :
@@ -63,7 +63,7 @@ if(isset($_GET['confirm'])){	// Confirmation
 
   // Choix des destinataires en fonction de la configuration
   $a=new absences();
-  $a->getRecipients($config['Absences-notifications'],$responsables,$mail,$mailsResponsables);
+  $a->getRecipients(1,$responsables,$mail,$mailsResponsables);
   $destinataires=$a->recipients;
 
   // Message qui sera envoyé par email
