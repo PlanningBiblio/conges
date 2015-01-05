@@ -3,7 +3,7 @@
 Planning Biblio, Plugin Congés Version 1.5.5
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
-Copyright (C) 2013-2014 - Jérôme Combes
+Copyright (C) 2013-2015 - Jérôme Combes
 
 Fichier : plugins/conges/ficheAgentValid.php
 Création : 15 janvier 2014
