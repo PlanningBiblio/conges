@@ -1,13 +1,13 @@
 <?php
 /*
-Planning Biblio, Plugin Congés Version 1.5.6
+Planning Biblio, Plugin Congés Version 1.5.8
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
 Copyright (C) 2013-2015 - Jérôme Combes
 
 Fichier : plugins/conges/credits.php
 Création : 17 novembre 2014
-Dernière modification : 4 décembre 2014
+Dernière modification : 5 janvier 2015
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -16,6 +16,36 @@ Accessible par le menu congés
 Inclus dans le fichier index.php
 */
 
+// Refuse l'accès aux personnes n'ayant pas le droit de gérer les congés et récupération des sites gérés
+/*
+2 : Congés validation N2 monosite
+7 : Congés validation N1 monosite
+40x : Congés validation N1 multisites
+60x : Congés validation N2 multisites
+*/
+$required=array(2,7,401,402,403,404,405,406,407,408,409,410,601,602,603,604,605,606,607,608,609,610);
+$access=false;
+$sites=array();
+foreach($required as $elem){
+  if(in_array($elem,$droits)){
+    $access=true;
+    if($elem>600){
+      $sites[]=$elem-600;
+    }elseif($elem>400){
+      $site=$elem-400;
+      if(!in_array($site,$sites)){
+	$sites[]=$site;
+      }
+    }
+  }
+}
+if(!$access){
+  echo "<div id='acces_refuse'>Accès refusé</div>\n";
+  include "include/footer.php";
+  exit;
+}
+
+// Includes
 require_once "class.conges.php";
 require_once "personnel/class.personnel.php";
 
@@ -43,6 +73,9 @@ $checked3=$credits_en_attente?"checked='checked'":null;
 $c=new conges();
 if($agents_supprimes){
   $c->agents_supprimes=array(0,1);
+}
+if($config['Multisites-nombre']>1){
+  $c->sites=$sites;
 }
 $c->fetchAllCredits();
 

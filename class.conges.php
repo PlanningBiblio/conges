@@ -1,13 +1,13 @@
 <?php
 /*
-Planning Biblio, Plugin Congés Version 1.5.7
+Planning Biblio, Plugin Congés Version 1.5.8
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
 Copyright (C) 2013-2015 - Jérôme Combes
 
 Fichier : plugins/conges/class.conges.php
 Création : 24 juillet 2013
-Dernière modification : 16 décembre 2014
+Dernière modification : 5 janvier 2015
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -44,6 +44,7 @@ class conges{
   public $perso_id=null;
   public $recupId=null;
   public $samedis=array();
+  public $sites=array();
   public $valide=null;
 
   public function conges(){
@@ -345,8 +346,20 @@ class conges{
     $supprime=join("','",$this->agents_supprimes);
 
     // Recherche des agents
+    // N'affiche que les agents des sites gérés (Multisites seulement)
+    $sitesReq=null;
+    if($GLOBALS['config']['Multisites-nombre']>1){
+      $tmp=array();
+      if(!empty($this->sites)){
+	foreach($this->sites as $elem){
+	  $tmp[]="sites LIKE '%\"$elem\"%'";
+	$sitesReq=" AND (".join(" OR ",$tmp).") ";
+	}
+      }
+    }
+
     $db=new db();
-    $db->select("personnel","id,nom,prenom,congesCredit,congesReliquat,congesAnticipation,recupSamedi,congesAnnuel","`supprime` IN ('$supprime') AND `id`<>'2' AND actif like 'Actif'");
+    $db->select("personnel","id,nom,prenom,congesCredit,congesReliquat,congesAnticipation,recupSamedi,congesAnnuel","`supprime` IN ('$supprime') AND `id`<>'2' AND actif like 'Actif' $sitesReq");
     if(!$db->result){
       return false;
     }
@@ -451,7 +464,7 @@ class conges{
 
 
     // Calcul des crédits en attente de validation
-    // Les crédits en attente sont égals aux crédits validés, on y ajoutera ensuite les demandes non validées
+    // Les crédits en attente sont égaux aux crédits validés, on y ajoutera ensuite les demandes non validées
     $perso_ids=array_keys($tab);
     foreach($perso_ids as $perso_id){
       $tab[$perso_id]['conge_en_attente']=$tab[$perso_id]['conge_restant'];
@@ -968,6 +981,11 @@ class conges{
       $version="1.5.6";
     }
 
+    if($version < "1.5.8"){
+      $sql[]="UPDATE `{$dbprefix}acces` SET `groupe_id`=100,`groupe`=NULL WHERE `page`='plugins/conges/credits.php';";
+      $sql[]="UPDATE `{$dbprefix}plugins` SET `version`='1.5.8' WHERE `nom`='conges';";
+      $version="1.5.8";
+    }
 
     foreach($sql as $elem){
       $db=new db();
