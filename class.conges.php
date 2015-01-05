@@ -694,8 +694,13 @@ class conges{
 	if(array_key_exists($offset,$temps)){
 	  $site=$temps[$offset][4];
 	  // Ajout du numéro du droit correspondant à la gestion des congés de ce site
-	  if(!in_array("30".$site,$droitsConges) and $site){
-	    $droitsConges[]="30".$site;
+	  // Validation N1
+	  if(!in_array((400+$site),$droitsConges) and $site){
+	    $droitsConges[]=400+$site;
+	  }
+	  // Validation N2
+	  if(!in_array((600+$site),$droitsConges) and $site){
+	    $droitsConges[]=600+$site;
 	  }
 	}
 	$date=date("Y-m-d",strtotime("+1 day",strtotime($date)));
@@ -703,13 +708,14 @@ class conges{
       // Si les jours de conges ne concernent aucun site, on ajoute les responsables de tous les sites par sécurité
       if(empty($droitsConges)){
 	for($i=1;$i<=$GLOBALS['config']['Multisites-nombre'];$i++){
-	  $droitsConges[]=300+$i;
+	  $droitsConges[]=400+$i;
+	  $droitsConges[]=600+$i;
 	}
       }
     }
-    // Si un seul site, le droit de gestion des conges est 2
+    // Si un seul site, le droit de gestion de congés N1 est 7, le droit de gestion de congés N2 est 2
     else{
-      $droitsConges[]=2;
+      $droitsConges=array(2,7);
     }
 
     $db=new db();
