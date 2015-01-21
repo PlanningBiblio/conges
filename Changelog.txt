@@ -1,3 +1,12 @@
+***	Version 1.5.9	(Jérôme Combes, 21 janvier 2015)			***
+-Correction :
+Affiche toutes les absences (et congés) dans les agendas
+
+***	Version 1.5.7	(Jérôme Combes, 18 décembre 2014)			***
+- Améliorations :
+Page affichant les crédits de tous les agents, validés et en attente de validation
+Amélioration de l'affichage de la liste des congés
+
 ***	Version 1.5.6	(Jérôme Combes, 6 décembre 2014)			***
 - Améliorations :
 Nouvelle page permettant de voir les crédits de tous les agents, qu'ils soient validés ou en attente

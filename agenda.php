@@ -1,13 +1,13 @@
 <?php
 /*
-Planning Biblio, Plugin Conges Version 1.3
+Planning Biblio, Plugin Conges Version 1.6
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
 Copyright (C) 2013-2015 - Jérôme Combes
 
 Fichier : plugins/conges/agenda.php
 Création : 14 mars 2014
-Dernière modification : 17 mars 2014
+Dernière modification : 21 janvier 2015
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -31,8 +31,7 @@ $c->debut=$current." 00:00:00";
 $c->fin=$current." 23:59:59";
 $c->valide=true;
 $c->fetch();
-$conges_affichage=null;
-$conge_journee=false;
+$conges_affichage=array();
 
 if(!empty($c->elements)){
   $conge=$c->elements[0];
@@ -40,24 +39,23 @@ if(!empty($c->elements)){
   // (remplace le message d'absence)
   if($conge['debut']<=$current." 00:00:00" and $conge['fin']>=$current." 23:59:59"){
     $absent=true;
-    $conge_journee=true;
-    $absences_affichage="En cong&eacute; toute la journ&eacute;e";
+    $conges_affichage[]="Toute la journ&eacute;e : Cong&eacute;";
   }
   elseif(substr($conge['debut'],0,10)==$current and substr($conge['fin'],0,10)==$current){
     $deb=heure2(substr($conge['debut'],-8));
     $fi=heure2(substr($conge['fin'],-8));
-    $conges_affichage="En cong&eacute; de $deb &agrave; $fi";
+    $conges_affichage[]="De $deb &agrave; $fi : Cong&eacute;";
   }
   elseif(substr($conge['debut'],0,10)==$current and $conge['fin']>=$current." 23:59:59"){
     $deb=heure2(substr($conge['debut'],-8));
-    $conges_affichage="En cong&eacute; &agrave; partir de $deb";
+    $conges_affichage[]="&Agrave; partir de $deb : Cong&eacute;";
   }
   elseif($conge['debut']<=$current." 00:00:00" and substr($conge['fin'],0,10)==$current){
     $fi=heure2(substr($conge['fin'],-8));
-    $conges_affichage="En cong&eacute; jusqu'&agrave; $fi";
+    $conges_affichage[]="Jusqu'&agrave; $fi : Cong&eacute;";
   }
   else{
-    $conges_affichage="{$conge['debut']} --> {$conge['fin']}";
+    $conges_affichage[]="{$conge['debut']} &rarr; {$conge['fin']} : Cong&eacute;";
   }
 
   // Modifie l'index "absent" du tableau $current_postes pour barrer les postes concernés par le congé
@@ -70,7 +68,7 @@ if(!empty($c->elements)){
 }
 
 // Si congé sur une partie de la journée seulement, complète le message d'absence
-if($conges_affichage and !$conge_journee){
-  $absences_affichage.="<p>$conges_affichage</p>";
+if(!empty($conges_affichage)){
+  $absences_affichage[]=join("<br/>",$conges_affichage);
 }
 ?>
