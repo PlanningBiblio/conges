@@ -1,13 +1,13 @@
 <?php
 /*
-Planning Biblio, Plugin Congés Version 1.5.8
+Planning Biblio, Plugin Congés Version 1.6
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
 Copyright (C) 2013-2015 - Jérôme Combes
 
 Fichier : plugins/conges/class.conges.php
 Création : 24 juillet 2013
-Dernière modification : 6 janvier 2015
+Dernière modification : 22 janvier 2015
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -988,11 +988,17 @@ class conges{
     }
 
     if($version < "1.5.8"){
-      $sql[]="UPDATE `{$dbprefix}acces` SET `groupe_id`=100,`groupe`=NULL WHERE `page`='plugins/conges/credits.php';";
+      $sql[]="UPDATE `{$dbprefix}acces` SET `groupe_id`=100,`groupe`='' WHERE `page`='plugins/conges/credits.php';";
       $sql[]="UPDATE `{$dbprefix}plugins` SET `version`='1.5.8' WHERE `nom`='conges';";
       $sql[]="UPDATE `{$dbprefix}acces` SET `groupe_id`='7', `groupe`='Gestion des cong&eacute;s, validation N1' WHERE `page`='plugins/conges/infos.php';";
       $sql[]="INSERT INTO `{$dbprefix}acces` (`nom`,`groupe`,`groupe_id`) VALUES ('Gestion des cong&eacute;s, validation N2','Gestion des cong&eacute;s, validation N2',2);";
       $version="1.5.8";
+    }
+
+    if($version < "1.6"){
+      $sql[]="UPDATE `{$dbprefix}acces` SET `groupe_id`=100,`groupe`='' WHERE `page`='plugins/conges/credits.php';";
+      $sql[]="UPDATE `{$dbprefix}plugins` SET `version`='1.6' WHERE `nom`='conges';";
+      $version="1.6";
     }
 
     foreach($sql as $elem){
