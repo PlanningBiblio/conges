@@ -1,13 +1,13 @@
 <?php
 /*
-Planning Biblio, Plugin Conges Version 1.5.9
+Planning Biblio, Plugin Conges Version 1.6.1
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
 Copyright (C) 2013-2015 - Jérôme Combes
 
 Fichier : plugins/conges/planning_cellule_poste.php
 Création : 30 janvier 2014
-Dernière modification : 12 janvier 2015
+Dernière modification : 23 février 2015
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -17,7 +17,8 @@ Vérifie si l'agent placé dans la cellule est en congés, si oui, il le barre e
 
 foreach($GLOBALS['conges'] as $conge){
   if($conge['perso_id']==$elem['perso_id'] and $conge['debut']<"$date {$elem['fin']}" and $conge['fin']>"$date {$elem['debut']}"){
-    $resultat="<s style='color:orange;'>$resultat</s>";
+    $class_tmp[]="orange";
+    $class_tmp[]="striped";
   }
 }
 ?>

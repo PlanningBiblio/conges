@@ -1,3 +1,6 @@
+***	Version 1.6.1	(Jérôme Combes, 6 mars 2015)			***
+Compatibilité PB 1.9.1 : Modification de la fonction cellule_poste
+
 ***	Version 1.5.9	(Jérôme Combes, 21 janvier 2015)			***
 -Correction :
 Affiche toutes les absences (et congés) dans les agendas
