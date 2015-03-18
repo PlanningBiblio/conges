@@ -1,3 +1,7 @@
+***	Version 1.6.2	(Jérôme Combes, 18 mars 2015)			***
+-Correction :
+Initialisation de variables
+
 ***	Version 1.6.1	(Jérôme Combes, 6 mars 2015)			***
 Compatibilité PB 1.9.1 : Modification de la fonction cellule_poste
 
