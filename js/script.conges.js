@@ -1,12 +1,12 @@
 /*
-Planning Biblio, Plugin Congés Version 1.5.6
+Planning Biblio, Plugin Congés Version 1.6.1
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
 Copyright (C) 2013-2015 - Jérôme Combes
 
 Fichier : plugins/conges/js/script.conges.js
 Création : 2 août 2013
-Dernière modification : 3 décembre 2014
+Dernière modification : 3 février 2015
 Auteurs : Jérôme Combes jerome@planningbilbio.fr, Etienne Cavalié etienne.cavalie@unice.fr
 
 Description :
@@ -300,11 +300,8 @@ function checkDateAge( o, limit, n, tip ) {
     tip=true;
   }
   var today=new Date();
-  var d=new Date();
   tmp=o.val().split("/");
-  d.setDate(parseInt(tmp[0]));
-  d.setMonth(parseInt(tmp[1])-1);
-  d.setFullYear(parseInt(tmp[2]));
+  var d=new Date(tmp[2],tmp[1]-1,tmp[0]);
   diff=dateDiff(d,today);
   if(diff.day>limit){
     if(tip){
