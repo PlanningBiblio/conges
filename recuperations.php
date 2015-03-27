@@ -1,13 +1,13 @@
 <?php
 /*
-Planning Biblio, Plugin Congés Version 1.5.6
+Planning Biblio, Plugin Congés Version 1.6.3
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
 Copyright (C) 2013-2015 - Jérôme Combes
 
 Fichier : plugins/conges/recuperations.php
 Création : 27 août 2013
-Dernière modification : 5 novembre 2014
+Dernière modification : 27 mars 2015
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -110,14 +110,15 @@ echo <<<EOD
 &nbsp;&nbsp;<input type='button' value='Reset' id='button-Effacer' class='ui-button' onclick='location.href="index.php?page=plugins/conges/recuperations.php&reset"' />
 </p>
 </form>
-<table id='tableRecup'>
+<table id='tableRecup' class='CJDataTable' data-sort='[[1]]' data-stateSave='0'>
 <thead>
-<tr><th>&nbsp;</th>
+<tr><th class='dataTableNoSort' >&nbsp;</th>
 EOD;
+echo "<th class='dataTableDateFR'>Date</th>\n";
 if($admin){
   echo "<th>Agent</th>";
 }
-echo "<th>Date</th><th>Heures</th><th>Commentaires</th><th>Validation</th><th>Crédits</th></tr>\n";
+echo "<th>Heures</th><th>Commentaires</th><th>Validation</th><th>Crédits</th></tr>\n";
 echo "</thead>\n";
 echo "<tbody>\n";
 
@@ -143,11 +144,12 @@ foreach($recup as $elem){
 
   echo "<tr>";
   echo "<td><a href='index.php?page=plugins/conges/recuperation_modif.php&amp;id={$elem['id']}'><span class='pl-icon pl-icon-edit' title='Modifier'></span></a></td>\n";
+  $date2=($elem['date2'] and $elem['date2']!="0000-00-00")?" &amp; ".dateFr($elem['date2']):null;
+  echo "<td>".dateFr($elem['date'])."$date2</td>\n";
   if($admin){
     echo "<td>".nom($elem['perso_id'])."</td>";
   }
-  $date2=($elem['date2'] and $elem['date2']!="0000-00-00")?" &amp; ".dateFr($elem['date2']):null;
-  echo "<td>".dateFr($elem['date'])."$date2</td><td>".heure4($elem['heures'])."</td>";
+  echo "<td>".heure4($elem['heures'])."</td>\n";
   echo "<td>".str_replace("\n","<br/>",$elem['commentaires'])."</td><td style='$validationStyle'>$validation</td><td>$credits</td></tr>\n";
 }
 
@@ -355,23 +357,6 @@ $(function() {
       date.datepicker("enable");
       return false;
     });
-
-  $("#tableRecup").dataTable({
-    "bJQueryUI": true,
-    "sPaginationType": "full_numbers",
-    "bStateSave": true,
-    "aaSorting" : [[1,"asc"],[2,"asc"]],
-    "aoColumns" : [{"bSortable":false},{"bSortable":true},{"sType": "date-fr"},{"bSortable":true},{"bSortable":true},{"bSortable":true},
-      <?php
-      if($admin){
-	echo '{"bSortable":true},';
-      }
-      ?>
-      ],
-    "aLengthMenu" : [[25,50,75,100,-1],[25,50,75,100,"Toutes"]],
-    "iDisplayLength" : 25,
-    "oLanguage" : {"sUrl" : "vendor/dataTables.french.lang"}
-  });
 
 });
 </script>

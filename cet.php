@@ -1,13 +1,13 @@
 <?php
 /*
-Planning Biblio, Plugin Congés Version 1.5.5
+Planning Biblio, Plugin Congés Version 1.6.3
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
 Copyright (C) 2013-2015 - Jérôme Combes
 
 Fichier : plugins/conges/cet.php
 Création : 6 mars 2014
-Dernière modification : 3 juillet 2014
+Dernière modification : 27 mars 2015
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -113,16 +113,21 @@ echo <<<EOD
 &nbsp;&nbsp;<input type='button' value='Reset' id='button-Effacer' class='ui-button' onclick='location.href="index.php?page=plugins/conges/cet.php&reset"' />
 </p>
 </form>
-<table id='tableCET'>
+<table id='tableCET' class='CJDataTable' data-sort='[[1]]'>
 <thead>
-<tr><th>&nbsp;</th>
+<tr><th class='dataTableNoSort' >&nbsp;</th>
 EOD;
 if($adminN1){
   echo "<th>Agent</th>";
 }
-echo "<th>Jours</th><th>Crédits</th><th>Demande</th><th>Validation</th><th>Date validation</th></tr>\n";
-echo "</thead>\n";
-echo "<tbody>\n";
+echo <<<EOD
+  <th>Jours</th><th>Crédits</th>
+  <th class='dataTableDateFr'>Demande</th>
+  <th>Validation</th>
+  <th class='dataTableDateFr'>Date validation</th></tr>
+  </thead>
+  <tbody>
+EOD;
 
 foreach($cet as $elem){
   $saisie_par=null;

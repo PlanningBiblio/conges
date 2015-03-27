@@ -1,12 +1,12 @@
 /*
-Planning Biblio, Plugin Congés Version 1.5.4
+Planning Biblio, Plugin Congés Version 1.6.3
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
 Copyright (C) 2013-2015 - Jérôme Combes
 
 Fichier : plugins/conges/js/cet.js
 Création : 6 mars 2014
-Dernière modification : 19 juin 2014
+Dernière modification : 27 mars 2015
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -14,23 +14,6 @@ Fichier regroupant les functions JavaScript utiles à la gestion des CET (page p
 */
 
 $(document).ready(function(){
-  // DataTable
-  aoColumns=[{"bSortable":false},{"bSortable":true},{"sType": "date-fr"},{"bSortable":true},{"bSortable":true},{"bSortable":true}];
-  if($("#adminN1").val()==1){
-    aoColumns[aoColumns.length]={"bSortable":true};
-  }
-  $("#tableCET").dataTable({
-    "bJQueryUI": true,
-    "sPaginationType": "full_numbers",
-    "bStateSave": true,
-    "aaSorting" : [[1,"asc"],[2,"asc"]],
-    "aoColumns" : aoColumns,
-    "aLengthMenu" : [[25,50,75,100,-1],[25,50,75,100,"Toutes"]],
-    "iDisplayLength" : 25,
-    "oLanguage" : {"sUrl" : "vendor/dataTables.french.lang"}
-  });
-
-  
   // DialogBox
   // Affichage du reliquat dans la boite de dialogue au chargment de la page
   cetReliquat($("#perso_id").val());
