@@ -1,12 +1,12 @@
 /*
-Planning Biblio, Plugin Congés Version 1.6.1
+Planning Biblio, Plugin Congés Version 1.6.3
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
 Copyright (C) 2013-2015 - Jérôme Combes
 
 Fichier : plugins/conges/js/script.conges.js
 Création : 2 août 2013
-Dernière modification : 3 février 2015
+Dernière modification : 28 mars 2015
 Auteurs : Jérôme Combes jerome@planningbilbio.fr, Etienne Cavalié etienne.cavalie@unice.fr
 
 Description :
@@ -330,72 +330,6 @@ function checkSamedi( o, n ) {
   }
 }
 
-$(document).ready(function() {
-  
-  // Initialisation de la dataTable Conges (voir les conges, voir.php)
-  if($("#tableConges").length){
-    var tableCongesCols=$("#tableConges thead th").length-1;
-    var tableCongesColumns= [{"bSortable":false},{"sType": "date-fr"},{"sType": "date-fr-fin"},{"bSortable":true},{"bSortable":true},
-      {"sType": "date-fr"},{"bSortable":true},{"bSortable":true},{"bSortable":true},{"bSortable":true}];
-       
-    if(tableCongesCols==11){
-      tableCongesColumns.push({"bSortable":true});
-    }
-
-    $("#tableConges").dataTable({
-      "bJQueryUI": true,
-      "sPaginationType": "full_numbers",
-      "bStateSave": true,
-      "aaSorting" : [[1,"asc"],[2,"asc"]],
-      "aoColumns" : tableCongesColumns,
-      "aLengthMenu" : [[25,50,75,100,-1],[25,50,75,100,"Tous"]],
-      "iDisplayLength" : 25,
-      "oLanguage" : {"sUrl" : "vendor/dataTables.french.lang"}
-    });
-  }
-  
-
-  // Initialisation de la dataTable Credits (credits.php)
-  if($("#tableCredits").length){
-    $("#tableCredits").dataTable({
-      "bJQueryUI": true,
-      "sPaginationType": "full_numbers",
-      "bStateSave": true,
-      "aaSorting" : [[0,"asc"]],
-      "aoColumns" : [{"bSortable":true},
-	{"sType": "heure-fr"},{"sType": "heure-fr"},{"sType": "heure-fr"},{"sType": "heure-fr"},
-	{"sType": "heure-fr"},{"sType": "heure-fr"},{"sType": "heure-fr"},
-	{"sType": "heure-fr"},{"sType": "heure-fr"},{"sType": "heure-fr"},
-	{"sType": "heure-fr"},{"sType": "heure-fr"},{"sType": "heure-fr"}],
-      "aLengthMenu" : [[30,60,90,120,-1],[30,60,90,120,"Tous"]],
-      "iDisplayLength" : 30,
-      "oLanguage" : {"sUrl" : "vendor/dataTables.french.lang"},
-      "sDom": '<"H"lfr>t<"F"ip>T',
-      "oTableTools": {
-	"sSwfPath" : "vendor/DataTables-1.10.4/extensions/TableTools/swf/copy_csv_xls.swf",
-	"aButtons": [
-	  {
-	    "sExtends": "xls",
-	    "sButtonText": "Excel",
-	  },
-	  {
-	    "sExtends": "csv",
-	    "sButtonText": "CSV",
-	  },
-	  {
-	    "sExtends": "pdf",
-	    "sButtonText": "PDF",
-	  },
-	  {
-	    "sExtends": "print",
-	    "sButtonText": "Imprimer",
-	  },
-	]
-      }
-    });
-  }
-
-});
 
 $(function(){
   if($(".googleCalendarTrigger").length){

@@ -1,13 +1,13 @@
 <?php
 /*
-Planning Biblio, Plugin Congés Version 1.5.8
+Planning Biblio, Plugin Congés Version 1.6.3
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
 Copyright (C) 2013-2015 - Jérôme Combes
 
 Fichier : plugins/conges/credits.php
 Création : 17 novembre 2014
-Dernière modification : 5 janvier 2015
+Dernière modification : 28 mars 2015
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -105,21 +105,30 @@ echo <<<EOD
 </form>
 <br/>
 
-<table id='tableCredits'>
+<table id='tableCredits' class='CJDataTable' data-sort='[[0]]'>
 <thead>
   <tr>
     <th rowspan='2'>Agent</th>
-    <th rowspan='2'>Cong&eacute;s / an</th>
+    <th rowspan='2' class='dataTableHeureFR' >Cong&eacute;s / an</th>
     <th colspan='3'>Cr&eacute;dit cong&eacute;s</th>
     <th colspan='3'>Cr&eacute;dit reliquat</th>
     <th colspan='3'>Cr&eacute;dit r&eacute;cup&eacute;rations</th>
     <th colspan='3'>Solde d&eacute;biteur</th>
   </tr>
   <tr>
-    <th>Initial</th><th>Utilis&eacute;</th><th>Restant</th>
-    <th>Initial</th><th>Utilis&eacute;</th><th>Restant</th>
-    <th>Initial</th><th>Utilis&eacute;</th><th>Restant</th>
-    <th>Initial</th><th>Utilis&eacute;</th><th>Restant</th>
+    <th class='dataTableHeureFR' >Initial</th>
+    <th class='dataTableHeureFR' >Utilis&eacute;</th>
+    <th class='dataTableHeureFR' >Restant</th>
+    <th class='dataTableHeureFR' >Initial</th>
+    <th class='dataTableHeureFR' >Utilis&eacute;</th>
+    <th class='dataTableHeureFR' >Restant</th>
+    <th class='dataTableHeureFR' >Initial</th>
+    <th class='dataTableHeureFR' >Utilis&eacute;</th>
+    <th class='dataTableHeureFR' >Restant</th>
+    <th class='dataTableHeureFR' >Initial</th>
+    <th class='dataTableHeureFR' >Utilis&eacute;</th>
+    <th class='dataTableHeureFR' >Restant</th>
+  </tr>
 </thead>
 <tbody>
 EOD;

@@ -1,13 +1,13 @@
 <?php
 /*
-Planning Biblio, Plugin Congés Version 1.5.6
+Planning Biblio, Plugin Congés Version 1.6.3
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
 Copyright (C) 2013-2015 - Jérôme Combes
 
 Fichier : plugins/conges/voir.php
 Création : 24 juillet 2013
-Dernière modification : 20 novembre 2014
+Dernière modification : 28 mars 2015
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -137,8 +137,12 @@ echo <<<EOD
 </tr></tbody></table>
 </form>
 <br/>
-<table id='tableConges'>
-<thead><tr><th rowspan='2'>&nbsp;</th><th rowspan='2'>Début</th><th rowspan='2'>Fin</th>
+<table id='tableConges' class='CJDataTable' data-sort='[[1],[2]]'>
+<thead>
+  <tr>
+    <th rowspan='2' class='dataTableNoSort'>&nbsp;</th>
+    <th rowspan='2' class='dataTableDateFr'>Début</th>
+    <th rowspan='2' class='dataTableDateFr-fin'>Fin</th>
 EOD;
 if($admin){
   echo "<th rowspan='2'>Nom</th>";
