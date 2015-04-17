@@ -1,13 +1,13 @@
 <?php
 /*
-Planning Biblio, Plugin Congés Version 1.5.7
+Planning Biblio, Plugin Congés Version 1.6.5
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
 Copyright (C) 2013-2015 - Jérôme Combes
 
 Fichier : plugins/conges/enregistrer.php
 Création : 24 juillet 2013
-Dernière modification : 16 décembre 2014
+Dernière modification : 17 avril 2015
 Auteurs : Jérôme Combes jerome@planningbilbio.fr, Etienne Cavalié etienne.cavalie@unice.fr
 
 Description :
@@ -81,8 +81,9 @@ if(isset($_GET['confirm'])){	// Confirmation
   $message.="<br/><br/>Lien vers la demande de cong&eacute; :<br/><a href='$url'>$url</a><br/><br/>";
 
   sendmail("Nouveau congés",$message,$destinataires);
-
-  echo "<script type='text/JavaScript'>document.location.href='index.php?page=plugins/conges/voir.php&information=".urlencode("La demande de congé a été enregistrée")."';</script>\n";
+ 
+  $msg=urlencode("La demande de congé a été enregistrée");
+  echo "<script type='text/JavaScript'>document.location.href='index.php?page=plugins/conges/voir.php&msg=$msg&msgType=success';</script>\n";
 }
 
 // Formulaire

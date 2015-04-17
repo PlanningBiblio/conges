@@ -1,13 +1,13 @@
 <?php
 /*
-Planning Biblio, Plugin Congés Version 1.6.3
+Planning Biblio, Plugin Congés Version 1.6.5
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
 Copyright (C) 2013-2015 - Jérôme Combes
 
 Fichier : plugins/conges/recuperations.php
 Création : 27 août 2013
-Dernière modification : 27 mars 2015
+Dernière modification : 17 avril 2015
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -19,19 +19,26 @@ include_once "personnel/class.personnel.php";
 
 // Initialisation des variables
 $admin=in_array(2,$droits)?true:false;
-$agent=isset($_GET['agent'])?$_GET['agent']:null;
-$tri=isset($_GET['tri'])?$_GET['tri']:"`debut`,`fin`,`nom`,`prenom`";
-$annee=isset($_GET['annee'])?$_GET['annee']:(isset($_SESSION['oups']['recup_annee'])?$_SESSION['oups']['recup_annee']:(date("m")<9?date("Y")-1:date("Y")));
-if($admin){
-  $perso_id=isset($_GET['perso_id'])?$_GET['perso_id']:(isset($_SESSION['oups']['recup_perso_id'])?$_SESSION['oups']['recup_perso_id']:$_SESSION['login_id']);
+$annee=filter_input(INPUT_GET,"annee",FILTER_SANITIZE_STRING);
+$reset=filter_input(INPUT_GET,"reset",FILTER_CALLBACK,array("options"=>"sanitize_on"));
+$perso_id=filter_input(INPUT_GET,"perso_id",FILTER_SANITIZE_NUMBER_INT);
+
+if($admin and $perso_id===null){
+  $perso_id=isset($_SESSION['oups']['recup_perso_id'])?$_SESSION['oups']['recup_perso_id']:$_SESSION['login_id'];
 }
-else{
+elseif($perso_id===null){
   $perso_id=$_SESSION['login_id'];
 }
-if(isset($_GET['reset'])){
+
+if(!$annee){
+	$annee=isset($_SESSION['oups']['recup_annee'])?$_SESSION['oups']['recup_annee']:(date("m")<9?date("Y")-1:date("Y"));
+}
+
+if($reset){
   $annee=date("m")<9?date("Y")-1:date("Y");
   $perso_id=$_SESSION['login_id'];
 }
+
 $_SESSION['oups']['recup_annee']=$annee;
 $_SESSION['oups']['recup_perso_id']=$perso_id;
 
@@ -60,20 +67,6 @@ $agents=$p->elements;
 $annees=array();
 for($d=date("Y")+2;$d>date("Y")-11;$d--){
   $annees[]=array($d,$d."-".($d+1));
-}
-
-// Notifications
-if(isset($_GET['message'])){
-  switch($_GET['message']){
-    case "Demande-OK" : $message="Votre demande a été enregistrée"; $type="highlight";	break;
-    case "Demande-Erreur" : $message="Une erreur est survenue lors de l'enregitrement de votre demande."; $type="error"; break;
-    case "OK" : $message="Vos modifications ont été enregistrées"; $type="highlight";	break;
-    case "Erreur" : $message="Une erreur est survenue lors de la validation de vos modifications."; $type="error"; break;
-    case "Refus" : $message="Accès refusé."; $type="error"; break;
-  }
-  if($message){
-    echo "<script type='text/JavaScript'>information('$message','$type',70);</script>\n";
-  }
 }
 
 // Affichage
@@ -107,7 +100,7 @@ if($admin){
 }
 echo <<<EOD
 &nbsp;&nbsp;<input type='submit' value='OK' id='button-OK' class='ui-button'/>
-&nbsp;&nbsp;<input type='button' value='Reset' id='button-Effacer' class='ui-button' onclick='location.href="index.php?page=plugins/conges/recuperations.php&reset"' />
+&nbsp;&nbsp;<input type='button' value='Reset' id='button-Effacer' class='ui-button' onclick='location.href="index.php?page=plugins/conges/recuperations.php&reset=on"' />
 </p>
 </form>
 <table id='tableRecup' class='CJDataTable' data-sort='[[1]]' data-stateSave='0'>
@@ -329,7 +322,8 @@ $(function() {
 	    type: "get",
 	    success: function(){
 	      // Affiche la liste des demandes après enregistrement
-	      document.location.href="index.php?page=plugins/conges/recuperations.php&message=Demande-OK";
+	      var msg=encodeURIComponent("Votre demande a été enregistrée");
+	      document.location.href="index.php?page=plugins/conges/recuperations.php&msgType=success&msg="+msg;
 	      // Ferme le dialog
 	      $( this ).dialog( "close" );
 	    },

@@ -1,13 +1,13 @@
 <?php
 /*
-Planning Biblio, Plugin Congés Version 1.4.5
+Planning Biblio, Plugin Congés Version 1.6.5
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
 Copyright (C) 2013-2015 - Jérôme Combes
 
 Fichier : plugins/conges/recuperation_modif.php
 Création : 29 août 2013
-Dernière modification : 24 février 2014
+Dernière modification : 17 avril 2015
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -19,7 +19,7 @@ include_once "include/horaires.php";
 
 // Initialisation des variables
 $admin=in_array(2,$droits)?true:false;
-$id=$_GET['id'];
+$id=filter_input(INPUT_GET,"id",FILTER_SANITIZE_NUMBER_INT);
 
 $c=new conges();
 $c->recupId=$id;

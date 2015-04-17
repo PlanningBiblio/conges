@@ -1,13 +1,13 @@
 <?php
 /*
-Planning Biblio, Plugin Congés Version 1.5.7
+Planning Biblio, Plugin Congés Version 1.6.5
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
 Copyright (C) 2013-2015 - Jérôme Combes
 
 Fichier : plugins/conges/modif.php
 Création : 1er août 2013
-Dernière modification : 16 décembre 2014
+Dernière modification : 17 avril 2015
 Auteurs : Jérôme Combes jerome@planningbilbio.fr, Etienne Cavalié etienne.cavalie@unice.fr
 
 Description :
@@ -19,10 +19,20 @@ Inclus dans le fichier index.php
 require_once "class.conges.php";
 
 // Initialisation des variables
-$id=$_GET['id'];
-$menu=isset($_GET['menu'])?$_GET['menu']:null;
-$debut=isset($_GET['debut'])?$_GET['debut']:null;
-$fin=isset($_GET['fin'])?$_GET['fin']:null;
+$get=filter_input_array(INPUT_GET,FILTER_SANITIZE_STRING);
+
+$id=filter_input(INPUT_GET,"id",FILTER_SANITIZE_NUMBER_INT);
+$commentaires=filter_input(INPUT_GET,"commentaires",FILTER_SANITIZE_STRING);
+$confirm=filter_input(INPUT_GET,"confirm",FILTER_CALLBACK,array("options"=>"sanitize_on"));
+$debut=filter_input(INPUT_GET,"debut",FILTER_CALLBACK,array("options"=>"sanitize_dateFr"));
+$fin=filter_input(INPUT_GET,"fin",FILTER_CALLBACK,array("options"=>"sanitize_dateFr"));
+$hre_debut=filter_input(INPUT_GET,"hre_debut",FILTER_CALLBACK,array("options"=>"sanitize_time"));
+$hre_fin=filter_input(INPUT_GET,"hre_fin",FILTER_CALLBACK,array("options"=>"sanitize_time_end"));
+$menu=filter_input(INPUT_GET,"menu",FILTER_SANITIZE_STRING);
+$perso_id=filter_input(INPUT_GET,"perso_id",FILTER_SANITIZE_NUMBER_INT);
+$refus=filter_input(INPUT_GET,"refus",FILTER_SANITIZE_STRING);
+$valide=filter_input(INPUT_GET,"refus",FILTER_SANITIZE_NUMBER_INT);
+
 $quartDHeure=$config['heuresPrecision']=="quart d&apos;heure"?true:false;
 
 // Elements du congé demandé
@@ -33,11 +43,13 @@ if(!array_key_exists(0,$c->elements)){
   echo "<h3>Congés</h3>\n";
   echo "<div id='acces_refuse'>Accès refusé</div>\n";
   include "include/footer.php";
-  exit;
 }
 $data=$c->elements[0];
 
-$perso_id=isset($_GET['perso_id'])?$_GET['perso_id']:$data['perso_id'];
+if(!$perso_id){
+	$perso_id=$data['perso_id'];
+}
+
 if(!in_array(2,$droits) and $perso_id!=$_SESSION['login_id']){
   echo "<h3>Congés</h3>\n";
   echo "<div id='acces_refuse'>Accès refusé</div>\n";
@@ -66,18 +78,14 @@ foreach($droitsConges as $elem){
   $adminN2=in_array($elem,$droits)?true:$adminN2;
 }
 
-if(isset($_GET['confirm'])){
+if($confirm){
   $fin=$fin?$fin:$debut;
   $debutSQL=dateSQL($debut);
   $finSQL=dateSQL($fin);
-  $hre_debut=$_GET['hre_debut']?$_GET['hre_debut']:"00:00:00";
-  $hre_fin=$_GET['hre_fin']?$_GET['hre_fin']:"23:59:59";
-  $commentaires=htmlentities($_GET['commentaires'],ENT_QUOTES|ENT_IGNORE,"UTF-8",false);
-  $refus=isset($_GET['refus'])?htmlentities($_GET['refus'],ENT_QUOTES|ENT_IGNORE,"UTF-8",false):null;
 
   // Enregistre la modification du congés
   $c=new conges();
-  $c->update($_GET);
+  $c->update($get);
 
   // Envoi d'une notification par email
   // Récupération des adresses e-mails de l'agent et des responsables pour m'envoi des alertes
@@ -93,7 +101,7 @@ if(isset($_GET['confirm'])){
   $mailsResponsables=$p->elements[0]['mailsResponsables'];
 
   // Choix du sujet et des destinataires en fonction du degré de validation
-  switch($_GET['valide']){
+  switch($valide){
     // Modification sans validation
     case 0 : 
       $sujet="Modification de congés";
@@ -133,7 +141,7 @@ if(isset($_GET['confirm'])){
     $message.=" ".heure3($hre_fin);
   if($commentaires)
     $message.="<br/><br/>Commentaires :<br/>$commentaires<br/>";
-  if($refus and $_GET['valide']==-1){
+  if($refus and $valide==-1){
     $message.="<br/>Motif du refus :<br/>$refus<br/>";
   }
 
@@ -147,7 +155,8 @@ if(isset($_GET['confirm'])){
     echo "<script type=text/JavaScript>popup_closed();</script>\n";
   }
   else{
-    echo "<script type='text/JavaScript'>document.location.href=\"index.php?page=plugins/conges/voir.php&information=Le congé à été modifié avec succés\"</script>\n";
+  	$msg=urlencode("Le congé à été modifié avec succés.");
+    echo "<script type='text/JavaScript'>document.location.href=\"index.php?page=plugins/conges/voir.php&msg=$msg&msgType=success\"</script>\n";
   }
 }
 

@@ -1,13 +1,13 @@
 <?php
 /*
-Planning Biblio, Plugin Congés Version 1.5.7
+Planning Biblio, Plugin Congés Version 1.6.5
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
 Copyright (C) 2013-2015 - Jérôme Combes
 
 Fichier : plugins/conges/ajax.enregistreCet.php
 Création : 7 mars 2014
-Dernière modification : 16 décembre 2014
+Dernière modification : 17 avril 2015
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -19,13 +19,16 @@ ini_set('display_errors',0);
 include "../../include/config.php";
 include "class.conges.php";
 
-$id=$_GET['id'];
-$perso_id=$_GET['perso_id'];
-$validation=$_GET['validation'];
+$commentaires=filter_input(INPUT_GET,"commentaires",FILTER_SANITIZE_STRING);
+$id=filter_input(INPUT_GET,"id",FILTER_SANITIZE_NUMBER_INT);
+$jours=filter_input(INPUT_GET,"jours",FILTER_SANITIZE_NUMBER_FLOAT);
+$perso_id=filter_input(INPUT_GET,"perso_id",FILTER_SANITIZE_NUMBER_INT);
+$validation=filter_input(INPUT_GET,"validation",FILTER_SANITIZE_NUMBER_INT);
+
 $isValidate=false;
 $annee=date("Y")+1;
 
-$data=array("perso_id"=>$perso_id,"jours"=>$_GET['jours'],"commentaires"=>$_GET['commentaires']);
+$data=array("perso_id"=>$perso_id,"jours"=>$jours,"commentaires"=>$commentaires);
 
 // Si pas d'id, il s'git d'une demande, on ajoute l'annee pour laquelle le CET est demandé
 if(!$id){
@@ -122,8 +125,8 @@ else{
   if(!empty($destinataires)){
     $sujet="Nouvelle demande de CET";
     $message="Une nouvelle demande de CET a été enregistrée pour $prenom $nom<br/><br/>";
-    if($_GET['commentaires']){
-      $message.="Commentaires : ".str_replace("\n","<br/>",$_GET['commentaires']);
+    if($commentaires){
+      $message.="Commentaires : ".str_replace("\n","<br/>",$commentaires);
     }
     sendmail($sujet,$message,$destinataires);
   }

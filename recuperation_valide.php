@@ -1,13 +1,13 @@
 <?php
 /*
-Planning Biblio, Plugin Congés Version 1.5.7
+Planning Biblio, Plugin Congés Version 1.6.5
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
 Copyright (C) 2013-2015 - Jérôme Combes
 
 Fichier : plugins/conges/recuperation_valide.php
 Création : 30 août 2013
-Dernière modification : 16 décembre 2014
+Dernière modification : 17 avril 2015
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -35,7 +35,8 @@ include "class.conges.php";
 // Initialisation des variables
 $admin=in_array(2,$_SESSION['droits'])?true:false;
 $id=$_POST['id'];
-$msg="Erreur";
+$msg=urlencode("Une erreur est survenue lors de la validation de vos modifications.");
+$msgType="error";
 
 $c=new conges();
 $c->recupId=$id;
@@ -45,7 +46,8 @@ $perso_id=$recup['perso_id'];
 
 // Sécurité
 if(!$admin and $perso_id!=$_SESSION['login_id']){
-  header("Location: ../../index.php?page=plugins/conges/recuperations.php&message=Refus");
+	$msg=urlencode($msg);
+  header("Location: ../../index.php?page=plugins/conges/recuperations.php&msg=$msg&msgType=error");
   exit;
 }
 
@@ -64,7 +66,8 @@ if(isset($update)){
   $db=new db();
   $db->update2("recuperations",$update,array("id"=>$id));
   if(!$db->error){
-    $msg="OK";
+    $msg=urlencode("Vos modifications ont été enregistrées");
+    $msgType="success";
   }
 
   // Modification du crédit d'heures de récupérations s'il y a validation
@@ -115,5 +118,5 @@ if(isset($update)){
   sendmail($sujet,$message,$destinataires);
 }
 
-header("Location: ../../index.php?page=plugins/conges/recuperations.php&message=$msg");
+header("Location: ../../index.php?page=plugins/conges/recuperations.php&msg=$msg&msgType=$msgType");
 ?>

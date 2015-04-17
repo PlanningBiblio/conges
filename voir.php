@@ -1,13 +1,13 @@
 <?php
 /*
-Planning Biblio, Plugin Congés Version 1.6.3
+Planning Biblio, Plugin Congés Version 1.6.5
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
 Copyright (C) 2013-2015 - Jérôme Combes
 
 Fichier : plugins/conges/voir.php
 Création : 24 juillet 2013
-Dernière modification : 28 mars 2015
+Dernière modification : 17 avril 2015
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -24,20 +24,32 @@ require_once "personnel/class.personnel.php";
 $admin=in_array(7,$droits)?true:false;
 $admin=in_array(2,$droits)?true:$admin;
 
-$annee=isset($_GET['annee'])?$_GET['annee']:(isset($_SESSION['oups']['conges_annee'])?$_SESSION['oups']['conges_annee']:(date("m")<9?date("Y")-1:date("Y")));
-$congesAffiches=isset($_GET['congesAffiches'])?$_GET['congesAffiches']:(isset($_SESSION['oups']['congesAffiches'])?$_SESSION['oups']['congesAffiches']:"aVenir");
+$annee=filter_input(INPUT_GET,"annee",FILTER_SANITIZE_STRING);
+$congesAffiches=filter_input(INPUT_GET,"congesAffiches",FILTER_SANITIZE_STRING);
+$perso_id=filter_input(INPUT_GET,"perso_id",FILTER_SANITIZE_NUMBER_INT);
+$reset=filter_input(INPUT_GET,"reset",FILTER_CALLBACK,array("options"=>"sanitize_on"));
+$supprimes=filter_input(INPUT_GET,"supprimes",FILTER_CALLBACK,array("options"=>"sanitize_on"));
 
-$agents_supprimes=isset($_SESSION['oups']['conges_agents_supprimes'])?$_SESSION['oups']['conges_agents_supprimes']:false;
-$agents_supprimes=(isset($_GET['annee']) and isset($_GET['supprimes']))?true:$agents_supprimes;
-$agents_supprimes=(isset($_GET['annee']) and !isset($_GET['supprimes']))?false:$agents_supprimes;
-
-if($admin){
-  $perso_id=isset($_GET['perso_id'])?$_GET['perso_id']:(isset($_SESSION['oups']['conges_perso_id'])?$_SESSION['oups']['conges_perso_id']:$_SESSION['login_id']);
+if($admin and $perso_id==null){
+  $perso_id=isset($_SESSION['oups']['conges_perso_id'])?$_SESSION['oups']['conges_perso_id']:$_SESSION['login_id'];
 }
-else{
+elseif($perso_id==null){
   $perso_id=$_SESSION['login_id'];
 }
-if(isset($_GET['reset'])){
+
+$agents_supprimes=isset($_SESSION['oups']['conges_agents_supprimes'])?$_SESSION['oups']['conges_agents_supprimes']:false;
+$agents_supprimes=($annee and $supprimes)?true:$agents_supprimes;
+$agents_supprimes=($annee and !$supprimes)?false:$agents_supprimes;
+
+if(!$annee){
+	$annee=isset($_SESSION['oups']['conges_annee'])?$_SESSION['oups']['conges_annee']:(date("m")<9?date("Y")-1:date("Y"));
+}
+
+if(!$congesAffiches){
+	$congesAffiches=isset($_SESSION['oups']['congesAffiches'])?$_SESSION['oups']['congesAffiches']:"aVenir";
+}
+
+if($reset){
   $annee=date("m")<9?date("Y")-1:date("Y");
   $perso_id=$_SESSION['login_id'];
   $agents_supprimes=false;
@@ -80,11 +92,6 @@ if($admin){
 $annees=array();
 for($d=date("Y")+2;$d>date("Y")-11;$d--){
   $annees[]=array($d,$d."-".($d+1));
-}
-
-// Affichage des notifications
-if(isset($_GET['information'])){
-  echo "<script type='text/JavaScript'>information(\"{$_GET['information']}\",\"highlight\");</script>\n";
 }
 
 // Affichage du tableau
@@ -133,7 +140,7 @@ if($admin){
 }
 echo <<<EOD
 <td><input type='submit' value='OK' id='button-OK' class='ui-button'/></td>
-<td><input type='button' value='Effacer' onclick='location.href="index.php?page=plugins/conges/voir.php&reset"' class='ui-button'/></td>
+<td><input type='button' value='Effacer' onclick='location.href="index.php?page=plugins/conges/voir.php&reset=on"' class='ui-button'/></td>
 </tr></tbody></table>
 </form>
 <br/>
@@ -141,8 +148,8 @@ echo <<<EOD
 <thead>
   <tr>
     <th rowspan='2' class='dataTableNoSort'>&nbsp;</th>
-    <th rowspan='2' class='dataTableDateFr'>Début</th>
-    <th rowspan='2' class='dataTableDateFr-fin'>Fin</th>
+    <th rowspan='2' class='dataTableDateFR'>Début</th>
+    <th rowspan='2' class='dataTableDateFR-fin'>Fin</th>
 EOD;
 if($admin){
   echo "<th rowspan='2'>Nom</th>";
@@ -150,7 +157,7 @@ if($admin){
 echo "<th colspan='2' class='ui-state-default'>Validation</th>\n";
 echo "<th rowspan='2'>Heures</th>";
 echo "<th rowspan='2'>Crédits</th><th rowspan='2'>Reliquat</th><th rowspan='2'>Récupérations</th><th rowspan='2'>Solde Débiteur</th></tr>\n";
-echo "<tr><th>&Eacute;tat</th><th>Date</th></tr></thead>\n";
+echo "<tr><th>&Eacute;tat</th><th class='dataTableDateFR'>Date</th></tr></thead>\n";
 echo "<tbody>\n";
 
 foreach($c->elements as $elem){
