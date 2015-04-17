@@ -1,12 +1,12 @@
 /*
-Planning Biblio, Plugin Congés Version 1.6.3
+Planning Biblio, Plugin Congés Version 1.6.5
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
 Copyright (C) 2013-2015 - Jérôme Combes
 
 Fichier : plugins/conges/js/script.conges.js
 Création : 2 août 2013
-Dernière modification : 28 mars 2015
+Dernière modification : 17 avril 2015
 Auteurs : Jérôme Combes jerome@planningbilbio.fr, Etienne Cavalié etienne.cavalie@unice.fr
 
 Description :
@@ -139,10 +139,10 @@ function calculRestes(){
   }
   
   // Affichage
-  document.getElementById("reliquat4").innerHTML=heure4(reliquat);
-  document.getElementById("recup4").innerHTML=heure4(recuperation);
-  document.getElementById("credit4").innerHTML=heure4(credit);
-  document.getElementById("anticipation4").innerHTML=heure4(anticipation);
+  $("#reliquat4").text(heure4(reliquat));
+  $("#recup4").text(heure4(recuperation));
+  $("#credit4").text(heure4(credit));
+  $("#anticipation4").text(heure4(anticipation));
 }
 
 
