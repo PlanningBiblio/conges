@@ -1,3 +1,13 @@
+***	Version 1.6.5	(Jérôme Combes, 17 avril 2015)			***
+- Corrections :
+Corrige les vulnérabilités Redlected XSS
+Corrige les vulnérabilités SQL Injection
+Corrige les vulnérabilités Client Potential XSS
+
+***	Version 1.6.3	(Jérôme Combes, 28 mars 2015)			***
+- Amélioration :
+Créé les DataTables avec la classe CJDataTable
+
 ***	Version 1.6.2	(Jérôme Combes, 18 mars 2015)			***
 -Correction :
 Initialisation de variables
