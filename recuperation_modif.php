@@ -7,7 +7,7 @@ Copyright (C) 2013-2015 - Jérôme Combes
 
 Fichier : plugins/conges/recuperation_modif.php
 Création : 29 août 2013
-Dernière modification : 17 avril 2015
+Dernière modification : 21 avril 2015
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -51,7 +51,8 @@ $displayRefus=$recup['valide']<0?"":"none";
 // Affichage
 echo <<<EOD
 <h3>Récupérations des samedis</h3>
-<form method='post' action='plugins/conges/recuperation_valide.php'>
+<form method='post' action='index.php'>
+<input type='hidden' name='page' value='plugins/conges/recuperation_valide.php' />
 <input type='hidden' name='id' value='$id' />
 <table class='tableauFiches'>
 <tr><td>Agent : </td><td>$agent</td></td></tr>

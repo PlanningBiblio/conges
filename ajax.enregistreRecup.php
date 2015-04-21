@@ -1,13 +1,13 @@
 <?php
 /*
-Planning Biblio, Plugin Congés Version 1.5.7
+Planning Biblio, Plugin Congés Version 1.6.5
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
 Copyright (C) 2013-2015 - Jérôme Combes
 
 Fichier : plugins/conges/ajax.enregistreRecup.php
 Création : 11 octobre 2013
-Dernière modification : 16 décembre 2014
+Dernière modification : 21 avril 2015
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -18,24 +18,33 @@ session_start();
 include "../../include/config.php";
 
 ini_set('display_errors',0);
-error_reporting(E_ALL ^ E_NOTICE);
 
 include "class.conges.php";
 
-// Les dates sont au format DD/MM/YYYY et converti en YYYY-MM-DD
-$date=dateFr($_GET['date']);
-$date2=dateFr($_GET['date2']);
-$perso_id=is_numeric($_GET['perso_id'])?$_GET['perso_id']:$_SESSION['login_id'];
+// Initialisation des variables
+$commentaires=trim(filter_input(INPUT_POST,"commentaires",FILTER_SANITIZE_STRING));
+$date=filter_input(INPUT_POST,"date",FILTER_CALLBACK,array("options"=>"sanitize_dateFr"));
+$date2=filter_input(INPUT_POST,"date2",FILTER_CALLBACK,array("options"=>"sanitize_dateFr"));
+$heures=filter_input(INPUT_POST,"heures",FILTER_SANITIZE_STRING);
+$perso_id=filter_input(INPUT_POST,"perso_id",FILTER_SANITIZE_NUMBER_INT);
 
-$insert=array("perso_id"=>$perso_id,"date"=>$date,"date2"=>$date2,"heures"=>$_GET['heures'],"commentaires"=>$_GET['commentaires'],
+// Les dates sont au format DD/MM/YYYY et converti en YYYY-MM-DD
+$date=dateSQL($date);
+$date2=dateSQL($date2);
+
+if($perso_id===null){
+  $perso_id=$_SESSION['login_id'];
+}
+
+$insert=array("perso_id"=>$perso_id,"date"=>$date,"date2"=>$date2,"heures"=>$heures,"commentaires"=>$commentaires,
   "saisie_par"=>$_SESSION['login_id']);
 $db=new db();
 $db->insert2("recuperations",$insert);
 if($db->error){
-  echo "###Demande-Erreur###";
+  echo json_encode("Demande-Erreur");
 }
 else{
-  echo "###Demande-OK###";
+  echo json_encode("Demande-OK");
 
   // Envoi d'un e-mail à l'agent et aux responsables
   $p=new personnel();
@@ -57,8 +66,8 @@ else{
   if(!empty($destinataires)){
     $sujet="Nouvelle demande de récupération";
     $message="Demande de récupération du ".dateFr($date)." enregistrée pour $prenom $nom<br/><br/>";
-    if($_GET['commentaires']){
-      $message.="Commentaires : ".str_replace("\n","<br/>",$_GET['commentaires']);
+    if($commentaires){
+      $message.="Commentaires : ".str_replace("\n","<br/>",$commentaires);
     }
     sendmail($sujet,$message,$destinataires);
   }

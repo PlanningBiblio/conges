@@ -1,13 +1,13 @@
 <?php
 /*
-Planning Biblio, Plugin Congés Version 1.6
+Planning Biblio, Plugin Congés Version 1.6.5
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
 Copyright (C) 2013-2015 - Jérôme Combes
 
 Fichier : plugins/conges/class.conges.php
 Création : 24 juillet 2013
-Dernière modification : 22 janvier 2015
+Dernière modification : 21 avril 2015
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -15,9 +15,9 @@ Fichier regroupant les fonctions utiles à la gestion des congés
 Inclus dans les autres fichiers PHP du dossier plugins/conges
 */
 
-// pas de $version=acces direct aux pages de ce dossier => redirection vers la page index.php
-if(!$version){
-  header("Location: ../../index.php");
+// pas de $version=acces direct aux pages de ce dossier => Accès refusé
+if(!isset($version)){
+  include_once "../../include/accessDenied.php";
 }
 
 $path=substr($_SERVER['SCRIPT_NAME'],-9)=="index.php"?null:"../../";
@@ -692,7 +692,11 @@ class conges{
 	// Récupération du numéro du site concerné par la date courante
 	$offset=$jour-1+($semaine*7)-7;
 	if(array_key_exists($offset,$temps)){
-	  $site=$temps[$offset][4];
+	  if(array_key_exists(4,$temps[$offset])){
+	    $site=$temps[$offset][4];
+	  }else{
+	    $site=1;
+	  }
 	  // Ajout du numéro du droit correspondant à la gestion des congés de ce site
 	  // Validation N1
 	  if(!in_array((400+$site),$droitsConges) and $site){
@@ -999,6 +1003,12 @@ class conges{
       $sql[]="UPDATE `{$dbprefix}acces` SET `groupe_id`=100,`groupe`='' WHERE `page`='plugins/conges/credits.php';";
       $sql[]="UPDATE `{$dbprefix}plugins` SET `version`='1.6' WHERE `nom`='conges';";
       $version="1.6";
+    }
+
+    if($version < "1.6.5"){
+      $sql[]="INSERT INTO `{$dbprefix}acces` (`nom`,`groupe_id`,`page`) VALUES ('Cong&eacute;s - R&eacute;cup&eacute;rations','100','plugins/conges/recuperation_valide.php');";
+      $sql[]="UPDATE `{$dbprefix}plugins` SET `version`='1.6.5' WHERE `nom`='conges';";
+      $version="1.6.5";
     }
 
     foreach($sql as $elem){

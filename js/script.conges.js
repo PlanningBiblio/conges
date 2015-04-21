@@ -6,7 +6,7 @@ Copyright (C) 2013-2015 - Jérôme Combes
 
 Fichier : plugins/conges/js/script.conges.js
 Création : 2 août 2013
-Dernière modification : 17 avril 2015
+Dernière modification : 21 avril 2015
 Auteurs : Jérôme Combes jerome@planningbilbio.fr, Etienne Cavalié etienne.cavalie@unice.fr
 
 Description :
@@ -162,6 +162,7 @@ function googleCalendarIcon(){
 
   if($("select#perso_id").length>0){
     agent=$("select#perso_id").find(":selected").text();
+    agent=sanitize_string(agent);
   }
 
   debut=debut.replace(/([0-9]*)\/([0-9]*)\/([0-9]*)/g,"$3$2$1");

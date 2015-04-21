@@ -7,58 +7,46 @@ Copyright (C) 2013-2015 - Jérôme Combes
 
 Fichier : plugins/conges/recuperation_valide.php
 Création : 30 août 2013
-Dernière modification : 17 avril 2015
+Dernière modification : 21 avril 2015
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
 Fichier permettant de modifier et valider les demandes de récupérations des samedis (validation du formulaire)
 */
 
-session_start();
-
-$version="1.5.1";
-include "../../include/config.php";
-
-ini_set('display_errors',$config['display_errors']);
-switch($config['error_reporting']){
-  case 0: error_reporting(0); break;
-  case 1: error_reporting(E_ERROR | E_WARNING | E_PARSE); break;
-  case 2: error_reporting(E_ERROR | E_WARNING | E_PARSE | E_NOTICE); break;
-  case 3: error_reporting(E_ALL ^ (E_NOTICE | E_WARNING)); break;
-  case 4: error_reporting(E_ALL ^ E_NOTICE); break;
-  case 5: error_reporting(E_ALL); break;
-  default: error_reporting(E_ALL ^ E_NOTICE); break;
-}
-
 include "class.conges.php";
 
 // Initialisation des variables
+$id=filter_input(INPUT_POST,"id",FILTER_SANITIZE_NUMBER_INT);
+$commentaires=trim(filter_input(INPUT_POST,"commentaires",FILTER_SANITIZE_STRING));
+$heures=filter_input(INPUT_POST,"heures",FILTER_SANITIZE_STRING);
+$refus=trim(filter_input(INPUT_POST,"refus",FILTER_SANITIZE_STRING));
+$validation=filter_input(INPUT_POST,"validation",FILTER_SANITIZE_NUMBER_INT);
+
 $admin=in_array(2,$_SESSION['droits'])?true:false;
-$id=$_POST['id'];
 $msg=urlencode("Une erreur est survenue lors de la validation de vos modifications.");
 $msgType="error";
 
+// Sécurité
+if(!$admin and $perso_id!=$_SESSION['login_id']){ // Undefined $perso_id
+  include_once "../../include/accessDenied.php";
+}
+
+// Récupération des éléments
 $c=new conges();
 $c->recupId=$id;
 $c->getRecup();
 $recup=$c->elements[0];
 $perso_id=$recup['perso_id'];
 
-// Sécurité
-if(!$admin and $perso_id!=$_SESSION['login_id']){
-	$msg=urlencode($msg);
-  header("Location: ../../index.php?page=plugins/conges/recuperations.php&msg=$msg&msgType=error");
-  exit;
-}
-
 // Modification des heures
-$update=array("heures"=>$_POST['heures'],"commentaires"=>$_POST['commentaires'],"modif"=>$_SESSION['login_id'],"modification"=>date("Y-m-d H:i:s"));
+$update=array("heures"=>$heures,"commentaires"=>$commentaires,"modif"=>$_SESSION['login_id'],"modification"=>date("Y-m-d H:i:s"));
 
 // Modification des heures  et validation par l'administrateur
-if(isset($_POST['validation']) and $admin){
-  $update['valide']=$_POST['validation'];
+if($validation!==null and $admin){
+  $update['valide']=$validation;
   $update['validation']=date("Y-m-d H:i:s");
-  $update['refus']=isset($_POST['refus'])?htmlentities($_POST['refus'],ENT_QUOTES|ENT_IGNORE,"UTF-8"):null;
+  $update['refus']=$refus;
 }
 
 if(isset($update)){
@@ -118,5 +106,5 @@ if(isset($update)){
   sendmail($sujet,$message,$destinataires);
 }
 
-header("Location: ../../index.php?page=plugins/conges/recuperations.php&msg=$msg&msgType=$msgType");
+echo "<script type='text/JavaScript'>document.location.href='index.php?page=plugins/conges/recuperations.php&msg=$msg&msgType=$msgType';</script>\n";
 ?>

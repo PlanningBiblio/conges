@@ -7,7 +7,7 @@ Copyright (C) 2013-2015 - Jérôme Combes
 
 Fichier : plugins/conges/recuperations.php
 Création : 27 août 2013
-Dernière modification : 17 avril 2015
+Dernière modification : 21 avril 2015
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -103,7 +103,7 @@ echo <<<EOD
 &nbsp;&nbsp;<input type='button' value='Reset' id='button-Effacer' class='ui-button' onclick='location.href="index.php?page=plugins/conges/recuperations.php&reset=on"' />
 </p>
 </form>
-<table id='tableRecup' class='CJDataTable' data-sort='[[1]]' data-stateSave='0'>
+<table id='tableRecup' class='CJDataTable' data-sort='[[1]]'>
 <thead>
 <tr><th class='dataTableNoSort' >&nbsp;</th>
 EOD;
@@ -318,16 +318,21 @@ $(function() {
 	  // Enregistre la demande
 	  $.ajax({
 	    url: "plugins/conges/ajax.enregistreRecup.php",
-	    data: "date="+date.val()+"&date2="+date2.val()+"&heures="+heures.val()+"&commentaires="+commentaires.val()+"&perso_id="+perso_id,
-	    type: "get",
-	    success: function(){
-	      // Affiche la liste des demandes après enregistrement
-	      var msg=encodeURIComponent("Votre demande a été enregistrée");
-	      document.location.href="index.php?page=plugins/conges/recuperations.php&msgType=success&msg="+msg;
-	      // Ferme le dialog
-	      $( this ).dialog( "close" );
+	    dataType: "json",
+	    data: {date: date.val(), date2: date2.val(), heures: heures.val(), commentaires: commentaires.val(), perso_id: perso_id},
+	    type: "post",
+	    success: function(result){
+	      if(result=="Demande-OK"){
+		// Affiche la liste des demandes après enregistrement
+		var msg=encodeURIComponent("Votre demande a été enregistrée");
+		document.location.href="index.php?page=plugins/conges/recuperations.php&msgType=success&msg="+msg;
+		// Ferme le dialog
+		$( this ).dialog( "close" );
+	      }else{
+		updateTips("Erreur lors de l'enregistrement de la récupération");
+	      }
 	    },
-	    error: function (){
+	    error: function (result){
 	      updateTips("Erreur lors de l'enregistrement de la récupération");
 	    },
 	  });
