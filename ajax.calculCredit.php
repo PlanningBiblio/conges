@@ -1,13 +1,13 @@
 <?php
 /*
-Planning Biblio, Plugin Congés Version 1.5.6
+Planning Biblio, Plugin Congés Version 1.6.5
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
 Copyright (C) 2013-2015 - Jérôme Combes
 
 Fichier : plugins/conges/ajax.calculCredit.php
 Création : 2 août 2013
-Dernière modification : 5 novembre 2014
+Dernière modification : 22 avril 2015
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -19,8 +19,15 @@ Appelé en arrière plan par la fonction JS calculCredit() (fichier plugins/cong
 require_once "../../include/config.php";
 require_once "class.conges.php";
 
+// Initilisation des variables
+$debut=dateSQL(filter_input(INPUT_GET,"debut",FILTER_CALLBACK,array("options"=>"sanitize_dateFr")));
+$fin=dateSQL(filter_input(INPUT_GET,"fin",FILTER_CALLBACK,array("options"=>"sanitize_dateFr")));
+$hre_debut=filter_input(INPUT_GET,"hre_debut",FILTER_CALLBACK,array("options"=>"sanitize_time"));
+$hre_fin=filter_input(INPUT_GET,"hre_fin",FILTER_CALLBACK,array("options"=>"sanitize_time"));
+$perso_id=filter_input(INPUT_GET,"perso_id",FILTER_SANITIZE_NUMBER_INT);
+
 $c=new conges();
-$c->calculCredit(dateSQL($_GET['debut']),$_GET['hre_debut'],dateSQL($_GET['fin']),$_GET['hre_fin'],$_GET['perso_id']);
+$c->calculCredit($debut,$hre_debut,$fin,$hre_fin,$perso_id);
 $result=$c->error?array("error"):array("OK");
 $result[]=$c->heures;
 echo json_encode($result);

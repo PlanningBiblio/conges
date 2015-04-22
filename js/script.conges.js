@@ -6,7 +6,7 @@ Copyright (C) 2013-2015 - Jérôme Combes
 
 Fichier : plugins/conges/js/script.conges.js
 Création : 2 août 2013
-Dernière modification : 21 avril 2015
+Dernière modification : 22 avril 2015
 Auteurs : Jérôme Combes jerome@planningbilbio.fr, Etienne Cavalié etienne.cavalie@unice.fr
 
 Description :
@@ -40,11 +40,11 @@ function calculCredit(){
   
   $.ajax({
     url: "plugins/conges/ajax.calculCredit.php",
-    data: "debut="+debut+"&fin="+fin+"&hre_debut="+hre_debut+"&hre_fin="+hre_fin+"&perso_id="+perso_id,
+    data: {debut: debut, fin: fin, hre_debut: hre_debut, hre_fin: hre_fin, perso_id: perso_id},
+    dataType: "json",
     type: "get",
     async: false,
     success: function(result){
-      result=JSON.parse(result);
       var msg=result[0];
       if(msg=="error"){
 	$("#erreurCalcul").val("true");
