@@ -7,7 +7,7 @@ Copyright (C) 2013-2015 - Jérôme Combes
 
 Fichier : plugins/conges/enregistrer.php
 Création : 24 juillet 2013
-Dernière modification : 17 avril 2015
+Dernière modification : 24 avril 2015
 Auteurs : Jérôme Combes jerome@planningbilbio.fr, Etienne Cavalié etienne.cavalie@unice.fr
 
 Description :
@@ -26,7 +26,7 @@ if(!in_array(2,$droits)){
 }
 $debut=isset($_GET['debut'])?$_GET['debut']:null;
 $fin=isset($_GET['fin'])?$_GET['fin']:null;
-$quartDHeure=$config['heuresPrecision']=="quart d&apos;heure"?true:false;
+$quartDHeure=$config['heuresPrecision']=="quart-heure"?true:false;
 
 echo <<<EOD
 <h3>Poser des congés</h3>

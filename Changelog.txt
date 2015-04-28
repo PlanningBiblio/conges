@@ -1,3 +1,7 @@
+***	Version 1.6.6	(Jérôme Combes, 27 avril 2015)			***
+- Corrections :
+Corrige l'erreur empêchant la sélection de "Quart d'heure" comme option de "HeuresPrécision" (PB 1.9.6)
+
 ***	Version 1.6.5	(Jérôme Combes, 17 avril 2015)			***
 - Corrections :
 Corrige les vulnérabilités Redlected XSS

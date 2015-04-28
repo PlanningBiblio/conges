@@ -7,7 +7,7 @@ Copyright (C) 2013-2015 - Jérôme Combes
 
 Fichier : plugins/conges/modif.php
 Création : 1er août 2013
-Dernière modification : 17 avril 2015
+Dernière modification : 24 avril 2015
 Auteurs : Jérôme Combes jerome@planningbilbio.fr, Etienne Cavalié etienne.cavalie@unice.fr
 
 Description :
@@ -33,7 +33,7 @@ $perso_id=filter_input(INPUT_GET,"perso_id",FILTER_SANITIZE_NUMBER_INT);
 $refus=filter_input(INPUT_GET,"refus",FILTER_SANITIZE_STRING);
 $valide=filter_input(INPUT_GET,"refus",FILTER_SANITIZE_NUMBER_INT);
 
-$quartDHeure=$config['heuresPrecision']=="quart d&apos;heure"?true:false;
+$quartDHeure=$config['heuresPrecision']=="quart-heure"?true:false;
 
 // Elements du congé demandé
 $c=new conges();
