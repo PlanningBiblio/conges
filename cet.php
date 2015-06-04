@@ -1,13 +1,13 @@
 <?php
 /*
-Planning Biblio, Plugin Congés Version 1.6.3
+Planning Biblio, Plugin Congés Version 2.0
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
 Copyright (C) 2013-2015 - Jérôme Combes
 
 Fichier : plugins/conges/cet.php
 Création : 6 mars 2014
-Dernière modification : 27 mars 2015
+Dernière modification : 4 juin 2015
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -122,9 +122,9 @@ if($adminN1){
 }
 echo <<<EOD
   <th>Jours</th><th>Crédits</th>
-  <th class='dataTableDateFr'>Demande</th>
+  <th class='dataTableDateFR'>Demande</th>
   <th>Validation</th>
-  <th class='dataTableDateFr'>Date validation</th></tr>
+  <th class='dataTableDateFR'>Date validation</th></tr>
   </thead>
   <tbody>
 EOD;

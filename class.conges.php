@@ -1,13 +1,13 @@
 <?php
 /*
-Planning Biblio, Plugin Congés Version 1.6.5
+Planning Biblio, Plugin Congés Version 2.0
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
 Copyright (C) 2013-2015 - Jérôme Combes
 
 Fichier : plugins/conges/class.conges.php
 Création : 24 juillet 2013
-Dernière modification : 21 avril 2015
+Dernière modification : 22 mai 2015
 Auteur : Jérôme Combes, jerome@planningbilbio.fr
 
 Description :
@@ -21,7 +21,7 @@ if(!isset($version)){
 }
 
 $path=substr($_SERVER['SCRIPT_NAME'],-9)=="index.php"?null:"../../";
-require_once "{$path}plugins/planningHebdo/class.planningHebdo.php";
+require_once "{$path}planningHebdo/class.planningHebdo.php";
 require_once "{$path}joursFeries/class.joursFeries.php";
 require_once "{$path}personnel/class.personnel.php";
 require_once "{$path}absences/class.absences.php";
@@ -682,8 +682,8 @@ class conges{
       $date=$debut;
       while($date<=$fin){
 	// Emploi du temps si plugin planningHebdo
-	if(in_array("plannningHebdo",$GLOBALS['plugins'])){
-	  include "plugins/planningHebdo/absences.php";
+	if($config['PlanningHebdo']){
+	  include "planningHebdo/absences.php";
 	}
 	// Vérifions le numéro de la semaine de façon à contrôler le bon planning de présence hebdomadaire
 	$d=new datePl($date);
