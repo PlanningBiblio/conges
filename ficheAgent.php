@@ -8,7 +8,7 @@ Copyright (C) 2013-2015 - Jérôme Combes
 Fichier : plugins/conges/ficheAgent.php
 Création : 26 juillet 2013
 Dernière modification : 11 septembre 2014
-Auteur : Jérôme Combes, jerome@planningbilbio.fr
+Auteur : Jérôme Combes, jerome@planningbiblio.fr
 
 Description :
 Fichier permettant d'ajouter les informations sur les congés dans la fiche des agents

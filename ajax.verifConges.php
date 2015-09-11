@@ -8,7 +8,7 @@ Copyright (C) 2013-2015 - Jérôme Combes
 Fichier : plugins/conges/ajax.verifConges.php
 Création : 12 février 2014
 Dernière modification : 3 juin 2014
-Auteur : Jérôme Combes, jerome@planningbilbio.fr
+Auteur : Jérôme Combes, jerome@planningbiblio.fr
 
 Description :
 Vérifie si la période demandée a déjà fait l'objet d'une demande de congés.

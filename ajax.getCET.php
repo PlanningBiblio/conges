@@ -8,7 +8,7 @@ Copyright (C) 2013-2015 - Jérôme Combes
 Fichier : plugins/conges/ajax.getCET.php
 Création : 10 mars 2014
 Dernière modification : 10 mars 2014
-Auteur : Jérôme Combes, jerome@planningbilbio.fr
+Auteur : Jérôme Combes, jerome@planningbiblio.fr
 
 Description :
 Recupére les informations d'une demande de CET

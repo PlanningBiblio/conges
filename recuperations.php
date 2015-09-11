@@ -8,7 +8,7 @@ Copyright (C) 2013-2015 - Jérôme Combes
 Fichier : plugins/conges/recuperations.php
 Création : 27 août 2013
 Dernière modification : 21 avril 2015
-Auteur : Jérôme Combes, jerome@planningbilbio.fr
+Auteur : Jérôme Combes, jerome@planningbiblio.fr
 
 Description :
 Fichier permettant de voir les demandes de récupération

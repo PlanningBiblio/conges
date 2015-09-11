@@ -8,7 +8,7 @@ Copyright (C) 2013-2015 - Jérôme Combes
 Fichier : plugins/conges/ajax.supprime.php
 Création : 9 janvier 2014
 Dernière modification : 22 avril 2015
-Auteur : Jérôme Combes, jerome@planningbilbio.fr
+Auteur : Jérôme Combes, jerome@planningbiblio.fr
 
 Description :
 Supprime un congé

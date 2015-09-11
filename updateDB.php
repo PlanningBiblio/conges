@@ -8,7 +8,7 @@ Copyright (C) 2013-2015 - Jérôme Combes
 Fichier : plugins/conges/updateDB.php
 Création : 18 juin 2014
 Dernière modification : 18 juin 2014
-Auteur : Jérôme Combes, jerome@planningbilbio.fr
+Auteur : Jérôme Combes, jerome@planningbiblio.fr
 
 Description :
 Fichier permettant de vérifier et de mettre à jour la base de données si le plugins a été mis à jour.

@@ -8,7 +8,7 @@ Copyright (C) 2013-2015 - Jérôme Combes
 Fichier : plugins/conges/uninstall.php
 Création : 24 juillet 2013
 Dernière modification : 12 septembre 2014
-Auteur : Jérôme Combes, jerome@planningbilbio.fr
+Auteur : Jérôme Combes, jerome@planningbiblio.fr
 
 Description :
 Fichier permettant la désinstallation du plugin Congés. Supprime les informations LDAP de la base de données

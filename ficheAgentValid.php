@@ -8,7 +8,7 @@ Copyright (C) 2013-2015 - Jérôme Combes
 Fichier : plugins/conges/ficheAgentValid.php
 Création : 15 janvier 2014
 Dernière modification : 11 septembre 2014
-Auteur : Jérôme Combes, jerome@planningbilbio.fr
+Auteur : Jérôme Combes, jerome@planningbiblio.fr
 
 Description :
 Fichier permettant de mettre à jour les crédits congés des agents lors de la modification de leur fiche

@@ -8,7 +8,7 @@ Copyright (C) 2013-2015 - Jérôme Combes
 Fichier : plugins/conges/cron.jan1.php
 Création : 13 août 2013
 Dernière modification : 16 janvier 2014
-Auteur : Jérôme Combes, jerome@planningbilbio.fr
+Auteur : Jérôme Combes, jerome@planningbiblio.fr
 
 Description :
 Fichier executant des taches planifiées au 1er janvier pour le plugin Conges.

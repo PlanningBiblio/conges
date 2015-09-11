@@ -8,7 +8,7 @@ Copyright (C) 2013-2015 - Jérôme Combes
 Fichier : plugins/conges/ajax.verifRecup.php
 Création : 18 septembre 2013
 Dernière modification : 5 novembre 2014
-Auteur : Jérôme Combes, jerome@planningbilbio.fr
+Auteur : Jérôme Combes, jerome@planningbiblio.fr
 
 Description :
 Vérifie si le jour demandé à déjà fait l'objet d'une demande de récuperation.

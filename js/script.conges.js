@@ -7,7 +7,7 @@ Copyright (C) 2013-2015 - Jérôme Combes
 Fichier : plugins/conges/js/script.conges.js
 Création : 2 août 2013
 Dernière modification : 22 avril 2015
-Auteurs : Jérôme Combes jerome@planningbilbio.fr, Etienne Cavalié etienne.cavalie@unice.fr
+Auteurs : Jérôme Combes jerome@planningbiblio.fr, Etienne Cavalié etienne.cavalie@unice.fr
 
 Description :
 Fichier regroupant les fonctions JavaScript utiles à la gestion des congés

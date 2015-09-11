@@ -8,7 +8,7 @@ Copyright (C) 2013-2015 - Jérôme Combes
 Fichier : plugins/conges/enregistrer.php
 Création : 24 juillet 2013
 Dernière modification : 24 avril 2015
-Auteurs : Jérôme Combes jerome@planningbilbio.fr, Etienne Cavalié etienne.cavalie@unice.fr
+Auteurs : Jérôme Combes jerome@planningbiblio.fr, Etienne Cavalié etienne.cavalie@unice.fr
 
 Description :
 Fichier permettant de poser un congé

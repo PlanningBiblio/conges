@@ -8,7 +8,7 @@ Copyright (C) 2013-2015 - Jérôme Combes
 Fichier : plugins/conges/class.conges.php
 Création : 24 juillet 2013
 Dernière modification : 22 mai 2015
-Auteur : Jérôme Combes, jerome@planningbilbio.fr
+Auteur : Jérôme Combes, jerome@planningbiblio.fr
 
 Description :
 Fichier regroupant les fonctions utiles à la gestion des congés

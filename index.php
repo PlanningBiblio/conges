@@ -8,7 +8,7 @@ Copyright (C) 2013-2015 - Jérôme Combes
 Fichier : plugins/conges/index.php
 Création : 24 juillet 2013
 Dernière modification : 6 janvier 2015
-Auteur : Jérôme Combes, jerome@planningbilbio.fr
+Auteur : Jérôme Combes, jerome@planningbiblio.fr
 
 Description :
 Fichier Index du dossier congés, Affiche les liens vers les autres pages du dossier

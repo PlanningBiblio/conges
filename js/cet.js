@@ -7,7 +7,7 @@ Copyright (C) 2013-2015 - Jérôme Combes
 Fichier : plugins/conges/js/cet.js
 Création : 6 mars 2014
 Dernière modification : 27 mars 2015
-Auteur : Jérôme Combes, jerome@planningbilbio.fr
+Auteur : Jérôme Combes, jerome@planningbiblio.fr
 
 Description :
 Fichier regroupant les functions JavaScript utiles à la gestion des CET (page plugins/conges/cet.php)

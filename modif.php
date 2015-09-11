@@ -8,7 +8,7 @@ Copyright (C) 2013-2015 - Jérôme Combes
 Fichier : plugins/conges/modif.php
 Création : 1er août 2013
 Dernière modification : 24 avril 2015
-Auteurs : Jérôme Combes jerome@planningbilbio.fr, Etienne Cavalié etienne.cavalie@unice.fr
+Auteurs : Jérôme Combes jerome@planningbiblio.fr, Etienne Cavalié etienne.cavalie@unice.fr
 
 Description :
 Fichier permettant voir ou de modifier un congé

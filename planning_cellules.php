@@ -8,7 +8,7 @@ Copyright (C) 2013-2015 - Jérôme Combes
 Fichier : plugins/conges/planning_cellules.php
 Création : 30 janvier 2014
 Dernière modification : 30 janvier 2014
-Auteur : Jérôme Combes, jerome@planningbilbio.fr
+Auteur : Jérôme Combes, jerome@planningbiblio.fr
 
 Description :
 Fichier intégré au planning (planning/poste/index.php)

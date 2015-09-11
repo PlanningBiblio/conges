@@ -8,7 +8,7 @@ Copyright (C) 2013-2015 - Jérôme Combes
 Fichier : plugins/conges/install.php
 Création : 24 juillet 2013
 Dernière modification : 22 janvier 2015
-Auteur : Jérôme Combes, jerome@planningbilbio.fr
+Auteur : Jérôme Combes, jerome@planningbiblio.fr
 
 Description :
 Fichier permettant l'installation du plugin Congés. Ajoute les informations nécessaires dans la base de données

@@ -8,7 +8,7 @@ Copyright (C) 2013-2015 - Jérôme Combes
 Fichier : plugins/conges/menudiv.php
 Création : 13 août 2013
 Dernière modification : 13 août 2013
-Auteur : Jérôme Combes, jerome@planningbilbio.fr
+Auteur : Jérôme Combes, jerome@planningbiblio.fr
 
 Description :
 Fichier intégré au menudiv (planning/poste/menudiv.php)

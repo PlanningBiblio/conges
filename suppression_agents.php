@@ -8,7 +8,7 @@ Copyright (C) 2013-2015 - Jérôme Combes
 Fichier : plugins/conges/menudiv.php
 Création : 26 septembre 2013
 Dernière modification : 26 septembre 2013
-Auteur : Jérôme Combes, jerome@planningbilbio.fr
+Auteur : Jérôme Combes, jerome@planningbiblio.fr
 
 Description :
 Fichier appelé lors de la suppression d'un agent par le fichier personnel/class.personnel.php, fonction personnel::delete()

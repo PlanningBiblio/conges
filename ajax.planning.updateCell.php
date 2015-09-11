@@ -8,7 +8,7 @@ Copyright (C) 2013-2015 - Jérôme Combes
 Fichier : plugins/conges/ajax.planning.updateCell.php
 Création : 25 novembre 2014
 Dernière modification : 27 juillet 2015
-Auteur : Jérôme Combes, jerome@planningbilbio.fr
+Auteur : Jérôme Combes, jerome@planningbiblio.fr
 
 Description :
 Fichier intégré au fichier planning/poste/ajax.updateCell.php permettant la mise à jour de la cellule modifiée
