@@ -1,13 +1,13 @@
 <?php
 /*
-Planning Biblio, Plugin Congés Version 1.6.5
+Planning Biblio, Plugin Congés Version 2.0
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
 Copyright (C) 2013-2015 - Jérôme Combes
 
 Fichier : plugins/conges/modif.php
 Création : 1er août 2013
-Dernière modification : 24 avril 2015
+Dernière modification : 11 septembre 2015
 Auteurs : Jérôme Combes jerome@planningbiblio.fr, Etienne Cavalié etienne.cavalie@unice.fr
 
 Description :
@@ -31,7 +31,7 @@ $hre_fin=filter_input(INPUT_GET,"hre_fin",FILTER_CALLBACK,array("options"=>"sani
 $menu=filter_input(INPUT_GET,"menu",FILTER_SANITIZE_STRING);
 $perso_id=filter_input(INPUT_GET,"perso_id",FILTER_SANITIZE_NUMBER_INT);
 $refus=filter_input(INPUT_GET,"refus",FILTER_SANITIZE_STRING);
-$valide=filter_input(INPUT_GET,"refus",FILTER_SANITIZE_NUMBER_INT);
+$valide=filter_input(INPUT_GET,"valide",FILTER_SANITIZE_NUMBER_INT);
 
 $quartDHeure=$config['heuresPrecision']=="quart-heure"?true:false;
 
