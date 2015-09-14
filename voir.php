@@ -1,13 +1,13 @@
 <?php
 /*
-Planning Biblio, Plugin Congés Version 1.6.5
+Planning Biblio, Plugin Congés Version 2.0
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
 Copyright (C) 2013-2015 - Jérôme Combes
 
 Fichier : plugins/conges/voir.php
 Création : 24 juillet 2013
-Dernière modification : 17 avril 2015
+Dernière modification : 14 septembre 2015
 Auteur : Jérôme Combes, jerome@planningbiblio.fr
 
 Description :
@@ -69,7 +69,7 @@ if($congesAffiches=="aVenir"){
 
 $c=new conges();
 $c->debut=$debut;
-$c->fin=$fin;
+$c->fin=$fin." 23:59:59";
 if($perso_id!=0){
   $c->perso_id=$perso_id;
 }

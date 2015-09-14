@@ -7,7 +7,7 @@ Copyright (C) 2013-2015 - Jérôme Combes
 
 Fichier : plugins/conges/class.conges.php
 Création : 24 juillet 2013
-Dernière modification : 22 mai 2015
+Dernière modification : 14 septembre 2015
 Auteur : Jérôme Combes, jerome@planningbiblio.fr
 
 Description :
@@ -279,7 +279,7 @@ class conges{
     $date=date("Y-m-d")." 23:59:59";
     if($debut){
       $fin=$fin?$fin:$date;
-      $filter.=" AND `debut`<'$fin' AND `fin`>'$debut'";
+      $filter.=" AND `debut`<='$fin' AND `fin`>='$debut'";
     }
     else{
       $filter.=" AND `fin`>='$date'";
