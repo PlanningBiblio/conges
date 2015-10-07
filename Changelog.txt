@@ -1,3 +1,10 @@
+***	Version 2.0	(Jérôme Combes, 7 octobre 2015)			***
+- Compatibilité Planning Biblio version 2.0
+- Corrections :
+Corrige la mise à jour des cellules du planning (ne barre pas les congés en attente de validation)
+Corrige une erreur empêchant l'envoi des notifications aux N+1
+Corrige la recherche des congés sur la page voir.php
+
 ***	Version 1.6.6	(Jérôme Combes, 27 avril 2015)			***
 - Corrections :
 Corrige l'erreur empêchant la sélection de "Quart d'heure" comme option de "HeuresPrécision" (PB 1.9.6)
