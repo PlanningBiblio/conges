@@ -1,13 +1,13 @@
 <?php
 /*
-Planning Biblio, Plugin Congés Version 2.0
+Planning Biblio, Plugin Congés Version 2.1
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
 Copyright (C) 2013-2015 - Jérôme Combes
 
 Fichier : plugins/conges/class.conges.php
 Création : 24 juillet 2013
-Dernière modification : 14 septembre 2015
+Dernière modification : 9 janvier 2016
 Auteur : Jérôme Combes, jerome@planningbiblio.fr
 
 Description :
@@ -231,38 +231,6 @@ class conges{
     $db=new db();
     $db->update2("conges",array("supprime"=>$_SESSION['login_id'],"supprDate"=>date("Y-m-d H:i:s")),array("id"=>$id));
   }
-
-
-  public function enregistreRecup($date,$date2,$heures){
-    // Enregistrement de la demande de récupération
-    $perso_id=$_SESSION['login_id'];
-    $db=new db();
-    $db->delete("recuperations","`perso_id`='$perso_id' AND `date`='$date'");
-    $db=new db();
-    $db->insert2("recuperations",array("perso_id"=>$perso_id,"date"=>$date,"date2"=>$date2,"heures"=>$heures,"etat"=>"Demande"));
-
-    $p=new personnel();
-    $p->fetchById($perso_id);
-    $nom=$p->elements[0]['nom'];
-    $prenom=$p->elements[0]['prenom'];
-    $mail=$p->elements[0]['mail'];
-    $mailsResponsables=$p->elements[0]['mailsResponsables'];
-
-    $this->getResponsables($date,$date,$perso_id);
-    $responsables=$this->responsables;
-
-    // Choix des destinataires en fonction de la configuration
-    $a=new absences();
-    $a->getRecipients(1,$responsables,$mail,$mailsResponsables);
-    $destinataires=$a->recipients;
-
-    if(!empty($destinataires)){
-      $sujet="Nouvelle demande de récupération";
-      $message="Nouvelle demande de récupération<br/>$prenom $nom a fait une nouvelle demande de récupération";
-      sendmail($sujet,$message,$destinataires);
-    }
-  }
-
 
   public function fetch(){
     // Filtre de recherche

@@ -1,13 +1,13 @@
 <?php
 /*
-Planning Biblio, Plugin Congés Version 1.6.5
+Planning Biblio, Plugin Congés Version 2.1
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
 Copyright (C) 2013-2015 - Jérôme Combes
 
 Fichier : plugins/conges/ajax.enregistreCet.php
 Création : 7 mars 2014
-Dernière modification : 17 avril 2015
+Dernière modification : 9 janvier 2016
 Auteur : Jérôme Combes, jerome@planningbiblio.fr
 
 Description :
@@ -128,7 +128,12 @@ else{
     if($commentaires){
       $message.="Commentaires : ".str_replace("\n","<br/>",$commentaires);
     }
-    sendmail($sujet,$message,$destinataires);
+    // Envoi du mail
+    $m=new sendmail();
+    $m->subject=$sujet;
+    $m->message=$message;
+    $m->to=$destinataires;
+    $m->send();
   }
 }
 ?>

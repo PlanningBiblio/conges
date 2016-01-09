@@ -1,3 +1,7 @@
+***	Version 2.1	(Jérôme Combes, 9 janvier 2016)			***
+- Amélioration :
+Classe sendmail : permet la récupération et l'affichage des erreurs SMTP
+
 ***	Version 2.0	(Jérôme Combes, 7 octobre 2015)			***
 - Compatibilité Planning Biblio version 2.0
 - Corrections :

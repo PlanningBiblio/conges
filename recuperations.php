@@ -1,13 +1,13 @@
 <?php
 /*
-Planning Biblio, Plugin Congés Version 1.6.5
+Planning Biblio, Plugin Congés Version 2.1
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
 Copyright (C) 2013-2015 - Jérôme Combes
 
 Fichier : plugins/conges/recuperations.php
 Création : 27 août 2013
-Dernière modification : 21 avril 2015
+Dernière modification : 9 janvier 2016
 Auteur : Jérôme Combes, jerome@planningbiblio.fr
 
 Description :
@@ -322,10 +322,20 @@ $(function() {
 	    data: {date: date.val(), date2: date2.val(), heures: heures.val(), commentaires: commentaires.val(), perso_id: perso_id},
 	    type: "post",
 	    success: function(result){
-	      if(result=="Demande-OK"){
-		// Affiche la liste des demandes après enregistrement
+	      if(result[0]=="Demande-OK"){
+	      
+		// Préparation de l'affichage des erreurs et confirmations
 		var msg=encodeURIComponent("Votre demande a été enregistrée");
-		document.location.href="index.php?page=plugins/conges/recuperations.php&msgType=success&msg="+msg;
+		
+		var msg2=null;
+		var msg2Type=null;
+		if(result[1]!=undefined){
+		  msg2=encodeURIComponent(result[1]);
+		  msg2Type="error";
+		}
+		
+		// Affiche la liste des demandes après enregistrement
+		document.location.href="index.php?page=plugins/conges/recuperations.php&msgType=success&msg="+msg+"&msg2Type="+msg2Type+"&msg2="+msg2;
 		// Ferme le dialog
 		$( this ).dialog( "close" );
 	      }else{

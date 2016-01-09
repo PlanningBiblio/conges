@@ -1,13 +1,13 @@
 <?php
 /*
-Planning Biblio, Plugin Congés Version 1.6.5
+Planning Biblio, Plugin Congés Version 2.1
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
 Copyright (C) 2013-2015 - Jérôme Combes
 
 Fichier : plugins/conges/ajax.enregistreRecup.php
 Création : 11 octobre 2013
-Dernière modification : 21 avril 2015
+Dernière modification : 9 janvier 2016
 Auteur : Jérôme Combes, jerome@planningbiblio.fr
 
 Description :
@@ -41,10 +41,12 @@ $insert=array("perso_id"=>$perso_id,"date"=>$date,"date2"=>$date2,"heures"=>$heu
 $db=new db();
 $db->insert2("recuperations",$insert);
 if($db->error){
-  echo json_encode("Demande-Erreur");
+  $return=array("Demande-Erreur");
+  echo json_encode($return);
+  exit;
 }
 else{
-  echo json_encode("Demande-OK");
+  $return=array("Demande-OK");
 
   // Envoi d'un e-mail à l'agent et aux responsables
   $p=new personnel();
@@ -69,7 +71,17 @@ else{
     if($commentaires){
       $message.="Commentaires : ".str_replace("\n","<br/>",$commentaires);
     }
-    sendmail($sujet,$message,$destinataires);
+
+    // Envoi du mail
+    $m=new sendmail();
+    $m->subject=$sujet;
+    $m->message=$message;
+    $m->to=$destinataires;
+    $m->send();
+    
+    $return[]=$m->error_CJInfo;
   }
+  
+  echo json_encode($return);
 }
 ?>

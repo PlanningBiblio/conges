@@ -1,6 +1,6 @@
 <?php
 /*
-Planning Biblio, Plugin Congés Version 1.6.5
+Planning Biblio, Plugin Congés Version 2.1
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
 Copyright (C) 2013-2015 - Jérôme Combes
@@ -103,8 +103,22 @@ if(isset($update)){
   $a->getRecipients($notifications,$responsables,$mail,$mailsResponsables);
   $destinataires=$a->recipients;
 
-  sendmail($sujet,$message,$destinataires);
+  // Envoi du mail
+  $m=new sendmail();
+  $m->subject=$sujet;
+  $m->message=$message;
+  $m->to=$destinataires;
+  $m->send();
+
+  // Si erreur d'envoi de mail, affichage de l'erreur
+  $msg2=null;
+  $msg2Type=null;
+  if($m->error){
+    $msg2=urlencode($m->error_CJInfo);
+    $msg2Type="error";
+  }
+
 }
 
-echo "<script type='text/JavaScript'>document.location.href='index.php?page=plugins/conges/recuperations.php&msg=$msg&msgType=$msgType';</script>\n";
+echo "<script type='text/JavaScript'>document.location.href='index.php?page=plugins/conges/recuperations.php&msg=$msg&msgType=$msgType&msg2=$msg2&msg2Type=$msg2Type';</script>\n";
 ?>

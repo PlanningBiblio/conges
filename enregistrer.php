@@ -1,14 +1,15 @@
 <?php
-/*
-Planning Biblio, Plugin Congés Version 1.6.5
+/**
+Planning Biblio, Plugin Congés Version 2.1
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
 Copyright (C) 2013-2015 - Jérôme Combes
 
 Fichier : plugins/conges/enregistrer.php
 Création : 24 juillet 2013
-Dernière modification : 24 avril 2015
-Auteurs : Jérôme Combes jerome@planningbiblio.fr, Etienne Cavalié etienne.cavalie@unice.fr
+Dernière modification : 9 janvier 2016
+@author : Jérôme Combes <jerome@planningbiblio.fr>
+@author : Etienne Cavalié <etienne.cavalie@unice.fr>
 
 Description :
 Fichier permettant de poser un congé
@@ -80,10 +81,23 @@ if(isset($_GET['confirm'])){	// Confirmation
   $url=createURL("plugins/conges/modif.php&id=$id");
   $message.="<br/><br/>Lien vers la demande de cong&eacute; :<br/><a href='$url'>$url</a><br/><br/>";
 
-  sendmail("Nouveau congés",$message,$destinataires);
- 
+  // Envoi du mail
+  $m=new sendmail();
+  $m->subject="Nouveau congés";
+  $m->message=$message;
+  $m->to=$destinataires;
+  $m->send();
+
+  // Si erreur d'envoi de mail, affichage de l'erreur
+  $msg2=null;
+  $msg2Type=null;
+  if($m->error){
+    $msg2=urlencode($m->error_CJInfo);
+    $msg2Type="error";
+  }
+
   $msg=urlencode("La demande de congé a été enregistrée");
-  echo "<script type='text/JavaScript'>document.location.href='index.php?page=plugins/conges/voir.php&msg=$msg&msgType=success';</script>\n";
+  echo "<script type='text/JavaScript'>document.location.href='index.php?page=plugins/conges/voir.php&msg=$msg&msgType=success&msg2=$msg2&msg2Type=$msg2Type';</script>\n";
 }
 
 // Formulaire
@@ -161,7 +175,7 @@ else{
   echo "<tr id='hre_fin' style='display:none;'><td>\n";
   echo "Heure de fin : \n";
   echo "</td><td>\n";
-  echo "<select name='hre_fin' id='hre_fin_select' style='width:98%;' class='googleCalendarTrigger'>\n";
+  echo "<select name='hre_fin' id='hre_fin_select' style='width:98%;' class='googleCalendarTrigger' onfocus='setEndHour();'>\n";
   selectHeure(7,23,true,$quartDHeure);
   echo "</select>\n";
   echo "</td></tr>\n";
