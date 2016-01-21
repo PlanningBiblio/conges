@@ -3,12 +3,12 @@
 Planning Biblio, Plugin Congés Version 1.5.8
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
-Copyright (C) 2013-2015 - Jérôme Combes
+@copyright 2013-1016 Jérôme Combes
 
 Fichier : plugins/conges/index.php
 Création : 24 juillet 2013
 Dernière modification : 6 janvier 2015
-Auteur : Jérôme Combes, jerome@planningbiblio.fr
+@author Jérôme Combes <jerome@planningbiblio.fr>
 
 Description :
 Fichier Index du dossier congés, Affiche les liens vers les autres pages du dossier

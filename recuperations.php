@@ -3,12 +3,12 @@
 Planning Biblio, Plugin Congés Version 2.1
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
-Copyright (C) 2013-2015 - Jérôme Combes
+@copyright 2013-1016 Jérôme Combes
 
 Fichier : plugins/conges/recuperations.php
 Création : 27 août 2013
 Dernière modification : 9 janvier 2016
-Auteur : Jérôme Combes, jerome@planningbiblio.fr
+@author Jérôme Combes <jerome@planningbiblio.fr>
 
 Description :
 Fichier permettant de voir les demandes de récupération

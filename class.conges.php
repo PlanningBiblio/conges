@@ -3,12 +3,12 @@
 Planning Biblio, Plugin Congés Version 2.1
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
-Copyright (C) 2013-2015 - Jérôme Combes
+@copyright 2013-1016 Jérôme Combes
 
 Fichier : plugins/conges/class.conges.php
 Création : 24 juillet 2013
 Dernière modification : 9 janvier 2016
-Auteur : Jérôme Combes, jerome@planningbiblio.fr
+@author Jérôme Combes <jerome@planningbiblio.fr>
 
 Description :
 Fichier regroupant les fonctions utiles à la gestion des congés
@@ -20,11 +20,13 @@ if(!isset($version)){
   include_once "../../include/accessDenied.php";
 }
 
-$path=substr($_SERVER['SCRIPT_NAME'],-9)=="index.php"?null:"../../";
-require_once "{$path}planningHebdo/class.planningHebdo.php";
-require_once "{$path}joursFeries/class.joursFeries.php";
-require_once "{$path}personnel/class.personnel.php";
-require_once "{$path}absences/class.absences.php";
+if(!strstr($_SERVER['SCRIPT_NAME'],"cron.ctrlPlanning.php")){
+  $path=substr($_SERVER['SCRIPT_NAME'],-9)=="index.php"?null:"../../";
+  require_once "{$path}planningHebdo/class.planningHebdo.php";
+  require_once "{$path}joursFeries/class.joursFeries.php";
+  require_once "{$path}personnel/class.personnel.php";
+  require_once "{$path}absences/class.absences.php";
+}
 
 class conges{
   public $agent=null;
@@ -159,6 +161,39 @@ class conges{
     $this->heures2=str_replace(array(".00",".25",".50",".75"),array("h00","h15","h30","h45"),$this->heures);
   }
 
+  /**
+  * @method check
+  * @param int $perso_id
+  * @param string $debut, format YYYY-MM-DD HH:ii:ss
+  * @param string $fin, format YYYY-MM-DD HH:ii:ss
+  * @param boolean $valide, default = true
+  * Contrôle si l'agent $perso_id est absent entre $debut et $fin
+  * Retourne true si absent, false sinon
+  * Si $valide==false, les absences non validées seront également prises en compte
+  */
+  public function check($perso_id,$debut,$fin,$valide=true){
+  
+    if(strlen($debut)==10){
+      $debut.=" 00:00:00";
+    }
+
+    if(strlen($fin)==10){
+      $fin.=" 23:59:59";
+    }
+
+    $filter=array("perso_id"=>$perso_id, "debut"=>"<$fin", "fin"=>">$debut");
+    
+    if($valide==true){
+      $filter["valide"]=">0";
+    }
+    
+    $db=new db();
+    $db->select2("conges",null,$filter);
+    if($db->result){
+      return true;
+    }
+    return false;
+  }
 
   public function delete(){
     // Marque une demande de congé comme supprimée

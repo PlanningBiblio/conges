@@ -3,12 +3,12 @@
 Planning Biblio, Plugin Congés Version 1.6.5
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
-Copyright (C) 2013-2015 - Jérôme Combes
+@copyright 2013-1016 Jérôme Combes
 
 Fichier : plugins/conges/ajax.calculCredit.php
 Création : 2 août 2013
 Dernière modification : 22 avril 2015
-Auteur : Jérôme Combes, jerome@planningbiblio.fr
+@author Jérôme Combes <jerome@planningbiblio.fr>
 
 Description :
 Calcul le nombre d'heures correspondant à un congé

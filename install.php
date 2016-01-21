@@ -3,12 +3,12 @@
 Planning Biblio, Plugin Congés Version 1.6
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
-Copyright (C) 2013-2015 - Jérôme Combes
+@copyright 2013-1016 Jérôme Combes
 
 Fichier : plugins/conges/install.php
 Création : 24 juillet 2013
 Dernière modification : 22 janvier 2015
-Auteur : Jérôme Combes, jerome@planningbiblio.fr
+@author Jérôme Combes <jerome@planningbiblio.fr>
 
 Description :
 Fichier permettant l'installation du plugin Congés. Ajoute les informations nécessaires dans la base de données

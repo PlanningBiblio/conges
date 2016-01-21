@@ -3,12 +3,12 @@
 Planning Biblio, Plugin Conges Version 1.3
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
-Copyright (C) 2013-2015 - Jérôme Combes
+@copyright 2013-1016 Jérôme Combes
 
 Fichier : plugins/conges/menudiv.php
 Création : 26 septembre 2013
 Dernière modification : 26 septembre 2013
-Auteur : Jérôme Combes, jerome@planningbiblio.fr
+@author Jérôme Combes <jerome@planningbiblio.fr>
 
 Description :
 Fichier appelé lors de la suppression d'un agent par le fichier personnel/class.personnel.php, fonction personnel::delete()

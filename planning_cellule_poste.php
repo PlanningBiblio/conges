@@ -3,12 +3,12 @@
 Planning Biblio, Plugin Conges Version 1.6.1
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
-Copyright (C) 2013-2015 - Jérôme Combes
+@copyright 2013-1016 Jérôme Combes
 
 Fichier : plugins/conges/planning_cellule_poste.php
 Création : 30 janvier 2014
 Dernière modification : 23 février 2015
-Auteur : Jérôme Combes, jerome@planningbiblio.fr
+@author Jérôme Combes <jerome@planningbiblio.fr>
 
 Description :
 Fichier intégré au planning (planning/poste/fonctions.php)

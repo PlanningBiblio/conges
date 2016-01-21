@@ -3,12 +3,12 @@
 Planning Biblio, Plugin Congés Version 1.5.4
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
-Copyright (C) 2013-2015 - Jérôme Combes
+@copyright 2013-1016 Jérôme Combes
 
 Fichier : plugins/conges/updateDB.php
 Création : 18 juin 2014
 Dernière modification : 18 juin 2014
-Auteur : Jérôme Combes, jerome@planningbiblio.fr
+@author Jérôme Combes <jerome@planningbiblio.fr>
 
 Description :
 Fichier permettant de vérifier et de mettre à jour la base de données si le plugins a été mis à jour.

@@ -3,12 +3,12 @@
 Planning Biblio, Plugin Conges Version 2.0
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
-Copyright (C) 2013-2015 - Jérôme Combes
+@copyright 2013-1016 Jérôme Combes
 
 Fichier : plugins/conges/ajax.planning.updateCell.php
 Création : 25 novembre 2014
 Dernière modification : 27 juillet 2015
-Auteur : Jérôme Combes, jerome@planningbiblio.fr
+@author Jérôme Combes <jerome@planningbiblio.fr>
 
 Description :
 Fichier intégré au fichier planning/poste/ajax.updateCell.php permettant la mise à jour de la cellule modifiée

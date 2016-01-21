@@ -3,12 +3,12 @@
 Planning Biblio, Plugin Congés Version 1.5.1
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
-Copyright (C) 2013-2015 - Jérôme Combes
+@copyright 2013-1016 Jérôme Combes
 
 Fichier : plugins/conges/ajax.verifConges.php
 Création : 12 février 2014
 Dernière modification : 3 juin 2014
-Auteur : Jérôme Combes, jerome@planningbiblio.fr
+@author Jérôme Combes <jerome@planningbiblio.fr>
 
 Description :
 Vérifie si la période demandée a déjà fait l'objet d'une demande de congés.

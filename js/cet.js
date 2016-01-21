@@ -2,12 +2,12 @@
 Planning Biblio, Plugin Congés Version 1.6.3
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
-Copyright (C) 2013-2015 - Jérôme Combes
+@copyright 2013-1016 Jérôme Combes
 
 Fichier : plugins/conges/js/cet.js
 Création : 6 mars 2014
 Dernière modification : 27 mars 2015
-Auteur : Jérôme Combes, jerome@planningbiblio.fr
+@author Jérôme Combes <jerome@planningbiblio.fr>
 
 Description :
 Fichier regroupant les functions JavaScript utiles à la gestion des CET (page plugins/conges/cet.php)
