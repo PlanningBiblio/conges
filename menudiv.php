@@ -1,13 +1,13 @@
 <?php
-/*
-Planning Biblio, Plugin Conges Version 1.3
+/**
+Planning Biblio, Plugin Conges Version 2.2
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
 @copyright 2013-1016 Jérôme Combes
 
 Fichier : plugins/conges/menudiv.php
 Création : 13 août 2013
-Dernière modification : 13 août 2013
+Dernière modification : 27 février 2016
 @author Jérôme Combes <jerome@planningbiblio.fr>
 
 Description :
@@ -22,6 +22,7 @@ $c=new conges();
 $c->debut="$date $debut";
 $c->fin="$date $fin";
 $c->valide=true;
+$c->bornesExclues=true;
 $c->fetch();
 
 foreach($c->elements as $elem){

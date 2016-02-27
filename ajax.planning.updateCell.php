@@ -1,13 +1,13 @@
 <?php
-/*
-Planning Biblio, Plugin Conges Version 2.0
+/**
+Planning Biblio, Plugin Conges Version 2.2
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
 @copyright 2013-1016 Jérôme Combes
 
 Fichier : plugins/conges/ajax.planning.updateCell.php
 Création : 25 novembre 2014
-Dernière modification : 27 juillet 2015
+Dernière modification : 27 février 2016
 @author Jérôme Combes <jerome@planningbiblio.fr>
 
 Description :
@@ -47,19 +47,26 @@ Variable modifiée
     [1] => Array (
       ...
 */
+
+require_once "class.conges.php";
+
 $perso_ids=array();
 foreach($tab as $elem){
   $perso_ids[]=$elem['perso_id'];
 }
 $perso_ids=join(",",$perso_ids);
 
-$db=new db();
-$db->select2("conges","*",array("debut"=>"<$date $fin", "fin"=>">$date $debut", "perso_id"=>"IN$perso_ids", "valide"=>">0"));
+$c=new conges();
+$c->debut="$date $debut";
+$c->fin="$date $fin";
+$c->valide=true;
+$c->bornesExclues=true;
+$c->fetch();
 
-if($db->result){
+if(!empty($c->elements)){
   for($i=0;$i<count($tab);$i++){
     $tab[$i]['conges']=0;
-    foreach($db->result as $elem){
+    foreach($c->elements as $elem){
       if($tab[$i]['perso_id']==$elem['perso_id']){
 	$tab[$i]['conges']=1;
 	continue;

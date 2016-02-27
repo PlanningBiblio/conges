@@ -1,13 +1,13 @@
 <?php
-/*
-Planning Biblio, Plugin Congés Version 2.1
+/**
+Planning Biblio, Plugin Congés Version 2.2
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
 @copyright 2013-1016 Jérôme Combes
 
 Fichier : plugins/conges/class.conges.php
 Création : 24 juillet 2013
-Dernière modification : 9 janvier 2016
+Dernière modification : 27 février 2016
 @author Jérôme Combes <jerome@planningbiblio.fr>
 
 Description :
@@ -33,6 +33,7 @@ class conges{
   public $agents_supprimes=array(0);
   public $admin=false;
   public $annee=null;
+  public $bornesExclues=null;
   public $data=array();
   public $debut=null;
   public $elements=array();
@@ -282,10 +283,18 @@ class conges{
     $date=date("Y-m-d")." 23:59:59";
     if($debut){
       $fin=$fin?$fin:$date;
-      $filter.=" AND `debut`<='$fin' AND `fin`>='$debut'";
+      if($this->bornesExclues){
+	$filter.=" AND `debut`<'$fin' AND `fin`>'$debut'";
+      }else{
+	$filter.=" AND `debut`<='$fin' AND `fin`>='$debut'";
+      }
     }
     else{
-      $filter.=" AND `fin`>='$date'";
+      if($this->bornesExclues){
+	$filter.=" AND `fin`>'$date'";
+      }else{
+	$filter.=" AND `fin`>='$date'";
+      }
     }
 
 
