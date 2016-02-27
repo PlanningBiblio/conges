@@ -1,12 +1,12 @@
-/*
-Planning Biblio, Plugin Congés Version 1.6.5
+/**
+Planning Biblio, Plugin Congés Version 2.2
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
 @copyright 2013-1016 Jérôme Combes
 
 Fichier : plugins/conges/js/script.conges.js
 Création : 2 août 2013
-Dernière modification : 22 avril 2015
+Dernière modification : 27 février 2016
 @author Jérôme Combes <jerome@planningbiblio.fr>
 @author Etienne Cavalié <etienne.cavalie@unice.fr>
 
@@ -317,12 +317,9 @@ function checkDateAge( o, limit, n, tip ) {
 }
 
 function checkSamedi( o, n ) {
-  var d=new Date();
   tmp=o.val().split("/");
-  var date=tmp[0]==31?24:parseInt(tmp[0]);	// Ceci car getDay erroné à chaque fois que le samedi tombe un 31
-  d.setDate(date);
-  d.setMonth(parseInt(tmp[1])-1);
-  d.setFullYear(parseInt(tmp[2]));
+  var d=new Date(tmp[2],tmp[1]-1,tmp[0]);
+
   if(d.getDay()!=6){
     o.addClass( "ui-state-error" );
     updateTips( n );
