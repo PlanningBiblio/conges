@@ -1,12 +1,12 @@
 /**
-Planning Biblio, Plugin Congés Version 2.2
+Planning Biblio, Plugin Congés Version 2.4.3
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
 @copyright 2013-1016 Jérôme Combes
 
 Fichier : plugins/conges/js/script.conges.js
 Création : 2 août 2013
-Dernière modification : 27 février 2016
+Dernière modification : 10 octobre 2016
 @author Jérôme Combes <jerome@planningbiblio.fr>
 @author Etienne Cavalié <etienne.cavalie@unice.fr>
 
@@ -89,7 +89,13 @@ function calculRestes(){
   jours=heures/7;
   $("#nbJours").text(jours.toFixed(2));
 
-  // Calcul du reliquat après décompte
+	heures = parseFloat(heures.replace(' ',''));
+	reliquat = parseFloat(reliquat.replace(' ',''));
+	recuperation = parseFloat(recuperation.replace(' ',''));
+	credit = parseFloat(credit.replace(' ',''));
+	anticipation = parseFloat(anticipation.replace(' ',''));
+	
+	// Calcul du reliquat après décompte
   reste=0;
   reliquat=reliquat-heures;
   if(reliquat<0){
