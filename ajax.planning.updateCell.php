@@ -1,13 +1,13 @@
 <?php
 /**
-Planning Biblio, Plugin Conges Version 2.2
+Planning Biblio, Plugin Conges Version 2.4.8
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
 @copyright 2013-1016 Jérôme Combes
 
 Fichier : plugins/conges/ajax.planning.updateCell.php
 Création : 25 novembre 2014
-Dernière modification : 27 février 2016
+Dernière modification : 29 octobre 2016
 @author Jérôme Combes <jerome@planningbiblio.fr>
 
 Description :
@@ -42,7 +42,7 @@ Variable modifiée
       [perso_id] => 86
       [absent] => 0
       [supprime] => 0
-      [conges] => 0/1
+      [conges] => 0/1/2 ( 0 = pas d'absence ; 1 = absence validée ; 2 = absence non validée )
       )
     [1] => Array (
       ...
@@ -59,7 +59,7 @@ $perso_ids=join(",",$perso_ids);
 $c=new conges();
 $c->debut="$date $debut";
 $c->fin="$date $fin";
-$c->valide=true;
+$c->valide=false;
 $c->bornesExclues=true;
 $c->fetch();
 
@@ -68,8 +68,12 @@ if(!empty($c->elements)){
     $tab[$i]['conges']=0;
     foreach($c->elements as $elem){
       if($tab[$i]['perso_id']==$elem['perso_id']){
-	$tab[$i]['conges']=1;
-	continue;
+        if($elem['valide']>0){
+          $tab[$i]['conges']=1;
+          continue;  // Garder le continue à cet endroit pour que les absences validées prennent le dessus sur les non-validées
+        }else{
+          $tab[$i]['conges']=2;
+        }
       }
     }
   }

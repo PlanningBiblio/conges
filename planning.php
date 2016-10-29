@@ -1,13 +1,13 @@
 <?php
-/*
-Planning Biblio, Plugin Conges Version 1.3
+/**
+Planning Biblio, Plugin Conges Version 2.4.8
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
 @copyright 2013-1016 Jérôme Combes
 
 Fichier : plugins/conges/planning.php
 Création : 24 octobre 2013
-Dernière modification : 11 février 2014
+Dernière modification : 29 octobre 2016
 @author Jérôme Combes <jerome@planningbiblio.fr>
 
 Description :
@@ -18,8 +18,10 @@ Ajoute les agents en congés à la liste des absents
 // $conges = liste des congés du jour, créé par planning_cellules.php inclus plutôt dans planning/poste/index.php
 
 foreach($conges as $elem){
-  $elem['motif']="Cong&eacute; pay&eacute;";
-  $absences[]=$elem;
-  $absences_id[]=$elem['perso_id'];
+  if($elem['valide']>0){
+    $elem['motif']="Cong&eacute; pay&eacute;";
+    $absences_planning[]=$elem;
+    $absences_id[]=$elem['perso_id'];
+  }
 }
 ?>
