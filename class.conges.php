@@ -1,14 +1,15 @@
 <?php
 /**
-Planning Biblio, Plugin Congés Version 2.4.1
+Planning Biblio, Plugin Congés Version 2.4.6
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
-@copyright 2013-1016 Jérôme Combes
+@copyright 2013-2016 Jérôme Combes
 
 Fichier : plugins/conges/class.conges.php
 Création : 24 juillet 2013
-Dernière modification : 29 juillet 2016
+Dernière modification : 27 octobre 2016
 @author Jérôme Combes <jerome@planningbiblio.fr>
+@author Etienne Cavalié
 
 Description :
 Fichier regroupant les fonctions utiles à la gestion des congés
@@ -158,9 +159,9 @@ class conges{
 
       $current=date("Y-m-d",strtotime("+1 day",strtotime($current)));
     }
-    $this->minutes=$difference/60;
-    $this->heures=number_format($difference/3600, 2, '.', ' ');
-    $this->heures2=str_replace(array(".00",".25",".50",".75"),array("h00","h15","h30","h45"),$this->heures);
+    $this->minutes=$difference/60;                                      // nombre de minutes (ex 2h30 => 150)
+    $this->heures=number_format($difference/3600, 2, '.', '');         // heures et centièmes (ex 2h30 => 2.50)
+    $this->heures2 = heure4($this->heures);                             // heures et minutes (ex: 2h30 => 2h30)
   }
 
   /**
@@ -269,6 +270,7 @@ class conges{
     $db->update2("conges",array("supprime"=>$_SESSION['login_id'],"supprDate"=>date("Y-m-d H:i:s")),array("id"=>$id));
   }
 
+
   public function fetch(){
     // Filtre de recherche
     $filter="1";
@@ -285,16 +287,16 @@ class conges{
     if($debut){
       $fin=$fin?$fin:$date;
       if($this->bornesExclues){
-	$filter.=" AND `debut`<'$fin' AND `fin`>'$debut'";
+        $filter.=" AND `debut`<'$fin' AND `fin`>'$debut'";
       }else{
-	$filter.=" AND `debut`<='$fin' AND `fin`>='$debut'";
+        $filter.=" AND `debut`<='$fin' AND `fin`>='$debut'";
       }
     }
     else{
       if($this->bornesExclues){
-	$filter.=" AND `fin`>'$date'";
+        $filter.=" AND `fin`>'$date'";
       }else{
-	$filter.=" AND `fin`>='$date'";
+        $filter.=" AND `fin`>='$date'";
       }
     }
 
@@ -598,11 +600,11 @@ class conges{
 	$recupHeures=floor($recup);
 	$reliquatHeures=floor($reliquat);
 
-	$annuelCents=($annuel-$annuelHeures)*100;
-	$anticipationCents=($anticipation-$anticipationHeures)*100;
-	$creditCents=($credit-$creditHeures)*100;
-	$recupCents=($recup-$recupHeures)*100;
-	$reliquatCents=($reliquat-$reliquatHeures)*100;
+	$annuelCents=(round(($annuel-$annuelHeures)*60)/2)*2;
+	$anticipationCents=(round(($anticipation-$anticipationHeures)*60)/2)*2;
+	$creditCents=(round(($credit-$creditHeures)*60)/2)*2;
+	$recupCents=(round(($recup-$recupHeures)*60)/2)*2;
+	$reliquatCents=(round(($reliquat-$reliquatHeures)*60)/2)*2;
 
 	$annuelMinutes=$annuelCents*0.6;
 	$anticipationMinutes=$anticipationCents*0.6;
@@ -695,8 +697,8 @@ class conges{
       $date=$debut;
       while($date<=$fin){
 	// Emploi du temps si plugin planningHebdo
-	if($config['PlanningHebdo']){
-	  include "planningHebdo/absences.php";
+	if($GLOBALS['config']['PlannningHebdo']){
+	  include 'planningHebdo/absences.php';
 	}
 	// Vérifions le numéro de la semaine de façon à contrôler le bon planning de présence hebdomadaire
 	$d=new datePl($date);
@@ -1024,11 +1026,11 @@ class conges{
       $version="1.6.5";
     }
 
-    if($version < "2.4.1"){
-      $sql[]="UPDATE `{$dbprefix}plugins` SET `version`='2.4.1' WHERE `nom`='conges';";
-      $version="2.4.1";
+    if($version < "2.4.6"){
+      $sql[]="UPDATE `{$dbprefix}plugins` SET `version`='2.4.6' WHERE `nom`='conges';";
+      $version="2.4.6";
     }
-    
+
     foreach($sql as $elem){
       $db=new db();
       $db->query($elem);

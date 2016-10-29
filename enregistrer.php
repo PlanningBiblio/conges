@@ -1,13 +1,13 @@
 <?php
 /**
-Planning Biblio, Plugin Congés Version 2.1
+Planning Biblio, Plugin Congés Version 2.4.6
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
-@copyright 2013-1016 Jérôme Combes
+@copyright 2013-2016 Jérôme Combes
 
 Fichier : plugins/conges/enregistrer.php
 Création : 24 juillet 2013
-Dernière modification : 9 janvier 2016
+Dernière modification : 27 octobre 2016
 @author Jérôme Combes <jerome@planningbiblio.fr>
 @author Etienne Cavalié <etienne.cavalie@unice.fr>
 
@@ -27,7 +27,6 @@ if(!in_array(2,$droits)){
 }
 $debut=isset($_GET['debut'])?$_GET['debut']:null;
 $fin=isset($_GET['fin'])?$_GET['fin']:null;
-$quartDHeure=$config['heuresPrecision']=="quart-heure"?true:false;
 
 echo <<<EOD
 <h3>Poser des congés</h3>
@@ -82,7 +81,7 @@ if(isset($_GET['confirm'])){	// Confirmation
   $message.="<br/><br/>Lien vers la demande de cong&eacute; :<br/><a href='$url'>$url</a><br/><br/>";
 
   // Envoi du mail
-  $m=new sendmail();
+  $m=new CJMail();
   $m->subject="Nouveau congés";
   $m->message=$message;
   $m->to=$destinataires;
@@ -111,9 +110,9 @@ else{
   $credit=number_format($p->elements[0]['congesCredit'], 2, '.', ' ');
   $reliquat=number_format($p->elements[0]['congesReliquat'], 2, '.', ' ');
   $anticipation=number_format($p->elements[0]['congesAnticipation'], 2, '.', ' ');
-  $credit2=str_replace(array(".00",".25",".50",".75"),array("h00","h15","h30","h45"),$credit);
-  $reliquat2=str_replace(array(".00",".25",".50",".75"),array("h00","h15","h30","h45"),$reliquat);
-  $anticipation2=str_replace(array(".00",".25",".50",".75"),array("h00","h15","h30","h45"),$anticipation);
+  $credit2 = heure4($credit);
+  $reliquat2 = heure4($reliquat);
+  $anticipation2 = heure4($anticipation);
   $recuperation=number_format($p->elements[0]['recupSamedi'], 2, '.', ' ');
   $recuperation2=heure4($recuperation);
 
@@ -164,7 +163,7 @@ else{
   echo "Heure de début : \n";
   echo "</td><td>\n";
   echo "<select name='hre_debut' id='hre_debut_select' style='width:98%;' class='googleCalendarTrigger'>\n";
-  selectHeure(7,23,true,$quartDHeure);
+  selectHeure(7,23,true);
   echo "</select>\n";
   echo "</td></tr>\n";
   echo "<tr><td>\n";
@@ -176,7 +175,7 @@ else{
   echo "Heure de fin : \n";
   echo "</td><td>\n";
   echo "<select name='hre_fin' id='hre_fin_select' style='width:98%;' class='googleCalendarTrigger' onfocus='setEndHour();'>\n";
-  selectHeure(7,23,true,$quartDHeure);
+  selectHeure(7,23,true);
   echo "</select>\n";
   echo "</td></tr>\n";
   

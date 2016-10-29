@@ -1,14 +1,15 @@
 <?php
-/*
-Planning Biblio, Plugin Congés Version 1.5.5
+/**
+Planning Biblio, Plugin Congés Version 2.4.8
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
-@copyright 2013-1016 Jérôme Combes
+@copyright 2013-2016 Jérôme Combes
 
 Fichier : plugins/conges/ficheAgent.php
 Création : 26 juillet 2013
-Dernière modification : 11 septembre 2014
+Dernière modification : 29 octobre 2016
 @author Jérôme Combes <jerome@planningbiblio.fr>
+@author Etienne Cavalié
 
 Description :
 Fichier permettant d'ajouter les informations sur les congés dans la fiche des agents
@@ -34,12 +35,14 @@ if($admin){
   echo "<input type='text' name='congesAnnuel' value='{$conges['annuelHeures']}'  style='width:70px;text-align:right;'>\n";
   echo "<label style='text-align:center;padding:5px;'>h</label>";
   echo "<select name='congesAnnuelMin' style='width:50px;'>\n";
-  for($min=0;$min<=75;$min=$min+25){
-    $minutes=sprintf("%02s",$min*0.6);
-    $selected=$min==$conges['annuelCents']?"selected='selected'":null;
-    echo "<option value='$min' $selected>$minutes</option>\n";
+
+  for($min=0;$min<1;$min=$min+(5/60)){
+    $minutes=sprintf("%02s",$min*60);
+    $selected=$minutes==$conges['annuelCents']?"selected='selected'":null;
+    echo "<option value='". $min ."' $selected>$minutes</option>\n";
   }
   echo "</select>\n";
+  
 }
 else{
   echo heure4($conges['annuel']);
@@ -54,10 +57,11 @@ if($admin){
   echo "<input type='text' name='congesCredit' value='{$conges['creditHeures']}'  style='width:70px;text-align:right;'>\n";
   echo "<label style='text-align:center;padding:5px;'>h</label>";
   echo "<select name='congesCreditMin' style='width:50px;'>\n";
-  for($min=0;$min<=75;$min=$min+25){
-    $minutes=sprintf("%02s",$min*0.6);
-    $selected=$min==$conges['creditCents']?"selected='selected'":null;
-    echo "<option value='$min' $selected>$minutes</option>\n";
+
+  for($min=0;$min<1;$min=$min+(5/60)){
+    $minutes=sprintf("%02s",$min*60);
+    $selected=$minutes==$conges['creditCents']?"selected='selected'":null;
+    echo "<option value='".$min . "' $selected>$minutes</option>\n";
   }
   echo "</select>\n";
 }
@@ -74,10 +78,11 @@ if($admin){
   echo "<input type='text' name='congesReliquat' value='{$conges['reliquatHeures']}'  style='width:70px;text-align:right;'>\n";
   echo "<label style='text-align:center;padding:5px;'>h</label>";
   echo "<select name='congesReliquatMin' style='width:50px;'>\n";
-  for($min=0;$min<=75;$min=$min+25){
-    $minutes=sprintf("%02s",$min*0.6);
-    $selected=$min==$conges['reliquatCents']?"selected='selected'":null;
-    echo "<option value='$min' $selected>$minutes</option>\n";
+
+  for($min=0;$min<1;$min=$min+(5/60)){
+    $minutes=sprintf("%02s",$min*60);
+    $selected=$minutes==$conges['reliquatCents']?"selected='selected'":null;
+    echo "<option value='".$min ."' $selected>$minutes</option>\n";
   }
   echo "</select>\n";
 }
@@ -94,10 +99,11 @@ if($admin){
   echo "<input type='text' name='congesAnticipation' value='{$conges['anticipationHeures']}'  style='width:70px;text-align:right;'>\n";
   echo "<label style='text-align:center;padding:5px;'>h</label>";
   echo "<select name='congesAnticipationMin' style='width:50px;'>\n";
-  for($min=0;$min<=75;$min=$min+25){
-    $minutes=sprintf("%02s",$min*0.6);
-    $selected=$min==$conges['anticipationCents']?"selected='selected'":null;
-    echo "<option value='$min' $selected>$minutes</option>\n";
+
+  for($min=0;$min<1;$min=$min+(5/60)){
+    $minutes=sprintf("%02s",$min*60);
+    $selected=$minutes==$conges['anticipationCents']?"selected='selected'":null;
+    echo "<option value='".$min ."' $selected>$minutes</option>\n";
   }
   echo "</select>\n";
 }
@@ -114,10 +120,11 @@ if($admin){
   echo "<input type='text' name='recupSamedi' value='{$conges['recupHeures']}'  style='width:70px;text-align:right;'>\n";
   echo "<label style='text-align:center;padding:5px;'>h</label>";
   echo "<select name='recupSamediMin' style='width:50px;'>\n";
-  for($min=0;$min<=75;$min=$min+25){
-    $minutes=sprintf("%02s",$min*0.6);
-    $selected=$min==$conges['recupCents']?"selected='selected'":null;
-    echo "<option value='$min' $selected>$minutes</option>\n";
+
+  for($min=0;$min<1;$min=$min+(5/60)){
+    $minutes=sprintf("%02s",$min*60);
+    $selected=$minutes==$conges['recupCents']?"selected='selected'":null;
+    echo "<option value='".$min ."' $selected>$minutes</option>\n";
   }
   echo "</select>\n";
 }

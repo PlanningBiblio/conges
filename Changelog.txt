@@ -1,3 +1,17 @@
+***     Version 2.4.6     (29 octobre 2016)                 ***
+- Compatibilité Planning Biblio version 2.4.6
+- Amélioration :
+Propose le transfert des congés enregistrés vers la table absences en cas de désinstallation du plugin
+Améliore les calculs des crédits
+Granularité à 5 minutes
+Renomme la fonction sendmail en CJMail pour compatibilité avec Wamp et PB 2.4.6
+
+***     Version 2.2     (27 février 2016)                 ***
+- Corrections :
+Correction du contrôle des samedis
+Affichage de tous les congés dans les agendas
+Corrige les liens avec le menu du planning
+
 ***	Version 2.1	(Jérôme Combes, 9 janvier 2016)			***
 - Amélioration :
 Classe sendmail : permet la récupération et l'affichage des erreurs SMTP

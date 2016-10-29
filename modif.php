@@ -1,15 +1,15 @@
 <?php
 /**
-Planning Biblio, Plugin Congés Version 2.1
+Planning Biblio, Plugin Congés Version 2.4.6
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
-@copyright 2013-1016 Jérôme Combes
+@copyright 2013-2016 Jérôme Combes
 
 Fichier : plugins/conges/modif.php
 Création : 1er août 2013
-Dernière modification : 9 janvier 2016
+Dernière modification : 27 octobre 2016
 @author Jérôme Combes <jerome@planningbiblio.fr>
-@author: Etienne Cavalié <etienne.cavalie@unice.fr>
+@author Etienne Cavalié <etienne.cavalie@unice.fr>
 
 Description :
 Fichier permettant voir ou de modifier un congé
@@ -33,8 +33,6 @@ $menu=filter_input(INPUT_GET,"menu",FILTER_SANITIZE_STRING);
 $perso_id=filter_input(INPUT_GET,"perso_id",FILTER_SANITIZE_NUMBER_INT);
 $refus=filter_input(INPUT_GET,"refus",FILTER_SANITIZE_STRING);
 $valide=filter_input(INPUT_GET,"valide",FILTER_SANITIZE_NUMBER_INT);
-
-$quartDHeure=$config['heuresPrecision']=="quart-heure"?true:false;
 
 // Elements du congé demandé
 $c=new conges();
@@ -151,7 +149,7 @@ if($confirm){
   $message.="<br/><br/>Lien vers la demande de cong&eacute; :<br/><a href='$url'>$url</a><br/><br/>";
 
   // Envoi du mail
-  $m=new sendmail();
+  $m=new CJMail();
   $m->subject=$sujet;
   $m->message=$message;
   $m->to=$destinataires;
@@ -164,7 +162,6 @@ if($confirm){
     $msg2=urlencode($m->error_CJInfo);
     $msg2Type="error";
   }
-
   $msg=urlencode("Le congé à été modifié avec succés.");
   echo "<script type='text/JavaScript'>document.location.href=\"index.php?page=plugins/conges/voir.php&msg=$msg&msgType=success&msg2=$msg2&msg2Type=$msg2Type\"</script>\n";
 }
@@ -192,9 +189,6 @@ else{	// Formulaire
   $tmp=explode(".",$data['heures']);
   $heures=$tmp[0];
   $minutes=$tmp[1];
-  $select25=$minutes=="25"?"selected='selected'":null;
-  $select50=$minutes=="50"?"selected='selected'":null;
-  $select75=$minutes=="75"?"selected='selected'":null;
   $selectRecup=$data['debit']=="recuperation"?"selected='selected'":null;
   $selectCredit=$data['debit']=="credit"?"selected='selected'":null;
 
@@ -206,9 +200,9 @@ else{	// Formulaire
   $credit=number_format($p->elements[0]['congesCredit'], 2, '.', ' ');
   $reliquat=number_format($p->elements[0]['congesReliquat'], 2, '.', ' ');
   $anticipation=number_format($p->elements[0]['congesAnticipation'], 2, '.', ' ');
-  $credit2=str_replace(array(".00",".25",".50",".75"),array("h00","h15","h30","h45"),$credit);
-  $reliquat2=str_replace(array(".00",".25",".50",".75"),array("h00","h15","h30","h45"),$reliquat);
-  $anticipation2=str_replace(array(".00",".25",".50",".75"),array("h00","h15","h30","h45"),$anticipation);
+  $credit2 = heure4($credit);
+  $reliquat2 = heure4($reliquat);
+  $anticipation2 = heure4($anticipation);
   $recuperation=number_format($p->elements[0]['recupSamedi'], 2, '.', ' ');
   $recuperation2=heure4($recuperation);
 
@@ -262,7 +256,7 @@ else{	// Formulaire
   echo "Heure de début : \n";
   echo "</td><td>\n";
   echo "<select name='hre_debut' id='hre_debut_select' style='width:98%;' class='googleCalendarTrigger'>\n";
-  selectHeure(7,23,true,$quartDHeure,$hre_debut);
+  selectHeure(7,23,true,$hre_debut);
   echo "</select>\n";
   echo "</td></tr>\n";
   echo "<tr><td>\n";
@@ -274,7 +268,7 @@ else{	// Formulaire
   echo "Heure de fin : \n";
   echo "</td><td>\n";
   echo "<select name='hre_fin' id='hre_fin_select' style='width:98%;' class='googleCalendarTrigger' onfocus='setEndHour();'>\n";
-  selectHeure(7,23,true,$quartDHeure,$hre_fin);
+  selectHeure(7,23,true,$hre_fin);
   echo "</select>\n";
   echo "</td></tr>\n";
 

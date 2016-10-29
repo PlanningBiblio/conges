@@ -1,12 +1,12 @@
 /**
-Planning Biblio, Plugin Congés Version 2.4.3
+Planning Biblio, Plugin Congés Version 2.4.6
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
-@copyright 2013-1016 Jérôme Combes
+@copyright 2013-2016 Jérôme Combes
 
 Fichier : plugins/conges/js/script.conges.js
 Création : 2 août 2013
-Dernière modification : 10 octobre 2016
+Dernière modification : 28 octobre 2016
 @author Jérôme Combes <jerome@planningbiblio.fr>
 @author Etienne Cavalié <etienne.cavalie@unice.fr>
 
@@ -58,15 +58,14 @@ function calculCredit(){
       }else{
 	$("#JSInformation").remove();
 	var tmp=result[1].split(".");
-	var heures=tmp[0];
-	var minutes=tmp[1];
-	document.form.elements["heures"].value=heures;
+	var heures=tmp[0];              // heures pleines
+	var minutes=tmp[1];             // centièmes
+        var heures2=result[2];          // heures h minutes
+
+        document.form.elements["heures"].value=heures;
 	document.form.elements["minutes"].value=minutes;
-	var array={"25":"15","50":"30","75":"45"};
-	for(var val in array){
-	  minutes=minutes.replace(val,array[val]);
-	}
-	$("#nbHeures").text(heures+"h"+minutes);
+
+        $("#nbHeures").text(heures2);
 	$("#nbHeures").effect("highlight",null,3000);
 	$("#nbJours").effect("highlight",null,3000);
 	$("#erreurCalcul").val("false");
@@ -85,17 +84,18 @@ function calculRestes(){
   recuperation=document.form.elements["recuperation"].value;
   credit=document.form.elements["credit"].value;
   anticipation=document.form.elements["anticipation"].value;
-  debit=document.form.elements["debit"].value
+  debit=document.form.elements["debit"].value;
+
+  heures = parseFloat(heures.replace(' ',''));
+  reliquat = parseFloat(reliquat.replace(' ',''));
+  recuperation = parseFloat(recuperation.replace(' ',''));
+  credit = parseFloat(credit.replace(' ',''));
+  anticipation = parseFloat(anticipation.replace(' ',''));
+
   jours=heures/7;
   $("#nbJours").text(jours.toFixed(2));
 
-	heures = parseFloat(heures.replace(' ',''));
-	reliquat = parseFloat(reliquat.replace(' ',''));
-	recuperation = parseFloat(recuperation.replace(' ',''));
-	credit = parseFloat(credit.replace(' ',''));
-	anticipation = parseFloat(anticipation.replace(' ',''));
-	
-	// Calcul du reliquat après décompte
+  // Calcul du reliquat après décompte
   reste=0;
   reliquat=reliquat-heures;
   if(reliquat<0){
@@ -325,7 +325,6 @@ function checkDateAge( o, limit, n, tip ) {
 function checkSamedi( o, n ) {
   tmp=o.val().split("/");
   var d=new Date(tmp[2],tmp[1]-1,tmp[0]);
-
   if(d.getDay()!=6){
     o.addClass( "ui-state-error" );
     updateTips( n );

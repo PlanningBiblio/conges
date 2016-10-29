@@ -1,13 +1,13 @@
 <?php
 /*
-Planning Biblio, Plugin Congés Version 2.1
+Planning Biblio, Plugin Congés Version 2.4.6
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
 @copyright 2013-1016 Jérôme Combes
 
 Fichier : plugins/conges/ajax.enregistreRecup.php
 Création : 11 octobre 2013
-Dernière modification : 9 janvier 2016
+Dernière modification : 27 octobre 2016
 @author Jérôme Combes <jerome@planningbiblio.fr>
 
 Description :
@@ -73,7 +73,7 @@ else{
     }
 
     // Envoi du mail
-    $m=new sendmail();
+    $m=new CJMail();
     $m->subject=$sujet;
     $m->message=$message;
     $m->to=$destinataires;

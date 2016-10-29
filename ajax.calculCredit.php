@@ -1,13 +1,13 @@
 <?php
-/*
-Planning Biblio, Plugin Congés Version 1.6.5
+/**
+Planning Biblio, Plugin Congés Version 2.4.6
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
 @copyright 2013-1016 Jérôme Combes
 
 Fichier : plugins/conges/ajax.calculCredit.php
 Création : 2 août 2013
-Dernière modification : 22 avril 2015
+Dernière modification : 28 octobre 2016
 @author Jérôme Combes <jerome@planningbiblio.fr>
 
 Description :
@@ -29,6 +29,7 @@ $perso_id=filter_input(INPUT_GET,"perso_id",FILTER_SANITIZE_NUMBER_INT);
 $c=new conges();
 $c->calculCredit($debut,$hre_debut,$fin,$hre_fin,$perso_id);
 $result=$c->error?array("error"):array("OK");
-$result[]=$c->heures;
+$result[]=$c->heures;   // HH.CC (heures et centièmes)
+$result[]=$c->heures2;  // HHhMM (heures et minutes)
 echo json_encode($result);
 ?>
