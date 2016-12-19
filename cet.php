@@ -1,13 +1,13 @@
 <?php
 /*
-Planning Biblio, Plugin Congés Version 2.0
+Planning Biblio, Plugin Congés Version 2.5.3
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
 @copyright 2013-1016 Jérôme Combes
 
 Fichier : plugins/conges/cet.php
 Création : 6 mars 2014
-Dernière modification : 4 juin 2015
+Dernière modification : 19 décembre 2016
 @author Jérôme Combes <jerome@planningbiblio.fr>
 
 Description :
@@ -50,8 +50,14 @@ if($perso_id!=0){
 $c->getCET();
 $cet=$c->elements;
 
-// Recherche des agents
+// Recherche des agents pour le menu
 $p=new personnel();
+$p->fetch();
+$agents_menu=$p->elements;
+
+// Recherche des agents pour la fonction nom()
+$p=new personnel();
+$p->supprime=array(0,1,2);
 $p->fetch();
 $agents=$p->elements;
 
@@ -100,7 +106,7 @@ if($adminN1){
   echo "<select name='perso_id' id='perso_id'>";
   $selected=$perso_id==0?"selected='selected'":null;
   echo "<option value='0' $selected >Tous</option>";
-  foreach($agents as $agent){
+  foreach($agents_menu as $agent){
     $selected=$agent['id']==$perso_id?"selected='selected'":null;
     echo "<option value='{$agent['id']}' $selected >{$agent['nom']} {$agent['prenom']}</option>";
   }
@@ -132,7 +138,7 @@ EOD;
 foreach($cet as $elem){
   $saisie_par=null;
   if($elem['saisie_par'] and $elem['saisie_par']!=$elem['perso_id']){
-    $saisie_par=", ".nom($elem['saisie_par']);
+    $saisie_par=", ".nom($elem['saisie_par'], 'nom p', $agents);
   }
   $validation="Demand&eacute;e";
   $validationStyle="font-weight:bold;";
@@ -140,7 +146,7 @@ foreach($cet as $elem){
   $credits=null;
 
   if($elem['valideN2']>0){
-    $validation="Accept&eacute;, ".nom($elem['valideN2']);
+    $validation="Accept&eacute;, ".nom($elem['valideN2'], 'nom p', $agents);
     $validationStyle=null;
     $validationDate=dateFr($elem['validationN2'],true);
     if($elem['solde_prec']!=null and $elem['solde_actuel']!=null){
@@ -149,12 +155,12 @@ foreach($cet as $elem){
 
   }
   elseif($elem['valideN2']<0){
-    $validation="Refus&eacute;, ".nom(-$elem['valideN2']);
+    $validation="Refus&eacute;, ".nom(-$elem['valideN2'], 'nom p', $agents);
     $validationStyle="color:red;font-weight:bold;";
     $validationDate=dateFr($elem['validationN2'],true);
   }
   elseif($elem['valideN1']!=0){
-    $validation="En attente de validation hierarchique, ".nom($elem['valideN1']);
+    $validation="En attente de validation hierarchique, ".nom($elem['valideN1'], 'nom p', $agents);
     $validationStyle="font-weight:bold;";
     $validationDate=dateFr($elem['validationN1'],true);
   }
@@ -163,7 +169,7 @@ foreach($cet as $elem){
   echo "<tr>";
   echo "<td><a href='javascript:getCET({$elem['id']});'><span class='pl-icon pl-icon-edit' title='Modifier'></span></a></td>\n";
   if($adminN1){
-    echo "<td>".nom($elem['perso_id'])."</td>";
+    echo "<td>".nom($elem['perso_id'], 'nom p', $agents)."</td>";
   }
   echo "<td>{$elem['jours']}</td><td>$credits</td><td>".dateFr($elem['saisie'],true)."$saisie_par</td>";
   echo "<td style='$validationStyle'>$validation</td><td>$validationDate</td></tr>\n";
@@ -194,7 +200,7 @@ if($adminN1){
 EOD;
   foreach($agents as $elem){
     $selected=$elem['id']==$perso_id?"selected='selected'":null;
-    echo "<option value='{$elem['id']}' $selected >".nom($elem['id'])."</option>\n";
+    echo "<option value='{$elem['id']}' $selected >".nom($elem['id'], 'nom p', $agents)."</option>\n";
   }
   echo "</select></td></tr>\n";
 }

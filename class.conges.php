@@ -1,13 +1,13 @@
 <?php
 /**
-Planning Biblio, Plugin Congés Version 2.4.6
+Planning Biblio, Plugin Congés Version 2.5.1
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
 @copyright 2013-2016 Jérôme Combes
 
 Fichier : plugins/conges/class.conges.php
 Création : 24 juillet 2013
-Dernière modification : 27 octobre 2016
+Dernière modification : 19 novembre 2016
 @author Jérôme Combes <jerome@planningbiblio.fr>
 @author Etienne Cavalié
 
@@ -693,7 +693,7 @@ class conges{
     if($GLOBALS['config']['Multisites-nombre']>1){
       $db=new db();
       $db->select("personnel","temps","id='$perso_id'");
-      $temps=unserialize($db->result[0]['temps']);
+      $temps=json_decode(html_entity_decode($db->result[0]['temps'],ENT_QUOTES|ENT_IGNORE,'UTF-8'));
       $date=$debut;
       while($date<=$fin){
 	// Emploi du temps si plugin planningHebdo
@@ -740,7 +740,7 @@ class conges{
     $db=new db();
     $db->select("personnel",null,"supprime='0'");
     foreach($db->result as $elem){
-      $d=unserialize($elem['droits']);
+      $d=json_decode(html_entity_decode($elem['droits'],ENT_QUOTES|ENT_IGNORE,'UTF-8'));
       foreach($droitsConges as $elem2){
 	if(is_array($d)){
 	  if(in_array($elem2,$d) and !in_array($elem,$responsables)){
@@ -1039,7 +1039,8 @@ class conges{
       else
 	echo "$elem : <font style='color:red;'>Erreur</font><br/>\n";
     }
-    echo "<a href='index.php'>Continuer</a>\n";
+
+    echo "<a href='../../index.php'>Continuer</a>\n";
 
   }
 

@@ -1,13 +1,13 @@
 <?php
 /**
-Planning Biblio, Plugin Congés Version 2.0
+Planning Biblio, Plugin Congés Version 2.5.3
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
 @copyright 2013-2016 Jérôme Combes
 
 Fichier : plugins/conges/voir.php
 Création : 24 juillet 2013
-Dernière modification : 14 septembre 2015
+Dernière modification : 19 décembre 2016
 @author Jérôme Combes <jerome@planningbiblio.fr>
 
 Description :
@@ -78,15 +78,21 @@ if($agents_supprimes){
 }
 $c->fetch();
 
-// Recherche des agents
+// Recherche des agents pour le menu
 if($admin){
   $p=new personnel();
   if($agents_supprimes){
     $p->supprime=array(0,1);
   }
   $p->fetch();
-  $agents=$p->elements;
+  $agents_menu=$p->elements;
 }
+
+// Recherche des agents pour la fonction nom()
+$p=new personnel();
+$p->supprime=array(0,1,2);
+$p->fetch();
+$agents=$p->elements;
 
 // Années universitaires
 $annees=array();
@@ -95,7 +101,7 @@ for($d=date("Y")+2;$d>date("Y")-11;$d--){
 }
 
 // Affichage du tableau
-echo "<h3 class='print_only'>Liste des congés de ".nom($perso_id,"prenom nom").", année $annee-".($annee+1)."</h3>\n";
+echo "<h3 class='print_only'>Liste des congés de ".nom($perso_id,"prenom nom",$agents).", année $annee-".($annee+1)."</h3>\n";
 echo <<<EOD
 <h3 class='noprint'>Liste des congés</h3>
 <form name='form' method='get' action='index.php' class='noprint'>
@@ -122,7 +128,7 @@ if($admin){
   echo "<select name='perso_id' id='perso_id'>";
   $selected=$perso_id==0?"selected='selected'":null;
   echo "<option value='0' $selected >Tous</option>";
-  foreach($agents as $agent){
+  foreach($agents_menu as $agent){
     $selected=$agent['id']==$perso_id?"selected='selected'":null;
     echo "<option value='{$agent['id']}' $selected >{$agent['nom']} {$agent['prenom']}</option>";
   }
@@ -178,16 +184,16 @@ foreach($c->elements as $elem){
   $anticipationClass=null;
 
   if($elem['saisie_par'] and $elem['perso_id']!=$elem['saisie_par']){
-      $validation.=" par ".nom($elem['saisie_par']);
+      $validation.=" par ".nom($elem['saisie_par'], 'nom p', $agents);
   }
 
   if($elem['valide']<0){
-    $validation="Refus&eacute;, ".nom(-$elem['valide']);
+    $validation="Refus&eacute;, ".nom(-$elem['valide'], 'nom p', $agents);
     $validationDate=dateFr($elem['validation'],true);
     $validationStyle="color:red;";
   }
   elseif($elem['valide'] or $elem['information']){
-    $validation="Valid&eacute;, ".nom($elem['valide']);
+    $validation="Valid&eacute;, ".nom($elem['valide'], 'nom p', $agents);
     $validationDate=dateFr($elem['validation'],true);
     $validationStyle=null;
 
@@ -226,18 +232,18 @@ foreach($c->elements as $elem){
     $validationStyle="font-weight:bold;";
   }
   if($elem['information']){
-    $nom=$elem['information']<999999999?nom($elem['information']).", ":null;	// >999999999 = cron
+    $nom=$elem['information']<999999999?nom($elem['information'], 'nom p', $agents).", ":null;	// >999999999 = cron
     $validation="Mise à jour des cr&eacute;dits, $nom";
     $validationDate=dateFr($elem['infoDate'],true);
     $validationStyle=null;
   }
   elseif($elem['supprime']){
-    $validation="Supprim&eacute;, ".nom($elem['supprime']);
+    $validation="Supprim&eacute;, ".nom($elem['supprime'], 'nom p', $agents);
     $validationDate=dateFr($elem['supprDate'],true);
     $validationStyle=null;
   }
 
-  $nom=$admin?"<td>".nom($elem['perso_id'])."</td>":null;
+  $nom=$admin?"<td>".nom($elem['perso_id'], 'nom p', $agents)."</td>":null;
   
   echo "<tr><td>";
   if($elem['supprime'] or $elem['information']){
