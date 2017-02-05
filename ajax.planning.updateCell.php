@@ -3,7 +3,7 @@
 Planning Biblio, Plugin Conges Version 2.4.8
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
-@copyright 2013-1016 Jérôme Combes
+@copyright 2013-2017 Jérôme Combes
 
 Fichier : plugins/conges/ajax.planning.updateCell.php
 Création : 25 novembre 2014

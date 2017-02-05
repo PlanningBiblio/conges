@@ -3,7 +3,7 @@
 Planning Biblio, Plugin Congés Version 1.4.5
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
-@copyright 2013-1016 Jérôme Combes
+@copyright 2013-2017 Jérôme Combes
 
 Fichier : plugins/conges/ajax.getCET.php
 Création : 10 mars 2014

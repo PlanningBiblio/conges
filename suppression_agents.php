@@ -3,7 +3,7 @@
 Planning Biblio, Plugin Conges Version 1.3
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
-@copyright 2013-1016 Jérôme Combes
+@copyright 2013-2017 Jérôme Combes
 
 Fichier : plugins/conges/menudiv.php
 Création : 26 septembre 2013
