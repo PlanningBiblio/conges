@@ -1,13 +1,13 @@
 <?php
-/*
-Planning Biblio, Plugin Congés Version 2.4.6
+/**
+Planning Biblio, Plugin Congés Version 2.5.4
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
 @copyright 2013-2017 Jérôme Combes
 
 Fichier : plugins/conges/ajax.enregistreCet.php
 Création : 7 mars 2014
-Dernière modification : 27 octobre 2016
+Dernière modification : 10 février 2017
 @author Jérôme Combes <jerome@planningbiblio.fr>
 
 Description :
@@ -15,11 +15,13 @@ Enregistre la demande de récupération
 */
 
 session_start();
+
 ini_set('display_errors',0);
 include "../../include/config.php";
 include "class.conges.php";
 
 $commentaires=filter_input(INPUT_GET,"commentaires",FILTER_SANITIZE_STRING);
+$CSRFToken = filter_input(INPUT_GET,"CSRFToken",FILTER_SANITIZE_STRING);
 $id=filter_input(INPUT_GET,"id",FILTER_SANITIZE_NUMBER_INT);
 $jours=filter_input(INPUT_GET,"jours",FILTER_SANITIZE_NUMBER_FLOAT);
 $perso_id=filter_input(INPUT_GET,"perso_id",FILTER_SANITIZE_NUMBER_INT);
@@ -53,6 +55,7 @@ if(is_numeric($id)){
     $data["modification"]=date("Y-m-d H:i:s");
 
     $db=new db();
+    $db->CSRFToken = $CSRFToken;
     $db->update2("conges_CET",$data,array("id"=>$id));
     if($isValidate){
       // Mise à jour du compteur personnel/reliquat

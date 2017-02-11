@@ -1,13 +1,13 @@
 <?php
-/*
-Planning Biblio, Plugin Congés Version 1.6.5
+/**
+Planning Biblio, Plugin Congés Version 2.5.4
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
 @copyright 2013-2017 Jérôme Combes
 
 Fichier : plugins/conges/infos.php
 Création : 24 juillet 2013
-Dernière modification : 17 avril 2015
+Dernière modification : 10 février 2017
 @author Jérôme Combes <jerome@planningbiblio.fr>
 
 Description :
@@ -22,6 +22,7 @@ require_once "class.conges.php";
 echo "<h3>Informations sur les congés</h3>\n";
 
 // Initialisation des variables
+$CSRFToken=filter_input(INPUT_GET,"CSRFToken",FILTER_SANITIZE_STRING);
 $id=filter_input(INPUT_GET,"id",FILTER_SANITIZE_NUMBER_INT);
 $debut=filter_input(INPUT_GET,"debut",FILTER_CALLBACK,array("options"=>"sanitize_dateFr"));
 $fin=filter_input(INPUT_GET,"fin",FILTER_CALLBACK,array("options"=>"sanitize_dateFr"));
@@ -54,6 +55,7 @@ elseif($validation){
   echo "<b>Votre demande a été enregistrée</b>\n";
   echo "<br/><br/><a href='index.php?page=plugins/conges/index.php'>Retour</a>\n";
   $db=new db();
+  $db->CSRFToken = $CSRFToken;
   if($id){
     $db->update2("conges_infos",array("debut"=>dateSQL($debut),"fin"=>dateSQL($fin),"texte"=>$texte),array("id"=>$id));
   }
@@ -71,6 +73,7 @@ elseif($debut){
   echo "<br/><br/>";
   echo "<form method='get' action='index.php' name='form'>";
   echo "<input type='hidden' name='page' value='plugins/conges/infos.php'/>\n";
+  echo "<input type='hidden' name='CSRFToken' value='$CSRFToken'/>\n";
   echo "<input type='hidden' name='debut' value='$debut'/>\n";
   echo "<input type='hidden' name='fin' value='$fin'/>\n";
   echo "<input type='hidden' name='texte' value='$texte'/>\n";
@@ -98,6 +101,7 @@ else{
   echo <<<EOD
   <form method='get' action='index.php' name='form' onsubmit='return verif_form("debut=date1;fin=date2;texte");'>\n
   <input type='hidden' name='page' value='plugins/conges/infos.php'/>\n
+  <input type='hidden' name='CSRFToken' value='$CSRFSession'/>\n
   <input type='hidden' name='id' value='$id'/>\n
   <table class='tableauFiches'>
   <tr><td>

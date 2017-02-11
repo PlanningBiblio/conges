@@ -1,13 +1,13 @@
 <?php
 /**
-Planning Biblio, Plugin Congés Version 2.4.6
+Planning Biblio, Plugin Congés Version 2.5.4
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
 @copyright 2013-2017 Jérôme Combes
 
 Fichier : plugins/conges/modif.php
 Création : 1er août 2013
-Dernière modification : 27 octobre 2016
+Dernière modification : 10 février 2017
 @author Jérôme Combes <jerome@planningbiblio.fr>
 @author Etienne Cavalié <etienne.cavalie@unice.fr>
 
@@ -25,6 +25,7 @@ $get=filter_input_array(INPUT_GET,FILTER_SANITIZE_STRING);
 $id=filter_input(INPUT_GET,"id",FILTER_SANITIZE_NUMBER_INT);
 $commentaires=filter_input(INPUT_GET,"commentaires",FILTER_SANITIZE_STRING);
 $confirm=filter_input(INPUT_GET,"confirm",FILTER_CALLBACK,array("options"=>"sanitize_on"));
+$CSRFToken=filter_input(INPUT_GET,"CSRFToken",FILTER_SANITIZE_STRING);
 $debut=filter_input(INPUT_GET,"debut",FILTER_CALLBACK,array("options"=>"sanitize_dateFr"));
 $fin=filter_input(INPUT_GET,"fin",FILTER_CALLBACK,array("options"=>"sanitize_dateFr"));
 $hre_debut=filter_input(INPUT_GET,"hre_debut",FILTER_CALLBACK,array("options"=>"sanitize_time"));
@@ -84,6 +85,7 @@ if($confirm){
 
   // Enregistre la modification du congés
   $c=new conges();
+  $c->CSRFToken = $CSRFToken;
   $c->update($get);
 
   // Envoi d'une notification par email
@@ -210,6 +212,7 @@ else{	// Formulaire
   echo "<h3>Congés</h3>\n";
   echo "<form name='form' action='index.php' method='get' id='form' class='googleCalendarForm'>\n";
   echo "<input type='hidden' name='page' value='plugins/conges/modif.php' />\n";
+  echo "<input type='hidden' name='CSRFToken' value='$CSRFSession' />\n";
   echo "<input type='hidden' name='menu' value='$menu' />\n";
   echo "<input type='hidden' name='confirm' value='confirm' />\n";
   echo "<input type='hidden' name='reliquat' value='$reliquat' />\n";

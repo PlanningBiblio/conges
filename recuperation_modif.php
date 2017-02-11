@@ -1,13 +1,13 @@
 <?php
-/*
-Planning Biblio, Plugin Congés Version 1.6.5
+/**
+Planning Biblio, Plugin Congés Version 2.5.4
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
 @copyright 2013-2017 Jérôme Combes
 
 Fichier : plugins/conges/recuperation_modif.php
 Création : 29 août 2013
-Dernière modification : 21 avril 2015
+Dernière modification : 10 février 2017
 @author Jérôme Combes <jerome@planningbiblio.fr>
 
 Description :
@@ -53,6 +53,7 @@ echo <<<EOD
 <h3>Récupérations des samedis</h3>
 <form method='post' action='index.php'>
 <input type='hidden' name='page' value='plugins/conges/recuperation_valide.php' />
+<input type='hidden' name='CSRFToken' value='$CSRFSession' />
 <input type='hidden' name='id' value='$id' />
 <table class='tableauFiches'>
 <tr><td>Agent : </td><td>$agent</td></td></tr>

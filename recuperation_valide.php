@@ -1,13 +1,13 @@
 <?php
 /**
-Planning Biblio, Plugin Congés Version 2.4.6
+Planning Biblio, Plugin Congés Version 2.5.4
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
 @copyright 2013-2017 Jérôme Combes
 
 Fichier : plugins/conges/recuperation_valide.php
 Création : 30 août 2013
-Dernière modification : 27 octobre 2016
+Dernière modification : 10 février 2017
 @author Jérôme Combes <jerome@planningbiblio.fr>
 
 Description :
@@ -17,6 +17,7 @@ Fichier permettant de modifier et valider les demandes de récupérations des sa
 include "class.conges.php";
 
 // Initialisation des variables
+$CSRFToken = filter_input(INPUT_POST,"CSRFToken",FILTER_SANITIZE_STRING);
 $id=filter_input(INPUT_POST,"id",FILTER_SANITIZE_NUMBER_INT);
 $commentaires=trim(filter_input(INPUT_POST,"commentaires",FILTER_SANITIZE_STRING));
 $heures=filter_input(INPUT_POST,"heures",FILTER_SANITIZE_STRING);
@@ -52,6 +53,7 @@ if($validation!==null and $admin){
 if(isset($update)){
   // Modification de la table recuperations
   $db=new db();
+  $db->CSRFToken = $CSRFToken;
   $db->update2("recuperations",$update,array("id"=>$id));
   if(!$db->error){
     $msg=urlencode("Vos modifications ont été enregistrées");
@@ -65,8 +67,10 @@ if(isset($update)){
     $solde_prec=$db->result[0]['recupSamedi'];
     $recupSamedi=$solde_prec+$update['heures'];
     $db=new db();
+    $db->CSRFToken = $CSRFToken;
     $db->update2("personnel",array("recupSamedi"=>$recupSamedi),array("id"=>$perso_id));
     $db=new db();
+    $db->CSRFToken = $CSRFToken;
     $db->update2("recuperations",array("solde_prec"=>$solde_prec,"solde_actuel"=>$recupSamedi),array("id"=>$id));
   }
 

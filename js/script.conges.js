@@ -1,12 +1,12 @@
 /**
-Planning Biblio, Plugin Congés Version 2.4.6
+Planning Biblio, Plugin Congés Version 2.5.4
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
 @copyright 2013-2017 Jérôme Combes
 
 Fichier : plugins/conges/js/script.conges.js
 Création : 2 août 2013
-Dernière modification : 28 octobre 2016
+Dernière modification : 10 février 2010
 @author Jérôme Combes <jerome@planningbiblio.fr>
 @author Etienne Cavalié <etienne.cavalie@unice.fr>
 
@@ -195,7 +195,7 @@ function supprimeConges(){
     $.ajax({
       url: "plugins/conges/ajax.supprime.php",
       type: "get",
-      data: "id="+$("#id").val(),
+      data: "id="+$("#id").val()+"&CSRFToken="+$("#CSRFSession").val(),
       success: function(){
 	location.href="index.php?page=plugins/conges/voir.php";
       },

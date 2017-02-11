@@ -1,13 +1,13 @@
 <?php
 /**
-Planning Biblio, Plugin Congés Version 2.5.1
+Planning Biblio, Plugin Congés Version 2.5.4
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
 @copyright 2013-2017 Jérôme Combes
 
 Fichier : plugins/conges/class.conges.php
 Création : 24 juillet 2013
-Dernière modification : 19 novembre 2016
+Dernière modification : 10 février 2017
 @author Jérôme Combes <jerome@planningbiblio.fr>
 @author Etienne Cavalié
 
@@ -36,6 +36,7 @@ class conges{
   public $admin=false;
   public $annee=null;
   public $bornesExclues=null;
+  public $CSRFToken=null;
   public $data=array();
   public $debut=null;
   public $elements=array();
@@ -237,6 +238,7 @@ class conges{
 	$update=array("congesCredit"=>$perso_credit_new, "congesReliquat"=>$perso_reliquat_new, 
 	  "congesAnticipation"=>$perso_anticipation_new, "recupSamedi"=>$perso_recup_new);
 	$db=new db();
+	$db->CSRFToken = $this->CSRFToken;
 	$db->update2("personnel",$update,array("id"=>$perso_id));
 
 	// Ajout d'une ligne d'information sur les crédits
@@ -267,6 +269,7 @@ class conges{
 
     // Marque la demande de congé comme supprimée dans la table conges
     $db=new db();
+    $db->CSRFToken = $this->CSRFToken;
     $db->update2("conges",array("supprime"=>$_SESSION['login_id'],"supprDate"=>date("Y-m-d H:i:s")),array("id"=>$id));
   }
 
@@ -828,6 +831,7 @@ class conges{
 
   public function suppression_agents($liste){
     $db=new db();
+    $db->CSRFToken = $this->CSRFToken;
     $db->update2("personnel",
       array("congesCredit"=>null,"congesReliquat"=>null,"congesAnticipation"=>null,"congesAnnuel"=>null,"recupSamedi"=>null),
       "id IN ($liste)");
@@ -869,6 +873,7 @@ class conges{
     }
 
     $db=new db();
+    $db->CSRFToken = $this->CSRFToken;
     $db->update2("conges",$update,array("id"=>$data['id']));
   
     // En cas de validation, on débite les crédits dans la fiche de l'agent et on barre l'agent s'il est déjà placé dans le planning
@@ -936,11 +941,13 @@ class conges{
       // Mise à jour des compteurs dans la table personnel
       $updateCredits=array("congesCredit"=>$credit,"congesReliquat"=>$reliquat,"recupSamedi"=>$recuperation,"congesAnticipation"=>$anticipation);
       $db=new db();
+      $db->CSRFToken = $this->CSRFToken;
       $db->update2("personnel",$updateCredits,array("id"=>$data["perso_id"]));
 
       // Mise à jour des compteurs dans la table conges
       $updateConges=array_merge($updateConges,array("solde_actuel"=>$credit,"reliquat_actuel"=>$reliquat,"recup_actuel"=>$recuperation,"anticipation_actuel"=>$anticipation));
       $db=new db();
+      $db->CSRFToken = $this->CSRFToken;
       $db->update2("conges",$updateConges,array("id"=>$data['id']));
     }
 
@@ -1026,9 +1033,9 @@ class conges{
       $version="1.6.5";
     }
 
-    if($version < "2.4.6"){
-      $sql[]="UPDATE `{$dbprefix}plugins` SET `version`='2.4.6' WHERE `nom`='conges';";
-      $version="2.4.6";
+    if($version < "2.5.4"){
+      $version="2.5.4";
+      $sql[]="UPDATE `{$dbprefix}plugins` SET `version`='$version' WHERE `nom`='conges';";
     }
 
     foreach($sql as $elem){
@@ -1039,8 +1046,6 @@ class conges{
       else
 	echo "$elem : <font style='color:red;'>Erreur</font><br/>\n";
     }
-
-    echo "<a href='../../index.php'>Continuer</a>\n";
 
   }
 

@@ -1,13 +1,13 @@
 <?php
-/*
-Planning Biblio, Plugin Conges Version 1.3
+/**
+Planning Biblio, Plugin Conges Version 2.5.4
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
 @copyright 2013-2017 Jérôme Combes
 
 Fichier : plugins/conges/menudiv.php
 Création : 26 septembre 2013
-Dernière modification : 26 septembre 2013
+Dernière modification : 10 février 2017
 @author Jérôme Combes <jerome@planningbiblio.fr>
 
 Description :
@@ -20,5 +20,6 @@ require_once "class.conges.php";
 
 // recherche des personnes à exclure (congés)
 $c=new conges();
+$c->CSRFToken = $this->CSRFToken;   // $->this = personnel::delete
 $c->suppression_agents($liste);
 ?>

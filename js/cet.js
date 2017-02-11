@@ -1,12 +1,12 @@
-/*
-Planning Biblio, Plugin Congés Version 1.6.3
+/**
+Planning Biblio, Plugin Congés Version 2.5.4
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
 @copyright 2013-2017 Jérôme Combes
 
 Fichier : plugins/conges/js/cet.js
 Création : 6 mars 2014
-Dernière modification : 27 mars 2015
+Dernière modification : 10 février 2017
 @author Jérôme Combes <jerome@planningbiblio.fr>
 
 Description :
@@ -55,7 +55,7 @@ $(document).ready(function(){
 	  $.ajax({
 	    url: "plugins/conges/ajax.enregistreCET.php",
 	    type: "get",
-	    data: "id="+id.val()+"&perso_id="+perso_id+"&jours="+jours.val()+"&commentaires="+commentaires.val()+"&validation="+validation.val(),
+	    data: "id="+id.val()+"&perso_id="+perso_id+"&jours="+jours.val()+"&commentaires="+commentaires.val()+"&validation="+validation.val()+"&CSRFToken="+$('#CSRFSession').val(),
 	    success: function(){
 	      location.href="index.php?page=plugins/conges/cet.php&message=Demande-OK";
 	      $( this ).dialog( "close" );
