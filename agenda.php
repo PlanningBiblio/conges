@@ -1,5 +1,5 @@
 <?php
-/*
+/**
 Planning Biblio, Plugin Conges Version 2.2
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE

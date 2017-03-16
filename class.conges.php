@@ -1,13 +1,13 @@
 <?php
 /**
-Planning Biblio, Plugin Congés Version 2.5.4
+Planning Biblio, Plugin Congés Version 2.6
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
 @copyright 2013-2017 Jérôme Combes
 
 Fichier : plugins/conges/class.conges.php
 Création : 24 juillet 2013
-Dernière modification : 10 février 2017
+Dernière modification : 16 mars 2017
 @author Jérôme Combes <jerome@planningbiblio.fr>
 @author Etienne Cavalié
 
@@ -120,7 +120,11 @@ class conges{
       $semaine=$d->semaine3;
       $jour=$d->position?$d->position:7;
       $jour=$jour+(($semaine-1)*7)-1;
-      $temps=$p->elements[0]['temps'][$jour];
+      $temps = array(null, null, null, null);
+      if(isset($p->elements[0]['temps'][$jour])){
+        $temps=$p->elements[0]['temps'][$jour];
+      }
+      
       $temps[0]=strtotime($temps[0]);
       $temps[1]=strtotime($temps[1]);
       $temps[2]=strtotime($temps[2]);
@@ -1037,6 +1041,14 @@ class conges{
       $version="2.5.4";
       $sql[]="UPDATE `{$dbprefix}plugins` SET `version`='$version' WHERE `nom`='conges';";
     }
+    
+    if($version < "2.6"){
+      $sql[]="ALTER TABLE `{$dbprefix}conges` ADD `valideN1`INT(11) NOT NULL DEFAULT '0', ADD `validationN1` TIMESTAMP;";
+      $version="2.6";
+      $sql[]="UPDATE `{$dbprefix}plugins` SET `version`='$version' WHERE `nom`='conges';";
+    }
+    
+    
 
     foreach($sql as $elem){
       $db=new db();

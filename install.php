@@ -1,13 +1,13 @@
 <?php
-/*
-Planning Biblio, Plugin Congés Version 1.6
+/**
+Planning Biblio, Plugin Congés Version 2.6
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
 @copyright 2013-2017 Jérôme Combes
 
 Fichier : plugins/conges/install.php
 Création : 24 juillet 2013
-Dernière modification : 22 janvier 2015
+Dernière modification : 16 mars 2017
 @author Jérôme Combes <jerome@planningbiblio.fr>
 
 Description :
@@ -23,7 +23,7 @@ if($_SESSION['login_id']!=1){
   exit;
 }
 
-$version="1.5.8";
+$version="2.6";
 include_once "../../include/config.php";
 
 $sql=array();
@@ -49,12 +49,14 @@ $sql[]="INSERT INTO `{$dbprefix}acces` (`nom`,`groupe_id`,`page`) VALUES ('Cong�
 $sql[]="INSERT INTO `{$dbprefix}acces` (`nom`,`groupe_id`,`groupe`) VALUES ('Congés - Validation niveau 1','7','Gestion des cong&eacute;s, validation N1');";
 $sql[]="INSERT INTO `{$dbprefix}acces` (`nom`,`groupe_id`,`page`) VALUES ('Congés - Compte &Eacute;pargne Temps','100','plugins/conges/cet.php');";
 $sql[]="INSERT INTO `{$dbprefix}acces` (`nom`,`groupe_id`,`groupe`,`page`) VALUES ('Cong&eacute;s - Cr&eacute;dits','100','','plugins/conges/credits.php');";
+$sql[]="INSERT INTO `{$dbprefix}acces` (`nom`,`groupe_id`,`page`) VALUES ('Cong&eacute;s - R&eacute;cup&eacute;rations','100','plugins/conges/recuperation_valide.php');";
 
 // Création de la table conges
 $sql[]="CREATE TABLE `{$dbprefix}conges` (`id` INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY, `perso_id` INT(11) NOT NULL, 
   `debut` DATETIME NOT NULL, `fin` DATETIME NOT NULL, `commentaires` TEXT, `refus` TEXT, `heures` VARCHAR(20), `debit` VARCHAR(20), 
   `saisie` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, `saisie_par` INT NOT NULL, `modif` INT(11) NOT NULL DEFAULT '0',`modification` TIMESTAMP, 
-  `valide` INT(11) NOT NULL DEFAULT '0',`validation` TIMESTAMP,`solde_prec` FLOAT(10), `solde_actuel` FLOAT(10),
+  `valideN1` INT(11) NOT NULL DEFAULT '0',`validationN1` TIMESTAMP,`valide` INT(11) NOT NULL DEFAULT '0',`validation` TIMESTAMP,
+  `solde_prec` FLOAT(10), `solde_actuel` FLOAT(10),
   `recup_prec` FLOAT(10), `recup_actuel` FLOAT(10),`reliquat_prec` FLOAT(10), `reliquat_actuel` FLOAT(10), 
   `anticipation_prec` FLOAT(10), `anticipation_actuel` FLOAT(10), `supprime` INT(11) NOT NULL DEFAULT 0, 
   `supprDate` TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00', `information` INT(11) NOT NULL DEFAULT 0, 
