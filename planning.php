@@ -1,13 +1,13 @@
 <?php
 /**
-Planning Biblio, Plugin Conges Version 2.4.8
+Planning Biblio, Plugin Conges Version 2.6
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
 @copyright 2013-2017 Jérôme Combes
 
 Fichier : plugins/conges/planning.php
 Création : 24 octobre 2013
-Dernière modification : 29 octobre 2016
+Dernière modification : 17 mars 2017
 @author Jérôme Combes <jerome@planningbiblio.fr>
 
 Description :
@@ -24,4 +24,6 @@ foreach($conges as $elem){
     $absences_id[]=$elem['perso_id'];
   }
 }
+
+usort($absences_planning,'cmp_nom_prenom_debut_fin');
 ?>
