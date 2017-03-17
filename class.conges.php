@@ -45,12 +45,14 @@ class conges{
   public $heures=null;
   public $heures2=null;
   public $id=null;
+  public $information = true;
   public $message=null;
   public $minutes=null;
   public $perso_id=null;
   public $recupId=null;
   public $samedis=array();
   public $sites=array();
+  public $supprime = true;
   public $valide=null;
 
   public function conges(){
@@ -307,7 +309,15 @@ class conges{
       }
     }
 
-
+    // Suppressions et informations
+    if($this->information == false){
+      $filter .= " AND `information` = '0' ";
+    }
+    
+    if($this->supprime == false){
+      $filter .= " AND `supprime` = '0' ";
+    }
+    
     // Recherche des agents actifs seulement
     $perso_ids=array(0);
     $p=new personnel();
