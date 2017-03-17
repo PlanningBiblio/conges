@@ -1,13 +1,13 @@
 <?php
 /**
-Planning Biblio, Plugin Conges Version 2.4.8
+Planning Biblio, Plugin Conges Version 2.6
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
 @copyright 2013-2017 Jérôme Combes
 
 Fichier : plugins/conges/ajax.planning.updateCell.php
 Création : 25 novembre 2014
-Dernière modification : 29 octobre 2016
+Dernière modification : 16 mars 2017
 @author Jérôme Combes <jerome@planningbiblio.fr>
 
 Description :
@@ -59,6 +59,8 @@ $perso_ids=join(",",$perso_ids);
 $c=new conges();
 $c->debut="$date $debut";
 $c->fin="$date $fin";
+$c->information = false;
+$c->supprime = false;
 $c->valide=false;
 $c->bornesExclues=true;
 $c->fetch();
