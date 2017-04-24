@@ -1,13 +1,13 @@
 <?php
 /**
-Planning Biblio, Plugin Congés Version 2.5.4
+Planning Biblio, Plugin Congés Version 2.6.4
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
 @copyright 2013-2017 Jérôme Combes
 
 Fichier : plugins/conges/ajax.enregistreCet.php
 Création : 7 mars 2014
-Dernière modification : 10 février 2017
+Dernière modification : 21 avril 2017
 @author Jérôme Combes <jerome@planningbiblio.fr>
 
 Description :
@@ -38,10 +38,10 @@ if(!$id){
 }
 
 switch($validation){
-  case -2 : $data['valideN2']=-$_SESSION['login_id']; $data['validationN2']=date("Y-m-d H:i:s"); break;
-  case -1 : $data['valideN1']=-$_SESSION['login_id']; $data['validationN1']=date("Y-m-d H:i:s"); break;
-  case 1  : $data['valideN1']= $_SESSION['login_id']; $data['validationN1']=date("Y-m-d H:i:s"); break;
-  case 2  : $data['valideN2']= $_SESSION['login_id']; $data['validationN2']=date("Y-m-d H:i:s"); $isValidate=true; break;
+  case -2 : $data['valide_n2']=-$_SESSION['login_id']; $data['validation_n2']=date("Y-m-d H:i:s"); break;
+  case -1 : $data['valide_n1']=-$_SESSION['login_id']; $data['validation_n1']=date("Y-m-d H:i:s"); break;
+  case 1  : $data['valide_n1']= $_SESSION['login_id']; $data['validation_n1']=date("Y-m-d H:i:s"); break;
+  case 2  : $data['valide_n2']= $_SESSION['login_id']; $data['validation_n2']=date("Y-m-d H:i:s"); $isValidate=true; break;
 }
 
 if(is_numeric($id)){
@@ -49,7 +49,7 @@ if(is_numeric($id)){
   $c=new conges();
   $c->id=$id;
   $c->getCET();
-  if($c->elements[0]['valideN2']==0){
+  if($c->elements[0]['valide_n2']==0){
     // Modifie la demande d'alimentation du CET
     $data["modif"]=$_SESSION['login_id'];
     $data["modification"]=date("Y-m-d H:i:s");
@@ -66,8 +66,8 @@ if(is_numeric($id)){
 
       // Mise à jour du compteur conges_CET / solde_prec
       $db=new dbh();
-      $db->prepare("SELECT `solde_actuel` FROM `{$dbprefix}conges_CET` WHERE `annee`=:annee AND `valideN2`>0 
-	  AND `validationN2`=MAX(`validationN2`) AND `perso_id`=:perso_id;");
+      $db->prepare("SELECT `solde_actuel` FROM `{$dbprefix}conges_CET` WHERE `annee`=:annee AND `valide_n2`>0 
+	  AND `validation_n2`=MAX(`validation_n2`) AND `perso_id`=:perso_id;");
       $db->execute(array(":annee"=>$annee,":perso_id"=>$id));
       $solde_prec=$db->result[0]['solde_actuel'];
 
@@ -80,7 +80,7 @@ if(is_numeric($id)){
     // A CONTINUER init :solde_actuel, solde_prec
       $db=new dbh();
       $db->prepare("UPDATE `{$dbprefix}conges_CET` SET `solde_actuel`=:solde_actuel, `solde_prec`=:solde_prec
-	WHERE `annee`=:annee AND `valideN2`>0 AND `validationN2`=MAX(`validationN2`) AND `perso_id`=:perso_id);");
+	WHERE `annee`=:annee AND `valide_n2`>0 AND `validation_n2`=MAX(`validation_n2`) AND `perso_id`=:perso_id);");
       $db->execute(array(":annee"=>$annee,":perso_id"=>$id));
       // A FAIRE : Mettre à jour les compteurs conges_CET/solde_prec et solde_actuel
 
@@ -114,7 +114,7 @@ else{
   $nom=$p->elements[0]['nom'];
   $prenom=$p->elements[0]['prenom'];
   $mail=$p->elements[0]['mail'];
-  $mailsResponsables=$p->elements[0]['mailsResponsables'];
+  $mailsResponsables=$p->elements[0]['mails_responsables'];
 
   $c=new conges();
   $c->getResponsables(null,null,$perso_id);

@@ -1,13 +1,13 @@
 <?php
 /*
-Planning Biblio, Plugin Congés Version 2.4.1
+Planning Biblio, Plugin Congés Version 2.6.4
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
 @copyright 2013-2017 Jérôme Combes
 
 Fichier : plugins/conges/uninstall.php
 Création : 24 juillet 2013
-Dernière modification : 29 juillet 2016
+Dernière modification : 21 avril 2017
 @author Jérôme Combes <jerome@planningbiblio.fr>
 
 Description :
@@ -97,8 +97,8 @@ if($confirm == 2 and $transfer){
   $insert = array();
   
   // Préparation des requêtes
-  $req = "INSERT INTO `{$dbprefix}absences` (`perso_id`, `debut`, `fin`, `commentaires`, `demande`, `valide`, `validation`, `valideN1`, `validationN1`, `motif`, `motif_autre`) 
-    VALUES (:perso_id, :debut, :fin, :commentaires, :demande, :valide, :validation, :valideN1, :validationN1, :motif, :motif_autre);";
+  $req = "INSERT INTO `{$dbprefix}absences` (`perso_id`, `debut`, `fin`, `commentaires`, `demande`, `valide`, `validation`, `valide_n1`, `validation_n1`, `motif`, `motif_autre`) 
+    VALUES (:perso_id, :debut, :fin, :commentaires, :demande, :valide, :validation, :valide_n1, :validation_n1, :motif, :motif_autre);";
   $dbh=new dbh();
   $dbh->prepare($req);
 
@@ -107,7 +107,7 @@ if($confirm == 2 and $transfer){
   if($db->result){
     foreach($db->result as $elem){
       $insert[] = array(':perso_id'=>$elem['perso_id'], ':debut'=>$elem['debut'], ':fin'=>$elem['fin'], ':commentaires'=>$elem['commentaires'], ':demande'=>$elem['saisie'], ':valide'=>$elem['valide'], 
-        ':validation'=>$elem['validation'], ':valideN1'=>$elem['valideN1'], ':validationN1'=>$elem['validationN1'], ':motif'=>'Cong&eacute;s Pay&eacute;s', ':motif_autre'=>'Cong&eacute;s Pay&eacute;s');
+        ':validation'=>$elem['validation'], ':valide_n1'=>$elem['valide_n1'], ':validation_n1'=>$elem['validation_n1'], ':motif'=>'Cong&eacute;s Pay&eacute;s', ':motif_autre'=>'Cong&eacute;s Pay&eacute;s');
     }
     
       

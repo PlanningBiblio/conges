@@ -1,13 +1,13 @@
 <?php
-/*
-Planning Biblio, Plugin Congés Version 2.5.3
+/**
+Planning Biblio, Plugin Congés Version 2.6.4
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
 @copyright 2013-2017 Jérôme Combes
 
 Fichier : plugins/conges/cet.php
 Création : 6 mars 2014
-Dernière modification : 19 décembre 2016
+Dernière modification : 21 avril 2017
 @author Jérôme Combes <jerome@planningbiblio.fr>
 
 Description :
@@ -145,24 +145,24 @@ foreach($cet as $elem){
   $validationDate=null;
   $credits=null;
 
-  if($elem['valideN2']>0){
-    $validation="Accept&eacute;, ".nom($elem['valideN2'], 'nom p', $agents);
+  if($elem['valide_n2']>0){
+    $validation="Accept&eacute;, ".nom($elem['valide_n2'], 'nom p', $agents);
     $validationStyle=null;
-    $validationDate=dateFr($elem['validationN2'],true);
+    $validationDate=dateFr($elem['validation_n2'],true);
     if($elem['solde_prec']!=null and $elem['solde_actuel']!=null){
       $credits="{$elem['solde_prec']} &rarr; {$elem['solde_actuel']}";
     }
 
   }
-  elseif($elem['valideN2']<0){
-    $validation="Refus&eacute;, ".nom(-$elem['valideN2'], 'nom p', $agents);
+  elseif($elem['valide_n2']<0){
+    $validation="Refus&eacute;, ".nom(-$elem['valide_n2'], 'nom p', $agents);
     $validationStyle="color:red;font-weight:bold;";
-    $validationDate=dateFr($elem['validationN2'],true);
+    $validationDate=dateFr($elem['validation_n2'],true);
   }
-  elseif($elem['valideN1']!=0){
-    $validation="En attente de validation hierarchique, ".nom($elem['valideN1'], 'nom p', $agents);
+  elseif($elem['valide_n1']!=0){
+    $validation="En attente de validation hierarchique, ".nom($elem['valide_n1'], 'nom p', $agents);
     $validationStyle="font-weight:bold;";
-    $validationDate=dateFr($elem['validationN1'],true);
+    $validationDate=dateFr($elem['validation_n1'],true);
   }
 
 

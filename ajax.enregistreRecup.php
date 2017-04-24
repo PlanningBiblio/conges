@@ -1,13 +1,13 @@
 <?php
 /*
-Planning Biblio, Plugin Congés Version 2.4.6
+Planning Biblio, Plugin Congés Version 2.6.4
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
 @copyright 2013-2017 Jérôme Combes
 
 Fichier : plugins/conges/ajax.enregistreRecup.php
 Création : 11 octobre 2013
-Dernière modification : 27 octobre 2016
+Dernière modification : 21 avril 2017
 @author Jérôme Combes <jerome@planningbiblio.fr>
 
 Description :
@@ -54,7 +54,7 @@ else{
   $nom=$p->elements[0]['nom'];
   $prenom=$p->elements[0]['prenom'];
   $mail=$p->elements[0]['mail'];
-  $mailsResponsables=$p->elements[0]['mailsResponsables'];
+  $mailsResponsables=$p->elements[0]['mails_responsables'];
 
   $c=new conges();
   $c->getResponsables($date,$date,$perso_id);

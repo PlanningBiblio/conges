@@ -1,13 +1,13 @@
 <?php
 /**
-Planning Biblio, Plugin Congés Version 2.6
+Planning Biblio, Plugin Congés Version 2.6.4
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
 @copyright 2013-2017 Jérôme Combes
 
 Fichier : plugins/conges/class.conges.php
 Création : 24 juillet 2013
-Dernière modification : 16 mars 2017
+Dernière modification : 21 avril 2017
 @author Jérôme Combes <jerome@planningbiblio.fr>
 @author Etienne Cavalié
 
@@ -276,7 +276,7 @@ class conges{
     // Marque la demande de congé comme supprimée dans la table conges
     $db=new db();
     $db->CSRFToken = $this->CSRFToken;
-    $db->update2("conges",array("supprime"=>$_SESSION['login_id'],"supprDate"=>date("Y-m-d H:i:s")),array("id"=>$id));
+    $db->update2("conges",array("supprime"=>$_SESSION['login_id'],"suppr_date"=>date("Y-m-d H:i:s")),array("id"=>$id));
   }
 
 
@@ -877,8 +877,8 @@ class conges{
       }
       // Validation Niveau 1
       elseif($data['valide']==-2 or $data['valide']==2){
-	$update["valideN1"]=($data['valide']/2)*$_SESSION['login_id']; // login_id positif si accepté, négatif si refusé
-	$update["validationN1"]=date("Y-m-d H:i:s");
+	$update["valide_n1"]=($data['valide']/2)*$_SESSION['login_id']; // login_id positif si accepté, négatif si refusé
+	$update["validation_n1"]=date("Y-m-d H:i:s");
 	$update['valide']=0;
       }
     }
@@ -969,7 +969,7 @@ class conges{
 
   function updateCETCredits(){
     $data=$this->data;
-    if(!empty($data) and $data['valideN2']>0){
+    if(!empty($data) and $data['valide']>0){
       $jours=$data['jours'];
       $heures=intval($jours)*7;
       $db=new db();
@@ -1004,8 +1004,8 @@ class conges{
       // Création de la table conges_CET
       $sql[]="CREATE TABLE IF NOT EXISTS `{$dbprefix}conges_CET` (`id` INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY, `perso_id` INT(11) NOT NULL, 
 	`jours` INT(11) NOT NULL DEFAULT '0', `commentaires` TEXT, `saisie` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, 
-	`saisie_par` INT NOT NULL, `modif` INT(11) NOT NULL DEFAULT '0', `modification` TIMESTAMP, `valideN1` INT(11) NOT NULL DEFAULT '0', 
-	`validationN1` TIMESTAMP, `valideN2` INT(11) NOT NULL DEFAULT '0',`validationN2` TIMESTAMP, `refus` TEXT, 
+	`saisie_par` INT NOT NULL, `modif` INT(11) NOT NULL DEFAULT '0', `modification` TIMESTAMP, `valide_n1` INT(11) NOT NULL DEFAULT '0', 
+	`validation_n1` TIMESTAMP, `valide_n2` INT(11) NOT NULL DEFAULT '0',`validation_n2` TIMESTAMP, `refus` TEXT, 
 	`solde_prec` FLOAT(10), `solde_actuel` FLOAT(10));";
 
       $sql[]="ALTER TABLE `{$dbprefix}conges_CET` ADD annee VARCHAR(10);";
@@ -1053,8 +1053,18 @@ class conges{
     }
     
     if($version < "2.6"){
-      $sql[]="ALTER TABLE `{$dbprefix}conges` ADD `valideN1`INT(11) NOT NULL DEFAULT '0', ADD `validationN1` TIMESTAMP;";
+      $sql[]="ALTER TABLE `{$dbprefix}conges` ADD `valideN1` INT(11) NOT NULL DEFAULT '0', ADD `validationN1` TIMESTAMP;";
       $version="2.6";
+      $sql[]="UPDATE `{$dbprefix}plugins` SET `version`='$version' WHERE `nom`='conges';";
+    }
+    
+    if($version < "2.6.4"){
+      $sql[]="ALTER TABLE `{$dbprefix}conges` CHANGE `valideN1` `valide_n1` INT(11) NOT NULL DEFAULT '0', CHANGE `validationN1` `validation_n1` TIMESTAMP;";
+      $sql[]="ALTER TABLE `{$dbprefix}conges` CHANGE `supprDate` `suppr_date` TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00';";
+      $sql[]="ALTER TABLE `{$dbprefix}conges_CET` CHANGE `valideN1` `valide_n1` INT(11) NOT NULL DEFAULT '0', CHANGE `validationN1` `validation_n1` TIMESTAMP;";
+      $sql[]="ALTER TABLE `{$dbprefix}conges_CET` CHANGE `valideN2` `valide_n2` INT(11) NOT NULL DEFAULT '0', CHANGE `validationN2` `validation_n2` TIMESTAMP;";
+
+      $version="2.6.4";
       $sql[]="UPDATE `{$dbprefix}plugins` SET `version`='$version' WHERE `nom`='conges';";
     }
     

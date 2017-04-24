@@ -1,13 +1,13 @@
 <?php
 /**
-Planning Biblio, Plugin Congés Version 2.5.3
+Planning Biblio, Plugin Congés Version 2.6.4
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
 @copyright 2013-2017 Jérôme Combes
 
 Fichier : plugins/conges/voir.php
 Création : 24 juillet 2013
-Dernière modification : 19 décembre 2016
+Dernière modification : 21 avril 2017
 @author Jérôme Combes <jerome@planningbiblio.fr>
 
 Description :
@@ -226,9 +226,9 @@ foreach($c->elements as $elem){
     }
 
   }
-  elseif($elem['valideN1']){
+  elseif($elem['valide_n1']){
     $validation="En attente de validation hi&eacute;rarchique";
-    $validationDate=dateFr($elem['validationN1'],true);
+    $validationDate=dateFr($elem['validation_n1'],true);
     $validationStyle="font-weight:bold;";
   }
   if($elem['information']){
@@ -239,7 +239,7 @@ foreach($c->elements as $elem){
   }
   elseif($elem['supprime']){
     $validation="Supprim&eacute;, ".nom($elem['supprime'], 'nom p', $agents);
-    $validationDate=dateFr($elem['supprDate'],true);
+    $validationDate=dateFr($elem['suppr_date'],true);
     $validationStyle=null;
   }
 

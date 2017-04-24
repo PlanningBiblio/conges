@@ -1,13 +1,13 @@
 <?php
 /**
-Planning Biblio, Plugin Congés Version 2.5.4
+Planning Biblio, Plugin Congés Version 2.6.4
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
 @copyright 2013-2017 Jérôme Combes
 
 Fichier : plugins/conges/modif.php
 Création : 1er août 2013
-Dernière modification : 10 février 2017
+Dernière modification : 21 avril 2017
 @author Jérôme Combes <jerome@planningbiblio.fr>
 @author Etienne Cavalié <etienne.cavalie@unice.fr>
 
@@ -99,7 +99,7 @@ if($confirm){
   $nom=$p->elements[0]['nom'];
   $prenom=$p->elements[0]['prenom'];
   $mail=$p->elements[0]['mail'];
-  $mailsResponsables=$p->elements[0]['mailsResponsables'];
+  $mailsResponsables=$p->elements[0]['mails_responsables'];
 
   // Choix du sujet et des destinataires en fonction du degré de validation
   switch($valide){
@@ -172,10 +172,10 @@ else{	// Formulaire
   $valide=$data['valide']>0?true:false;
   $selectAccept[0]=$data['valide']>0?"selected='selected'":null;
   $selectAccept[1]=$data['valide']<0?"selected='selected'":null;
-  $selectAccept[2]=($data['valideN1']>0 and $data['valide']==0)?"selected='selected'":null;
-  $selectAccept[3]=($data['valideN1']<0 and $data['valide']==0)?"selected='selected'":null;
+  $selectAccept[2]=($data['valide_n1']>0 and $data['valide']==0)?"selected='selected'":null;
+  $selectAccept[3]=($data['valide_n1']<0 and $data['valide']==0)?"selected='selected'":null;
   $displayRefus=$data['valide']>=0?"display:none;":null;
-  $displayRefus=($data['valideN1']<0 and $admin)?null:$displayRefus;
+  $displayRefus=($data['valide_n1']<0 and $admin)?null:$displayRefus;
   $perso_id=$data['perso_id'];
   $debut=dateFr(substr($data['debut'],0,10));
   $fin=dateFr(substr($data['fin'],0,10));
@@ -355,7 +355,7 @@ EOD;
     elseif($data['valide']>0){
       echo "<td>Validé</td>";
     }
-    elseif($data['valideN1']){
+    elseif($data['valide_n1']){
       echo "<td>En attente de validation hi&eacute;rarchique</td>";
     }
     else{
@@ -375,7 +375,7 @@ EOD;
     echo "<input type='button' value='Annuler' onclick='document.location.href=\"index.php?page=plugins/conges/voir.php\";' class='ui-button'/>";
   }
 
-  if((!$valide and $admin) or ($data['valide']==0 and $data['valideN1']==0)){
+  if((!$valide and $admin) or ($data['valide']==0 and $data['valide_n1']==0)){
     echo "<input type='button' value='Enregistrer les modifications' style='margin-left:20px;' class='ui-button' onclick='verifConges();'/>\n";
   }
 

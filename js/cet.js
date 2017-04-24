@@ -1,12 +1,12 @@
 /**
-Planning Biblio, Plugin Congés Version 2.5.4
+Planning Biblio, Plugin Congés Version 2.6.4
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
 @copyright 2013-2017 Jérôme Combes
 
 Fichier : plugins/conges/js/cet.js
 Création : 6 mars 2014
-Dernière modification : 10 février 2017
+Dernière modification : 21 avril 2017
 @author Jérôme Combes <jerome@planningbiblio.fr>
 
 Description :
@@ -138,16 +138,16 @@ function getCET(id){
       setTimeout(function(){$("#cet-jours").val(jours);},500);
       
       var validation=0;
-      if(data["valideN2"]>0){
+      if(data["valide_n2"]>0){
 	validation=2;
       }
-      else if(data["valideN2"]<0){
+      else if(data["valide_n2"]<0){
 	validation=-2;
       }
-      else if(data["valideN1"]>0){
+      else if(data["valide_n1"]>0){
 	validation=1;
       }
-      else if(data["valideN1"]<0){
+      else if(data["valide_n1"]<0){
 	validation=-1;
       }
       
