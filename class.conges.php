@@ -969,7 +969,7 @@ class conges{
 
   function updateCETCredits(){
     $data=$this->data;
-    if(!empty($data) and $data['valide']>0){
+    if(!empty($data) and $data['valide_n2']>0){
       $jours=$data['jours'];
       $heures=intval($jours)*7;
       $db=new db();
