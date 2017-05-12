@@ -1,13 +1,13 @@
 <?php
 /**
-Planning Biblio, Plugin Congés Version 2.6.4
+Planning Biblio, Plugin Congés Version 2.6.7
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
 @copyright 2013-2017 Jérôme Combes
 
 Fichier : plugins/conges/class.conges.php
 Création : 24 juillet 2013
-Dernière modification : 21 avril 2017
+Dernière modification : 12 mai 2017
 @author Jérôme Combes <jerome@planningbiblio.fr>
 @author Etienne Cavalié
 
@@ -710,7 +710,7 @@ class conges{
     if($GLOBALS['config']['Multisites-nombre']>1){
       $db=new db();
       $db->select("personnel","temps","id='$perso_id'");
-      $temps=json_decode(html_entity_decode($db->result[0]['temps'],ENT_QUOTES|ENT_IGNORE,'UTF-8'));
+      $temps=json_decode(html_entity_decode($db->result[0]['temps'],ENT_QUOTES|ENT_IGNORE,'UTF-8'),true);
       $date=$debut;
       while($date<=$fin){
 	// Emploi du temps si plugin planningHebdo
@@ -757,7 +757,7 @@ class conges{
     $db=new db();
     $db->select("personnel",null,"supprime='0'");
     foreach($db->result as $elem){
-      $d=json_decode(html_entity_decode($elem['droits'],ENT_QUOTES|ENT_IGNORE,'UTF-8'));
+      $d=json_decode(html_entity_decode($elem['droits'],ENT_QUOTES|ENT_IGNORE,'UTF-8'),true);
       foreach($droitsConges as $elem2){
 	if(is_array($d)){
 	  if(in_array($elem2,$d) and !in_array($elem,$responsables)){
