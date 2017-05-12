@@ -1068,6 +1068,11 @@ class conges{
       $sql[]="UPDATE `{$dbprefix}plugins` SET `version`='$version' WHERE `nom`='conges';";
     }
     
+    if($version < "2.6.7"){
+      $version="2.6.7";
+      $sql[]="UPDATE `{$dbprefix}plugins` SET `version`='$version' WHERE `nom`='conges';";
+    }
+    
     
 
     foreach($sql as $elem){
