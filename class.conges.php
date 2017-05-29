@@ -1,13 +1,13 @@
 <?php
 /**
-Planning Biblio, Plugin Congés Version 2.6.7
+Planning Biblio, Plugin Congés Version 2.6.9
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
 @copyright 2013-2017 Jérôme Combes
 
 Fichier : plugins/conges/class.conges.php
 Création : 24 juillet 2013
-Dernière modification : 12 mai 2017
+Dernière modification : 21 mai 2017
 @author Jérôme Combes <jerome@planningbiblio.fr>
 @author Etienne Cavalié
 
@@ -22,12 +22,10 @@ if(!isset($version)){
 }
 
 if(!strstr($_SERVER['SCRIPT_NAME'],"cron.ctrlPlanning.php")){
-  $path=substr($_SERVER['SCRIPT_NAME'],-9)=="index.php"?null:"../../";
-  $path=substr($_SERVER['SCRIPT_NAME'],-16)=="ics/calendar.php"?"../":$path;
-  require_once "{$path}planningHebdo/class.planningHebdo.php";
-  require_once "{$path}joursFeries/class.joursFeries.php";
-  require_once "{$path}personnel/class.personnel.php";
-  require_once "{$path}absences/class.absences.php";
+  require_once __DIR__."/../../planningHebdo/class.planningHebdo.php";
+  require_once __DIR__."/../../joursFeries/class.joursFeries.php";
+  require_once __DIR__."/../../personnel/class.personnel.php";
+  require_once __DIR__."/../../absences/class.absences.php";
 }
 
 class conges{
