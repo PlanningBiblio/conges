@@ -1,13 +1,13 @@
 <?php
 /**
-Planning Biblio, Plugin Congés Version 2.6.9
+Planning Biblio, Plugin Congés Version 2.7
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
 @copyright 2013-2017 Jérôme Combes
 
 Fichier : plugins/conges/class.conges.php
 Création : 24 juillet 2013
-Dernière modification : 21 mai 2017
+Dernière modification : 20 juillet 2017
 @author Jérôme Combes <jerome@planningbiblio.fr>
 @author Etienne Cavalié
 
@@ -114,54 +114,30 @@ class conges{
 	$this->message="Impossible de déterminer le nombre d'heures correspondant aux congés demandés.";
 	break;
       }
-
       // Sinon, on calcule les heures d'absence
       $d=new datePl($current);
       $semaine=$d->semaine3;
       $jour=$d->position?$d->position:7;
       $jour=$jour+(($semaine-1)*7)-1;
-      $temps = array(null, null, null, null);
-      if(isset($p->elements[0]['temps'][$jour])){
-        $temps=$p->elements[0]['temps'][$jour];
-      }
-      
-      $temps[0]=strtotime($temps[0]);
-      $temps[1]=strtotime($temps[1]);
-      $temps[2]=strtotime($temps[2]);
-      $temps[3]=strtotime($temps[3]);
+
       $debutConges=$current==$debut?$hre_debut:"00:00:00";
       $finConges=$current==$fin?$hre_fin:"23:59:59";
       $debutConges=strtotime($debutConges);
       $finConges=strtotime($finConges);
-
-
-      // Calcul du temps du matin
-      if($temps[0] and $temps[1]){
-	$debutConges1=$debutConges>$temps[0]?$debutConges:$temps[0];
-	$finConges1=$finConges<$temps[1]?$finConges:$temps[1];
-	if($finConges1>$debutConges1){
-	  $difference+=$finConges1-$debutConges1;
-	}
+      
+      $temps = calculPresence($p->elements[0]['temps'], $jour);
+      
+      foreach($temps as $t){
+        $t0 = strtotime($t[0]);
+        $t1 = strtotime($t[1]);
+        
+        $debutConges1 = $debutConges > $t0 ? $debutConges : $t0;
+        $finConges1 = $finConges < $t1 ? $finConges : $t1;
+        if( $finConges1 > $debutConges1 ) {
+          $difference += $finConges1 - $debutConges1;
+        }
       }
-
-      // Calcul du temps de l'après-midi
-      if($temps[2] and $temps[3]){
-	$debutConges2=$debutConges>$temps[2]?$debutConges:$temps[2];
-	$finConges2=$finConges<$temps[3]?$finConges:$temps[3];
-	if($finConges2>$debutConges2){
-	  $difference+=$finConges2-$debutConges2;
-	}
-      }
-
-      // Calcul du temps de la journée s'il n'y a pas de pause le midi
-      if($temps[0] and $temps[3] and !$temps[1] and !$temps[2]){
-	$debutConges=$debutConges>$temps[0]?$debutConges:$temps[0];
-	$finConges=$finConges<$temps[3]?$finConges:$temps[3];
-	if($finConges>$debutConges){
-	  $difference+=$finConges-$debutConges;
-	}
-      }
-
+        
       $current=date("Y-m-d",strtotime("+1 day",strtotime($current)));
     }
     $this->minutes=$difference/60;                                      // nombre de minutes (ex 2h30 => 150)
