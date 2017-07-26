@@ -1,13 +1,13 @@
 <?php
 /**
-Planning Biblio, Plugin Congés Version 2.6.4
+Planning Biblio, Plugin Congés Version 2.7
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
 @copyright 2013-2017 Jérôme Combes
 
 Fichier : plugins/conges/voir.php
 Création : 24 juillet 2013
-Dernière modification : 21 avril 2017
+Dernière modification : 25 juillet 2017
 @author Jérôme Combes <jerome@planningbiblio.fr>
 
 Description :
@@ -101,9 +101,9 @@ for($d=date("Y")+2;$d>date("Y")-11;$d--){
 }
 
 // Affichage du tableau
+echo "<h3 class='noprint'>Liste des congés</h3>\n";
 echo "<h3 class='print_only'>Liste des congés de ".nom($perso_id,"prenom nom",$agents).", année $annee-".($annee+1)."</h3>\n";
 echo <<<EOD
-<h3 class='noprint'>Liste des congés</h3>
 <form name='form' method='get' action='index.php' class='noprint'>
 <input type='hidden' name='page' value='plugins/conges/voir.php' />
 <table class='tableauStandard'><tbody><tr>

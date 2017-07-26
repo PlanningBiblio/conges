@@ -7,7 +7,7 @@ Voir les fichiers README.md et LICENSE
 
 Fichier : plugins/conges/class.conges.php
 Création : 24 juillet 2013
-Dernière modification : 20 juillet 2017
+Dernière modification : 25 juillet 2017
 @author Jérôme Combes <jerome@planningbiblio.fr>
 @author Etienne Cavalié
 
@@ -21,12 +21,11 @@ if(!isset($version)){
   include_once "../../include/accessDenied.php";
 }
 
-if(!strstr($_SERVER['SCRIPT_NAME'],"cron.ctrlPlanning.php")){
-  require_once __DIR__."/../../planningHebdo/class.planningHebdo.php";
-  require_once __DIR__."/../../joursFeries/class.joursFeries.php";
-  require_once __DIR__."/../../personnel/class.personnel.php";
-  require_once __DIR__."/../../absences/class.absences.php";
-}
+require_once __DIR__."/../../planningHebdo/class.planningHebdo.php";
+require_once __DIR__."/../../joursFeries/class.joursFeries.php";
+require_once __DIR__."/../../personnel/class.personnel.php";
+require_once __DIR__."/../../absences/class.absences.php";
+
 
 class conges{
   public $agent=null;
@@ -1042,10 +1041,21 @@ class conges{
       $sql[]="UPDATE `{$dbprefix}plugins` SET `version`='$version' WHERE `nom`='conges';";
     }
     
-    if($version < "2.6.7"){
-      $version="2.6.7";
+    if($version < "2.7"){
+      // Configuration : gestion des rappels
+      $sql[]="INSERT INTO `{$dbprefix}config` (`nom`, `type`, `valeur`, `categorie`, `commentaires`, `ordre` ) 
+        VALUES ('Conges-Rappels', 'boolean', '0', 'Congés', 'Activer / D&eacute;sactiver l&apos;envoi de rappels s&apos;il y a des cong&eacute;s non-valid&eacute;s', '6');";
+      $sql[]="INSERT INTO `{$dbprefix}config` (`nom`, `type`, `valeur`, `categorie`, `commentaires`, `ordre` ) 
+        VALUES ('Conges-Rappels-Jours', 'text', '14', 'Congés', 'Nombre de jours &agrave; contr&ocirc;ler pour l&apos;envoi de rappels sur les cong&eacute;s non-valid&eacute;s', '7');";
+      $sql[]="INSERT INTO `{$dbprefix}config` (`nom`, `type`, `valeur`, `valeurs`, `categorie`, `commentaires`, `ordre` ) VALUES ('Conges-Rappels-N1', 'checkboxes', '[\"Mail-Planning\"]', 
+        '[[\"Mail-Planning\",\"La cellule planning\"],[\"mails_responsables\",\"Les responsables hi&eacute;rarchiques\"]]','Congés', 'A qui envoyer les rappels sur les cong&eacute;s non-valid&eacute;s au niveau 1', '8');";
+      $sql[]="INSERT INTO `{$dbprefix}config` (`nom`, `type`, `valeur`, `valeurs`, `categorie`, `commentaires`, `ordre` ) VALUES ('Conges-Rappels-N2', 'checkboxes', '[\"mails_responsables\"]', 
+      '[[\"Mail-Planning\",\"La cellule planning\"],[\"mails_responsables\",\"Les responsables hi&eacute;rarchiques\"]]','Congés', 'A qui envoyer les rappels sur les cong&eacute;s non-valid&eacute;s au niveau 2', '9');";
+
+      $version="2.7";
       $sql[]="UPDATE `{$dbprefix}plugins` SET `version`='$version' WHERE `nom`='conges';";
     }
+    
     
     
 
