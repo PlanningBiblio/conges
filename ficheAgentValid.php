@@ -48,6 +48,7 @@ if($action=="modif"){
 // Ajout d'un ligne d'information dans la liste des congés
 $c=new conges();
 $c->perso_id=$id;
+$c->CSRFToken = $CSRFToken;
 $c->maj($credits,$action);
 
 ?>

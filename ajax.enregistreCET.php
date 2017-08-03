@@ -93,6 +93,7 @@ else{
   $data["saisie_par"]=$_SESSION['login_id'];
 
   $db=new db();
+  $db->CSRFToken = $CSRFToken;
   $db->insert2("conges_CET",$data);
   if($isValidate){
     // A FAIRE : Mettre à jour les compteurs

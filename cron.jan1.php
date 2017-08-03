@@ -33,6 +33,7 @@ if($p->elements){
 
     $c=new conges();
     $c->perso_id=$elem['id'];
+    $c->CSRFToken = $CSRFToken;
     $c->maj($credits,"modif",true);
   }
 }

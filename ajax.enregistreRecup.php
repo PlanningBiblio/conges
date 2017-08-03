@@ -23,6 +23,7 @@ include "class.conges.php";
 
 // Initialisation des variables
 $commentaires=trim(filter_input(INPUT_POST,"commentaires",FILTER_SANITIZE_STRING));
+$CSRFToken=trim(filter_input(INPUT_POST,"CSRFToken",FILTER_SANITIZE_STRING));
 $date=filter_input(INPUT_POST,"date",FILTER_CALLBACK,array("options"=>"sanitize_dateFr"));
 $date2=filter_input(INPUT_POST,"date2",FILTER_CALLBACK,array("options"=>"sanitize_dateFr"));
 $heures=filter_input(INPUT_POST,"heures",FILTER_SANITIZE_STRING);
@@ -39,6 +40,7 @@ if($perso_id===null){
 $insert=array("perso_id"=>$perso_id,"date"=>$date,"date2"=>$date2,"heures"=>$heures,"commentaires"=>$commentaires,
   "saisie_par"=>$_SESSION['login_id']);
 $db=new db();
+$db->CSRFToken = $CSRFToken;
 $db->insert2("recuperations",$insert);
 if($db->error){
   $return=array("Demande-Erreur");

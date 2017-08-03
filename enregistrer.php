@@ -20,6 +20,7 @@ Inclus dans le fichier index.php
 require_once "class.conges.php";
 
 // Initialisation des variables
+$CSRFToken = filter_input(INPUT_GET, 'CSRFToken', FILTER_SANITIZE_STRING);
 $menu=isset($_GET['menu'])?$_GET['menu']:null;
 $perso_id=isset($_GET['perso_id'])?$_GET['perso_id']:$_SESSION['login_id'];
 if(!in_array(2,$droits)){
@@ -46,6 +47,7 @@ if(isset($_GET['confirm'])){	// Confirmation
 
   // Enregistrement du congés
   $c=new conges();
+  $c->CSRFToken = $CSRFToken;
   $c->add($_GET);
   $id=$c->id;
 
@@ -118,6 +120,7 @@ else{
 
   // Affichage du formulaire
   echo "<form name='form' action='index.php' method='get' id='form'>\n";
+  echo "<input type='hidden' name='CSRFToken' value='$CSRFSession' />\n";
   echo "<input type='hidden' name='page' value='plugins/conges/enregistrer.php' />\n";
   echo "<input type='hidden' name='menu' value='$menu' />\n";
   echo "<input type='hidden' name='confirm' value='confirm' />\n";

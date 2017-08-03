@@ -319,7 +319,7 @@ $(function() {
 	  $.ajax({
 	    url: "plugins/conges/ajax.enregistreRecup.php",
 	    dataType: "json",
-	    data: {date: date.val(), date2: date2.val(), heures: heures.val(), commentaires: commentaires.val(), perso_id: perso_id},
+	    data: {date: date.val(), date2: date2.val(), heures: heures.val(), commentaires: commentaires.val(), perso_id: perso_id, CSRFToken: $('#CSRFSession').val()},
 	    type: "post",
 	    success: function(result){
 	      if(result[0]=="Demande-OK"){

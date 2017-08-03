@@ -19,6 +19,8 @@ Met à jour les crédits de congés
 require_once "class.conges.php";
 require_once "personnel/class.personnel.php";
 
+$CSRFToken = CSRFToken();
+
 // Ajout d'une ligne d'information dans le tableau des congés
 $p=new personnel();
 $p->supprime=array(0,1);
@@ -33,6 +35,7 @@ if($p->elements){
 
     $c=new conges();
     $c->perso_id=$elem['id'];
+    $c->CSRFToken = $CSRFToken;
     $c->maj($credits,"modif",true);
   }
 }

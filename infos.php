@@ -60,6 +60,7 @@ elseif($validation){
     $db->update2("conges_infos",array("debut"=>dateSQL($debut),"fin"=>dateSQL($fin),"texte"=>$texte),array("id"=>$id));
   }
   else{
+    $db->CSRFToken = $CSRFToken;
     $db->insert2("conges_infos",array("debut"=>dateSQL($debut),"fin"=>dateSQL($fin),"texte"=>$texte));
   }
 }
