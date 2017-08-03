@@ -7,7 +7,7 @@ Voir les fichiers README.md et LICENSE
 
 Fichier : plugins/conges/cron.ctrlPlanning.php
 Création : 21 juillet 2017
-Dernière modification : 26 juillet 2017
+Dernière modification : 3 août 2017
 @author Jérôme Combes <jerome@planningbiblio.fr>
 
 Description :
@@ -43,8 +43,10 @@ require_once "$path/plugins/plugins.php";
 require_once "$path/plugins/conges/class.conges.php";
 require_once "$path/personnel/class.personnel.php";
 
+$CSRFToken = CSRFToken();
+
 if(!$config['Conges-Rappels']){
-  logs("Rappels cong&eacute;s d&eacute;sactiv&eacute;s","Rappels-conges");
+  logs("Rappels cong&eacute;s d&eacute;sactiv&eacute;s", "Rappels-conges", $CSRFToken);
   exit;
 }
 
@@ -184,7 +186,7 @@ foreach($data as $dest){
   $m->message=$msg;
   $m->send();
   if($m->error){
-    logs($m->error,"Rappels-conges");
+    logs($m->error, "Rappels-conges", $CSRFToken);
   }
 }
 ?>

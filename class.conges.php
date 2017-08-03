@@ -7,7 +7,7 @@ Voir les fichiers README.md et LICENSE
 
 Fichier : plugins/conges/class.conges.php
 Création : 24 juillet 2013
-Dernière modification : 25 juillet 2017
+Dernière modification : 3 août 2017
 @author Jérôme Combes <jerome@planningbiblio.fr>
 @author Etienne Cavalié
 
@@ -69,6 +69,7 @@ class conges{
       "commentaires"=>$data['commentaires'],"heures"=>$data['heures'],"debit"=>$data['debit'],"perso_id"=>$data['perso_id'],
       "saisie_par"=>$_SESSION['login_id']);
     $db=new db();
+    $db->CSRFToken = $this->CSRFToken;
     $db->insert2("conges",$insert);
 
     // Récupération de l'id du congé enregistré
@@ -240,6 +241,7 @@ class conges{
 	  $insert["information"]=$_SESSION['login_id'];
 	  $insert["infoDate"]=date("Y-m-d H:i:s");
 	  $db=new db();
+          $db->CSRFToken = $this->CSRFToken;
 	  $db->insert2("conges",$insert);
 	}
       }
@@ -811,6 +813,7 @@ class conges{
       $insert["infoDate"]=date("Y-m-d H:i:s");
 
       $db=new db();
+      $db->CSRFToken = $this->CSRFToken;
       $db->insert2("conges",$insert);
     }
   }

@@ -19,6 +19,8 @@ Supprime le reliquat à tous les agents
 require_once "class.conges.php";
 require_once "personnel/class.personnel.php";
 
+$CSRFToken = CSRFToken();
+
 // Ajout d'une ligne d'information dans le tableau des congés
 $p=new personnel();
 $p->supprime=array(0,1);
