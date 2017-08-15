@@ -56,7 +56,7 @@ if(is_numeric($id)){
 
     $db=new db();
     $db->CSRFToken = $CSRFToken;
-    $db->update2("conges_CET",$data,array("id"=>$id));
+    $db->update("conges_CET",$data,array("id"=>$id));
     if($isValidate){
       // Mise à jour du compteur personnel/reliquat
       $heures=$data['jours']*7;
@@ -94,7 +94,7 @@ else{
 
   $db=new db();
   $db->CSRFToken = $CSRFToken;
-  $db->insert2("conges_CET",$data);
+  $db->insert("conges_CET",$data);
   if($isValidate){
     // A FAIRE : Mettre à jour les compteurs
     $c=new conges();

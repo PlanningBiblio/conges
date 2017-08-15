@@ -1,13 +1,13 @@
 <?php
-/*
-Planning Biblio, Plugin Conges Version 1.0.1
+/**
+Planning Biblio, Plugin Conges Version 2.7
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
 @copyright 2013-2017 Jérôme Combes
 
 Fichier : plugins/conges/cron.sept1.php
 Création : 13 août 2013
-Dernière modification : 16 janvier 2014
+Dernière modification : 15 août 2017
 @author Jérôme Combes <jerome@planningbiblio.fr>
 
 Description :
@@ -18,8 +18,6 @@ Met à jour les crédits de congés
 
 require_once "class.conges.php";
 require_once "personnel/class.personnel.php";
-
-$CSRFToken = CSRFToken();
 
 // Ajout d'une ligne d'information dans le tableau des congés
 $p=new personnel();
@@ -35,18 +33,22 @@ if($p->elements){
 
     $c=new conges();
     $c->perso_id=$elem['id'];
-    $c->CSRFToken = $CSRFToken;
+    $c->CSRFToken = $CSRFSession;
     $c->maj($credits,"modif",true);
   }
 }
 
 // Modifie les crédits
 $db=new db();
+$db->CSRFToken = $CSRFSession;
 $db->update("personnel","congesReliquat=congesCredit");
 $db=new db();
+$db->CSRFToken = $CSRFSession;
 $db->update("personnel","recupSamedi='0.00'");
 $db=new db();
+$db->CSRFToken = $CSRFSession;
 $db->update("personnel","congesCredit=(congesAnnuel-congesAnticipation)");
 $db=new db();
+$db->CSRFToken = $CSRFSession;
 $db->update("personnel","congesAnticipation=0.00");
 ?>

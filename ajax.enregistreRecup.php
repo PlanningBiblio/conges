@@ -41,7 +41,7 @@ $insert=array("perso_id"=>$perso_id,"date"=>$date,"date2"=>$date2,"heures"=>$heu
   "saisie_par"=>$_SESSION['login_id']);
 $db=new db();
 $db->CSRFToken = $CSRFToken;
-$db->insert2("recuperations",$insert);
+$db->insert("recuperations",$insert);
 if($db->error){
   $return=array("Demande-Erreur");
   echo json_encode($return);

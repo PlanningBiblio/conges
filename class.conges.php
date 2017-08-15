@@ -7,7 +7,7 @@ Voir les fichiers README.md et LICENSE
 
 Fichier : plugins/conges/class.conges.php
 Création : 24 juillet 2013
-Dernière modification : 3 août 2017
+Dernière modification : 15 août 2017
 @author Jérôme Combes <jerome@planningbiblio.fr>
 @author Etienne Cavalié
 
@@ -70,7 +70,7 @@ class conges{
       "saisie_par"=>$_SESSION['login_id']);
     $db=new db();
     $db->CSRFToken = $this->CSRFToken;
-    $db->insert2("conges",$insert);
+    $db->insert("conges",$insert);
 
     // Récupération de l'id du congé enregistré
     $this->id=0;
@@ -219,7 +219,7 @@ class conges{
 	  "congesAnticipation"=>$perso_anticipation_new, "recupSamedi"=>$perso_recup_new);
 	$db=new db();
 	$db->CSRFToken = $this->CSRFToken;
-	$db->update2("personnel",$update,array("id"=>$perso_id));
+	$db->update("personnel",$update,array("id"=>$perso_id));
 
 	// Ajout d'une ligne d'information sur les crédits
 	$insert=array();
@@ -242,7 +242,7 @@ class conges{
 	  $insert["infoDate"]=date("Y-m-d H:i:s");
 	  $db=new db();
           $db->CSRFToken = $this->CSRFToken;
-	  $db->insert2("conges",$insert);
+	  $db->insert("conges",$insert);
 	}
       }
       
@@ -251,7 +251,7 @@ class conges{
     // Marque la demande de congé comme supprimée dans la table conges
     $db=new db();
     $db->CSRFToken = $this->CSRFToken;
-    $db->update2("conges",array("supprime"=>$_SESSION['login_id'],"suppr_date"=>date("Y-m-d H:i:s")),array("id"=>$id));
+    $db->update("conges",array("supprime"=>$_SESSION['login_id'],"suppr_date"=>date("Y-m-d H:i:s")),array("id"=>$id));
   }
 
 
@@ -814,7 +814,7 @@ class conges{
 
       $db=new db();
       $db->CSRFToken = $this->CSRFToken;
-      $db->insert2("conges",$insert);
+      $db->insert("conges",$insert);
     }
   }
 
@@ -822,12 +822,14 @@ class conges{
   public function suppression_agents($liste){
     $db=new db();
     $db->CSRFToken = $this->CSRFToken;
-    $db->update2("personnel",
+    $db->update("personnel",
       array("congesCredit"=>null,"congesReliquat"=>null,"congesAnticipation"=>null,"congesAnnuel"=>null,"recupSamedi"=>null),
       "id IN ($liste)");
     $db=new db();
+    $db->CSRFToken = $this->CSRFToken;
     $db->delete("conges","perso_id IN ($liste)");
     $db=new db();
+    $db->CSRFToken = $this->CSRFToken;
     $db->delete("recuperations","perso_id IN ($liste)");
   }
 
@@ -864,7 +866,7 @@ class conges{
 
     $db=new db();
     $db->CSRFToken = $this->CSRFToken;
-    $db->update2("conges",$update,array("id"=>$data['id']));
+    $db->update("conges",$update,array("id"=>$data['id']));
   
     // En cas de validation, on débite les crédits dans la fiche de l'agent et on barre l'agent s'il est déjà placé dans le planning
     if($data['valide']=="1" and !$db->error){
@@ -932,13 +934,13 @@ class conges{
       $updateCredits=array("congesCredit"=>$credit,"congesReliquat"=>$reliquat,"recupSamedi"=>$recuperation,"congesAnticipation"=>$anticipation);
       $db=new db();
       $db->CSRFToken = $this->CSRFToken;
-      $db->update2("personnel",$updateCredits,array("id"=>$data["perso_id"]));
+      $db->update("personnel",$updateCredits,array("id"=>$data["perso_id"]));
 
       // Mise à jour des compteurs dans la table conges
       $updateConges=array_merge($updateConges,array("solde_actuel"=>$credit,"reliquat_actuel"=>$reliquat,"recup_actuel"=>$recuperation,"anticipation_actuel"=>$anticipation));
       $db=new db();
       $db->CSRFToken = $this->CSRFToken;
-      $db->update2("conges",$updateConges,array("id"=>$data['id']));
+      $db->update("conges",$updateConges,array("id"=>$data['id']));
     }
 
   }

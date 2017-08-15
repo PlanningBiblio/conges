@@ -54,7 +54,7 @@ if(isset($update)){
   // Modification de la table recuperations
   $db=new db();
   $db->CSRFToken = $CSRFToken;
-  $db->update2("recuperations",$update,array("id"=>$id));
+  $db->update("recuperations",$update,array("id"=>$id));
   if(!$db->error){
     $msg=urlencode("Vos modifications ont été enregistrées");
     $msgType="success";
@@ -68,10 +68,10 @@ if(isset($update)){
     $recupSamedi=$solde_prec+$update['heures'];
     $db=new db();
     $db->CSRFToken = $CSRFToken;
-    $db->update2("personnel",array("recupSamedi"=>$recupSamedi),array("id"=>$perso_id));
+    $db->update("personnel",array("recupSamedi"=>$recupSamedi),array("id"=>$perso_id));
     $db=new db();
     $db->CSRFToken = $CSRFToken;
-    $db->update2("recuperations",array("solde_prec"=>$solde_prec,"solde_actuel"=>$recupSamedi),array("id"=>$id));
+    $db->update("recuperations",array("solde_prec"=>$solde_prec,"solde_actuel"=>$recupSamedi),array("id"=>$id));
   }
 
   // Envoi d'un e-mail à l'agent et aux responsables

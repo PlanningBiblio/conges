@@ -1,13 +1,13 @@
 <?php
 /**
-Planning Biblio, Plugin Congés Version 2.5.4
+Planning Biblio, Plugin Congés Version 2.7
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
 @copyright 2013-2017 Jérôme Combes
 
 Fichier : plugins/conges/infos.php
 Création : 24 juillet 2013
-Dernière modification : 10 février 2017
+Dernière modification : 15 août 2017
 @author Jérôme Combes <jerome@planningbiblio.fr>
 
 Description :
@@ -33,13 +33,15 @@ $validation=filter_input(INPUT_GET,"validation",FILTER_CALLBACK,array("options"=
 // Suppression
 if($suppression and $validation){
   $db=new db();
-  $db->delete("conges_infos","id='$id'");
+  $db->CSRFToken = $CSRFToken;
+  $db->delete('conges_infos', array('id'=>$id));
   echo "<b>L'information a été supprimée</b>";
   echo "<br/><br/><a href='index.php?page=plugins/conges/index.php'>Retour</a>\n";
 }
 elseif($suppression){
   echo "<h4>Etes vous sûr de vouloir supprimer cette information ?</h4>\n";
   echo "<form method='get' action='#' name='form'>\n";
+  echo "<input type='hidden' name='CSRFToken' value='$CSRFSession'/>\n";
   echo "<input type='hidden' name='page' value='plugins/conges/infos.php'/>\n";
   echo "<input type='hidden' name='suppression' value='1'/>\n";
   echo "<input type='hidden' name='validation' value='1'/>\n";
@@ -57,11 +59,11 @@ elseif($validation){
   $db=new db();
   $db->CSRFToken = $CSRFToken;
   if($id){
-    $db->update2("conges_infos",array("debut"=>dateSQL($debut),"fin"=>dateSQL($fin),"texte"=>$texte),array("id"=>$id));
+    $db->update("conges_infos",array("debut"=>dateSQL($debut),"fin"=>dateSQL($fin),"texte"=>$texte),array("id"=>$id));
   }
   else{
     $db->CSRFToken = $CSRFToken;
-    $db->insert2("conges_infos",array("debut"=>dateSQL($debut),"fin"=>dateSQL($fin),"texte"=>$texte));
+    $db->insert("conges_infos",array("debut"=>dateSQL($debut),"fin"=>dateSQL($fin),"texte"=>$texte));
   }
 }
 // Vérification
