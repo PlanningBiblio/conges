@@ -7,7 +7,7 @@ Voir les fichiers README.md et LICENSE
 
 Fichier : plugins/conges/install.php
 Création : 24 juillet 2013
-Dernière modification : 25 juillet 2017
+Dernière modification : 5 septembre 2017
 @author Jérôme Combes <jerome@planningbiblio.fr>
 
 Description :
@@ -23,7 +23,7 @@ if($_SESSION['login_id']!=1){
   exit;
 }
 
-$version="2.6";
+$version="2.7";
 include_once "../../include/config.php";
 
 $sql=array();

@@ -7,7 +7,7 @@ Voir les fichiers README.md et LICENSE
 
 Fichier : plugins/conges/uninstall.php
 Création : 24 juillet 2013
-Dernière modification : 29 août 2017
+Dernière modification : 5 septembre 2017
 @author Jérôme Combes <jerome@planningbiblio.fr>
 
 Description :
@@ -175,8 +175,10 @@ if($confirm == 2){
   $sql[]="DELETE FROM `{$dbprefix}config` WHERE `nom`='Recup-DelaiContractuel1';";
   $sql[]="DELETE FROM `{$dbprefix}config` WHERE `nom`='Recup-DelaiContractuel2';";
   $sql[]="DELETE FROM `{$dbprefix}config` WHERE `nom`='Recup-DelaiDefaut';";
-
-
+  $sql[]="DELETE FROM `{$dbprefix}config` WHERE `nom`='Conges-Rappels';";
+  $sql[]="DELETE FROM `{$dbprefix}config` WHERE `nom`='Conges-Rappels-Jours';";
+  $sql[]="DELETE FROM `{$dbprefix}config` WHERE `nom`='Conges-Rappels-N1';";
+  $sql[]="DELETE FROM `{$dbprefix}config` WHERE `nom`='Conges-Rappels-N2';";
 
   // Execution des requêtes
   foreach($sql as $elem){
