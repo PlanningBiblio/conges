@@ -5,9 +5,9 @@ Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
 @copyright 2013-2017 Jérôme Combes
 
-Fichier : plugins/conges/cron.ctrlPlanning.php
+Fichier : plugins/conges/cron.ctrlConges.php
 Création : 21 juillet 2017
-Dernière modification : 3 août 2017
+Dernière modification : 29 août 2017
 @author Jérôme Combes <jerome@planningbiblio.fr>
 
 Description :
@@ -19,12 +19,14 @@ ET le lundi suivant (3 jours ouvrés + samedi + jour courant)
 
 @note : Modifiez le crontab de l'utilisateur Apache (ex: #crontab -eu www-data) en ajoutant les 2 lignes suivantes :
 # Controle du planning du lundi au vendredi à 7h
-0 7 * * 1-5 /usr/bin/php5 -f /var/www/html/planning/cron.ctrlPlannings.php
+0 7 * * 1-5 /usr/bin/php5 -f /var/www/html/planning/plugins/conges/cron.ctrlConges.php
 Remplacer si besoin le chemin d'accès au programme php et le chemin d'accès à ce fichier
 @note : Modifiez la variable $path suivante en renseignant le chemin absolu vers votre dossier planningBiblio
 */
 
 $path="/var/www/html/planning";
+
+session_start();
 
 /** $version=$argv[0]; permet d'interdire l'execution de ce script via un navigateur
  *  Le fichier config.php affichera une page "accès interdit si la $version n'existe pas

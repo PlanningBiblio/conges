@@ -1,13 +1,13 @@
 <?php
-/*
-Planning Biblio, Plugin Congés Version 2.6.4
+/**
+Planning Biblio, Plugin Congés Version 2.7
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
 @copyright 2013-2017 Jérôme Combes
 
 Fichier : plugins/conges/uninstall.php
 Création : 24 juillet 2013
-Dernière modification : 21 avril 2017
+Dernière modification : 29 août 2017
 @author Jérôme Combes <jerome@planningbiblio.fr>
 
 Description :
@@ -22,9 +22,11 @@ error_reporting(999);
 $confirm = filter_input(INPUT_POST, 'confirm', FILTER_SANITIZE_NUMBER_INT);
 $transfer = filter_input(INPUT_POST, 'transfer', FILTER_SANITIZE_NUMBER_INT);
 
-$version="1.4.5";
+$version="2.7";
+
 include_once "../../include/config.php";
 
+$CSRFSession = $_SESSION['oups']['CSRFToken'];
 ?>
 
 <!-- Entête HTML -->
@@ -77,6 +79,7 @@ if($confirm == 1 and !$transfer){
   </p>
   <p>
   <form method='post' action='uninstall.php' name='form'>
+  <input type='hidden' name='CSRFToken' value='$CSRFSession' />
   <input type='hidden' name='confirm' value='2' />
   <input type='hidden' name='transfer' value='1' />
   <input type='button' value='Non' onclick='document.forms["form"].elements["transfer"].value="0"; document.form.submit();' />
@@ -89,6 +92,9 @@ EOD;
 
 // Transfert des données
 if($confirm == 2 and $transfer){
+
+  $CSRFToken = filter_input(INPUT_POST, 'CSRFToken', FILTER_SANITIZE_STRING);
+
   echo "<p><strong>Transfert des donn&eacute;es</strong></p>";
   
   // récupération des congés
@@ -100,6 +106,7 @@ if($confirm == 2 and $transfer){
   $req = "INSERT INTO `{$dbprefix}absences` (`perso_id`, `debut`, `fin`, `commentaires`, `demande`, `valide`, `validation`, `valide_n1`, `validation_n1`, `motif`, `motif_autre`) 
     VALUES (:perso_id, :debut, :fin, :commentaires, :demande, :valide, :validation, :valide_n1, :validation_n1, :motif, :motif_autre);";
   $dbh=new dbh();
+  $dbh->CSRFToken = $CSRFToken;
   $dbh->prepare($req);
 
   echo $req."<br/>\n";

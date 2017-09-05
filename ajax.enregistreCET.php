@@ -1,13 +1,13 @@
 <?php
 /**
-Planning Biblio, Plugin Congés Version 2.6.4
+Planning Biblio, Plugin Congés Version 2.7
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
 @copyright 2013-2017 Jérôme Combes
 
 Fichier : plugins/conges/ajax.enregistreCet.php
 Création : 7 mars 2014
-Dernière modification : 21 avril 2017
+Dernière modification : 29 août 2017
 @author Jérôme Combes <jerome@planningbiblio.fr>
 
 Description :
@@ -61,11 +61,13 @@ if(is_numeric($id)){
       // Mise à jour du compteur personnel/reliquat
       $heures=$data['jours']*7;
       $db=new dbh();
+      $db->CSRFToken = $CSRFToken;
       $db->prepare("UPDATE `{$dbprefix}personnel` SET `congesReliquat`=(`congesReliquat`-:heures) WHERE `id`=:id;");
       $db->execute(array(":heures"=>$heures,":id"=>$id));
 
       // Mise à jour du compteur conges_CET / solde_prec
       $db=new dbh();
+      $db->CSRFToken = $CSRFToken;
       $db->prepare("SELECT `solde_actuel` FROM `{$dbprefix}conges_CET` WHERE `annee`=:annee AND `valide_n2`>0 
 	  AND `validation_n2`=MAX(`validation_n2`) AND `perso_id`=:perso_id;");
       $db->execute(array(":annee"=>$annee,":perso_id"=>$id));
@@ -79,6 +81,7 @@ if(is_numeric($id)){
       // Mise à jour des compteurs conges_CET / solde_actuel et solde_prec
     // A CONTINUER init :solde_actuel, solde_prec
       $db=new dbh();
+      $db->CSRFToken = $CSRFToken;
       $db->prepare("UPDATE `{$dbprefix}conges_CET` SET `solde_actuel`=:solde_actuel, `solde_prec`=:solde_prec
 	WHERE `annee`=:annee AND `valide_n2`>0 AND `validation_n2`=MAX(`validation_n2`) AND `perso_id`=:perso_id);");
       $db->execute(array(":annee"=>$annee,":perso_id"=>$id));
