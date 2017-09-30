@@ -1,13 +1,13 @@
 <?php
 /**
-Planning Biblio, Plugin Congés Version 2.7
+Planning Biblio, Plugin Congés Version 2.7.01
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
 @copyright 2013-2017 Jérôme Combes
 
 Fichier : plugins/conges/class.conges.php
 Création : 24 juillet 2013
-Dernière modification : 15 août 2017
+Dernière modification : 30 septembre 2017
 @author Jérôme Combes <jerome@planningbiblio.fr>
 @author Etienne Cavalié
 
@@ -1061,8 +1061,15 @@ class conges{
       $sql[]="UPDATE `{$dbprefix}plugins` SET `version`='$version' WHERE `nom`='conges';";
     }
     
+    if($version < "2.7.01"){
     
-    
+      $sql[]="UPDATE `{$dbprefix}acces` SET `categorie`='Cong&eacute;s', `ordre`='75' WHERE `groupe_id`='7';";
+      $sql[]="UPDATE `{$dbprefix}acces` SET `categorie`='Cong&eacute;s', `ordre`='76' WHERE `groupe_id`='2';";
+
+      $version="2.7.01";
+      $sql[]="UPDATE `{$dbprefix}plugins` SET `version`='$version' WHERE `nom`='conges';";
+    }
+
 
     foreach($sql as $elem){
       $db=new db();

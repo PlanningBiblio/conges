@@ -1,13 +1,13 @@
 <?php
 /**
-Planning Biblio, Plugin Congés Version 2.7
+Planning Biblio, Plugin Congés Version 2.7.01
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
 @copyright 2013-2017 Jérôme Combes
 
 Fichier : plugins/conges/uninstall.php
 Création : 24 juillet 2013
-Dernière modification : 5 septembre 2017
+Dernière modification : 30 septembre 2017
 @author Jérôme Combes <jerome@planningbiblio.fr>
 
 Description :
@@ -140,7 +140,8 @@ if($confirm == 2){
   
   // Droits d'accès
   $sql[]="DELETE FROM `{$dbprefix}acces` WHERE `page` LIKE 'plugins/conges%';";
-  $sql[]="DELETE FROM `{$dbprefix}acces` WHERE `groupe` = 'Gestion des cong&eacute;s';";
+  $sql[]="DELETE FROM `{$dbprefix}acces` WHERE `groupe_id` = '2';";
+  $sql[]="DELETE FROM `{$dbprefix}acces` WHERE `groupe_id` = '7';";
 
   // Suppression de la table conges
   $sql[]="DROP TABLE `{$dbprefix}conges`;";
