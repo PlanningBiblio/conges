@@ -1,13 +1,13 @@
 <?php
 /**
-Planning Biblio, Plugin Congés Version 2.6.4
+Planning Biblio, Plugin Congés Version 2.7.01
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
 @copyright 2013-2017 Jérôme Combes
 
 Fichier : plugins/conges/modif.php
 Création : 1er août 2013
-Dernière modification : 21 avril 2017
+Dernière modification : 30 septembre 2017
 @author Jérôme Combes <jerome@planningbiblio.fr>
 @author Etienne Cavalié <etienne.cavalie@unice.fr>
 
@@ -61,7 +61,11 @@ if($config['Multisites-nombre']>1){
   $p=new personnel();
   $p->fetchById($perso_id);
   // $droitsConges = droits nécessaires pour adminN2 si multisites
-  $droitsConges=array();
+
+  // TODO : Vérifier le bon fonctionnement de la validation N2 en mono et en multisites. 
+  // $droitsConges=array(2); ajouté en 10/2017 suite à la découverte du fait que le droit "Gestion des congés, validation N2" n'est pas géré site par site
+//   $droitsConges=array();
+  $droitsConges=array(2);
   if(is_array($p->elements[0]['sites'])){
     foreach($p->elements[0]['sites'] as $site){
       $droitsConges[]=400+$site;
@@ -164,7 +168,7 @@ if($confirm){
     $msg2=urlencode($m->error_CJInfo);
     $msg2Type="error";
   }
-  $msg=urlencode("Le congé à été modifié avec succés.");
+  $msg=urlencode("Le congé a été modifié avec succès.");
   echo "<script type='text/JavaScript'>document.location.href=\"index.php?page=plugins/conges/voir.php&msg=$msg&msgType=success&msg2=$msg2&msg2Type=$msg2Type\"</script>\n";
 }
 

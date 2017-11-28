@@ -474,10 +474,10 @@ class conges{
     // Les crédits en attente sont égaux aux crédits validés, on y ajoutera ensuite les demandes non validées
     $perso_ids=array_keys($tab);
     foreach($perso_ids as $perso_id){
-      $tab[$perso_id]['conge_en_attente']=$tab[$perso_id]['conge_restant'];
-      $tab[$perso_id]['reliquat_en_attente']=$tab[$perso_id]['reliquat_restant'];
-      $tab[$perso_id]['recup_en_attente']=$tab[$perso_id]['recup_restant'];
-      $tab[$perso_id]['anticipation_en_attente']=$tab[$perso_id]['anticipation_restant'];
+      $tab[$perso_id]['conge_en_attente'] = isset($tab[$perso_id]['conge_restant']) ? $tab[$perso_id]['conge_restant'] : 0 ;
+      $tab[$perso_id]['reliquat_en_attente'] = isset($tab[$perso_id]['reliquat_restant']) ? $tab[$perso_id]['reliquat_restant'] : 0 ;
+      $tab[$perso_id]['recup_en_attente'] = isset($tab[$perso_id]['recup_restant']) ? $tab[$perso_id]['recup_restant'] : 0 ;
+      $tab[$perso_id]['anticipation_en_attente'] = isset($tab[$perso_id]['anticipation_restant']) ? $tab[$perso_id]['anticipation_restant'] : 0 ;
     }
 
 
@@ -546,6 +546,17 @@ class conges{
     // Calcul des crédits utilisés et demandés en attente de validation
     $perso_ids=array_keys($tab);
     foreach($perso_ids as $perso_id){
+
+      // Initilisation
+      $tab[$perso_id]['conge_initial'] = isset($tab[$perso_id]['conge_initial']) ? $tab[$perso_id]['conge_initial'] : 0;
+      $tab[$perso_id]['conge_restant'] = isset($tab[$perso_id]['conge_restant']) ? $tab[$perso_id]['conge_restant'] : 0;
+      $tab[$perso_id]['reliquat_initial'] = isset($tab[$perso_id]['reliquat_initial']) ? $tab[$perso_id]['reliquat_initial'] : 0;
+      $tab[$perso_id]['reliquat_restant'] = isset($tab[$perso_id]['reliquat_restant']) ? $tab[$perso_id]['reliquat_restant'] : 0;
+      $tab[$perso_id]['recup_initial'] = isset($tab[$perso_id]['recup_initial']) ? $tab[$perso_id]['recup_initial'] : 0;
+      $tab[$perso_id]['recup_restant'] = isset($tab[$perso_id]['recup_restant']) ? $tab[$perso_id]['recup_restant'] : 0;
+      $tab[$perso_id]['anticipation_restant'] = isset($tab[$perso_id]['anticipation_restant']) ? $tab[$perso_id]['anticipation_restant'] : 0;
+      $tab[$perso_id]['anticipation_initial'] = isset($tab[$perso_id]['anticipation_initial']) ? $tab[$perso_id]['anticipation_initial'] : 0;
+
       // Crédits utilisés
       $tab[$perso_id]['conge_utilise']=$tab[$perso_id]['conge_initial']-$tab[$perso_id]['conge_restant'];
       $tab[$perso_id]['reliquat_utilise']=$tab[$perso_id]['reliquat_initial']-$tab[$perso_id]['reliquat_restant'];

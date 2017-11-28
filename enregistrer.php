@@ -1,13 +1,13 @@
 <?php
 /**
-Planning Biblio, Plugin Congés Version 2.6.4
+Planning Biblio, Plugin Congés Version 2.7.01
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
 @copyright 2013-2017 Jérôme Combes
 
 Fichier : plugins/conges/enregistrer.php
 Création : 24 juillet 2013
-Dernière modification : 21 avril 2017
+Dernière modification : 30 septembre 2017
 @author Jérôme Combes <jerome@planningbiblio.fr>
 @author Etienne Cavalié <etienne.cavalie@unice.fr>
 
@@ -109,13 +109,13 @@ else{
   $p->fetchById($perso_id);
   $nom=$p->elements[0]['nom'];
   $prenom=$p->elements[0]['prenom'];
-  $credit=number_format($p->elements[0]['congesCredit'], 2, '.', ' ');
-  $reliquat=number_format($p->elements[0]['congesReliquat'], 2, '.', ' ');
-  $anticipation=number_format($p->elements[0]['congesAnticipation'], 2, '.', ' ');
+  $credit=number_format((float) $p->elements[0]['congesCredit'], 2, '.', ' ');
+  $reliquat=number_format((float) $p->elements[0]['congesReliquat'], 2, '.', ' ');
+  $anticipation=number_format((float) $p->elements[0]['congesAnticipation'], 2, '.', ' ');
   $credit2 = heure4($credit);
   $reliquat2 = heure4($reliquat);
   $anticipation2 = heure4($anticipation);
-  $recuperation=number_format($p->elements[0]['recupSamedi'], 2, '.', ' ');
+  $recuperation=number_format((float) $p->elements[0]['recupSamedi'], 2, '.', ' ');
   $recuperation2=heure4($recuperation);
 
   // Affichage du formulaire
