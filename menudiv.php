@@ -1,13 +1,13 @@
 <?php
 /**
-Planning Biblio, Plugin Conges Version 2.6
+Planning Biblio, Plugin Conges Version 2.7.06
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
 @copyright 2013-2017 Jérôme Combes
 
 Fichier : plugins/conges/menudiv.php
 Création : 13 août 2013
-Dernière modification : 16 mars 2017
+Dernière modification : 30 novembre 2017
 @author Jérôme Combes <jerome@planningbiblio.fr>
 
 Description :
@@ -31,7 +31,6 @@ foreach($c->elements as $elem){
   if($elem['valide'] > 0){
     $tab_exclus[]=$elem['perso_id'];
     $absents[]=$elem['perso_id'];
-    break;
   }else{
     $absences_non_validees[] = $elem['perso_id'];
   }

@@ -1,13 +1,13 @@
 <?php
 /**
-Planning Biblio, Plugin Congés Version 2.7.01
+Planning Biblio, Plugin Congés Version 2.7.06
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
 @copyright 2013-2017 Jérôme Combes
 
 Fichier : plugins/conges/class.conges.php
 Création : 24 juillet 2013
-Dernière modification : 30 septembre 2017
+Dernière modification : 30 novembre 2017
 @author Jérôme Combes <jerome@planningbiblio.fr>
 @author Etienne Cavalié
 
@@ -962,7 +962,7 @@ class conges{
       $jours=$data['jours'];
       $heures=intval($jours)*7;
       $db=new db();
-      $db->query("UPDATE `{$GLOBALS['dbprefix']}personnel` SET `congesReliquat`=(`congesReliquat`-$heures) 
+      $db->query("UPDATE `{$GLOBALS['config']['dbprefix']}personnel` SET `congesReliquat`=(`congesReliquat`-$heures)
 	WHERE `id`='{$data['perso_id']}'");
 
       // METTRE A JOUR LES CHAMPS solde_prec et solde_actuel
@@ -1073,11 +1073,15 @@ class conges{
     }
     
     if($version < "2.7.01"){
-    
       $sql[]="UPDATE `{$dbprefix}acces` SET `categorie`='Cong&eacute;s', `ordre`='75' WHERE `groupe_id`='7';";
       $sql[]="UPDATE `{$dbprefix}acces` SET `categorie`='Cong&eacute;s', `ordre`='76' WHERE `groupe_id`='2';";
 
       $version="2.7.01";
+      $sql[]="UPDATE `{$dbprefix}plugins` SET `version`='$version' WHERE `nom`='conges';";
+    }
+
+    if($version < "2.7.06"){
+      $version="2.7.06";
       $sql[]="UPDATE `{$dbprefix}plugins` SET `version`='$version' WHERE `nom`='conges';";
     }
 
