@@ -1,13 +1,13 @@
 <?php
 /**
-Planning Biblio, Plugin Congés Version 2.7.01
+Planning Biblio, Plugin Congés Version 2.7.06
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
 @copyright 2013-2017 Jérôme Combes
 
 Fichier : plugins/conges/install.php
 Création : 24 juillet 2013
-Dernière modification : 30 septembre 2017
+Dernière modification : 30 novembre 2017
 @author Jérôme Combes <jerome@planningbiblio.fr>
 
 Description :
@@ -53,7 +53,7 @@ $sql[]="INSERT INTO `{$dbprefix}acces` (`nom`,`groupe_id`,`page`) VALUES ('Cong�
 $sql[]="INSERT INTO `{$dbprefix}acces` (`nom`,`groupe_id`,`page`) VALUES ('Congés - Enregistrer','100','plugins/conges/enregistrer.php');";
 $sql[]="INSERT INTO `{$dbprefix}acces` (`nom`,`groupe_id`,`page`) VALUES ('Congés - Modifier','100','plugins/conges/modif.php');";
 $sql[]="INSERT INTO `{$dbprefix}acces` (`nom`,`groupe`,`groupe_id`,`categorie`,`ordre`) VALUES ('Gestion des cong&eacute;s, validation N2','Gestion des cong&eacute;s, validation N2',2,'Cong&eacute;s','76');";
-$sql[]="INSERT INTO `{$dbprefix}acces` (`nom`,`groupe_id`,`groupe`,`page`,`categorie`,`ordre`) VALUES ('Congés - Infos','7','Gestion des cong&eacute;s, validation N1','plugins/conges/infos.php','Cong&eacute;s','75');";
+$sql[]="INSERT INTO `{$dbprefix}acces` (`nom`,`groupe_id`,`page`) VALUES ('Congés - Infos','100','plugins/conges/infos.php');";
 $sql[]="INSERT INTO `{$dbprefix}acces` (`nom`,`groupe_id`,`page`) VALUES ('Congés - r&eacute;cuperations','100','plugins/conges/recuperations.php');";
 $sql[]="INSERT INTO `{$dbprefix}acces` (`nom`,`groupe_id`,`page`) VALUES ('Congés - R&eacute;cup&eacute;ration','100','plugins/conges/recuperation_modif.php');";
 $sql[]="INSERT INTO `{$dbprefix}acces` (`nom`,`groupe_id`,`groupe`,`categorie`,`ordre`) VALUES ('Congés - Validation niveau 1','7','Gestion des cong&eacute;s, validation N1','Cong&eacute;s','75');";
@@ -83,7 +83,7 @@ $sql[]="CREATE TABLE `{$dbprefix}recuperations` (`id` INT(11) NOT NULL AUTO_INCR
   `solde_prec` FLOAT(10), `solde_actuel` FLOAT(10));";
 
 // Menu
-$sql[]="INSERT INTO `{$dbprefix}menu` (`niveau1`,`niveau2`,`titre`,`url`) VALUES (15,0,'Cong&eacute;s','plugins/conges/index.php');";
+$sql[]="INSERT INTO `{$dbprefix}menu` (`niveau1`,`niveau2`,`titre`,`url`) VALUES (15,0,'Cong&eacute;s','plugins/conges/voir.php');";
 $sql[]="INSERT INTO `{$dbprefix}menu` (`niveau1`,`niveau2`,`titre`,`url`) VALUES (15,10,'Liste des cong&eacute;s','plugins/conges/voir.php');";
 $sql[]="INSERT INTO `{$dbprefix}menu` (`niveau1`,`niveau2`,`titre`,`url`) VALUES (15,20,'Poser des cong&eacute;s','plugins/conges/enregistrer.php');";
 $sql[]="INSERT INTO `{$dbprefix}menu` (`niveau1`,`niveau2`,`titre`,`url`) VALUES (15,26,'R&eacute;cup&eacute;rations','plugins/conges/recuperations.php');";

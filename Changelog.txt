@@ -1,3 +1,12 @@
+*** Version 2.7.06   (30 novembre 2017)   ***
+- Compatibilité Planning Biblio version 2.7.06
+- Améliorations
+Modification du menu : accès direct à la liste des congés en cliquant sur le menu principal
+
+- Corrections
+Correction des droits d'accès à la page d'enregistrement d'information en multisite
+Correction du filtre du menu du planning
+
 *** Version 2.7   (5 septembre 2017)   ***
 - Compatibilité Planning Biblio version 2.7
 - Améliorations

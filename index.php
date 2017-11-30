@@ -1,13 +1,13 @@
 <?php
-/*
-Planning Biblio, Plugin Congés Version 1.5.8
+/**
+Planning Biblio, Plugin Congés Version 2.7.06
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
 @copyright 2013-2017 Jérôme Combes
 
 Fichier : plugins/conges/index.php
 Création : 24 juillet 2013
-Dernière modification : 6 janvier 2015
+Dernière modification : 30 novembre 2017
 @author Jérôme Combes <jerome@planningbiblio.fr>
 
 Description :
@@ -27,7 +27,6 @@ require_once "class.conges.php";
 <li><a href='index.php?page=plugins/conges/voir.php'>Liste des congés</a></li>
 <li><a href='index.php?page=plugins/conges/enregistrer.php'>Poser des congés</a></li>
 <li><a href='index.php?page=plugins/conges/recuperations.php'>R&eacute;cup&eacute;rations</a></li>
-<li><a href='index.php?page=plugins/conges/infos.php'>Informations</a></li>
 <?php
 $required=array(2,7,401,402,403,404,405,406,407,408,409,410,601,602,603,604,605,606,607,608,609,610);
 $admin=false;

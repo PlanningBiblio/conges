@@ -1082,6 +1082,8 @@ class conges{
 
     if($version < "2.7.06"){
       $version="2.7.06";
+      $sql[]="UPDATE `{$dbprefix}menu` SET `url`='plugins/conges/voir.php' WHERE `titre`='Cong&eacute;s';";
+      $sql[]="UPDATE `{$dbprefix}acces` SET `groupe_id` = '100', `groupe` = '', `categorie` = '', ordre = '' WHERE `page`='plugins/conges/infos.php';";
       $sql[]="UPDATE `{$dbprefix}plugins` SET `version`='$version' WHERE `nom`='conges';";
     }
 
