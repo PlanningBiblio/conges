@@ -2,7 +2,7 @@
 Planning Biblio, Plugin Congés Version 2.5.4
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
-@copyright 2013-2017 Jérôme Combes
+@copyright 2013-2018 Jérôme Combes
 
 Fichier : plugins/conges/js/script.conges.js
 Création : 2 août 2013

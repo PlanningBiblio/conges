@@ -1,13 +1,13 @@
 <?php
 /**
-Planning Biblio, Plugin Congés Version 2.7.06
+Planning Biblio, Plugin Congés Version 2.7.07
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
-@copyright 2013-2017 Jérôme Combes
+@copyright 2013-2018 Jérôme Combes
 
 Fichier : plugins/conges/install.php
 Création : 24 juillet 2013
-Dernière modification : 30 novembre 2017
+Dernière modification : 1er décembre 2017
 @author Jérôme Combes <jerome@planningbiblio.fr>
 
 Description :
@@ -23,7 +23,7 @@ if($_SESSION['login_id']!=1){
   exit;
 }
 
-$version="2.7.01";
+$version="2.7.07";
 include_once "../../include/config.php";
 
 $sql=array();
