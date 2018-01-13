@@ -1,13 +1,13 @@
 <?php
 /**
-Planning Biblio, Plugin Congés Version 2.7.01
+Planning Biblio, Plugin Congés Version 2.8
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
 @copyright 2013-2018 Jérôme Combes
 
 Fichier : plugins/conges/modif.php
 Création : 1er août 2013
-Dernière modification : 30 septembre 2017
+Dernière modification : 12 janvier 2018
 @author Jérôme Combes <jerome@planningbiblio.fr>
 @author Etienne Cavalié <etienne.cavalie@unice.fr>
 
@@ -213,7 +213,11 @@ else{	// Formulaire
   $recuperation2=heure4($recuperation);
 
   // Affichage du formulaire
-  echo "<h3>Congés</h3>\n";
+  if($config['Conges-Recuperations'] == 1 and $data['debit']=="recuperation"){
+    echo "<h3>Demande récupérations</h3>\n";
+  } else {
+    echo "<h3>Demande de congés</h3>\n";
+  }
   echo "<form name='form' action='index.php' method='get' id='form' class='googleCalendarForm'>\n";
   echo "<input type='hidden' name='page' value='plugins/conges/modif.php' />\n";
   echo "<input type='hidden' name='CSRFToken' value='$CSRFSession' />\n";
@@ -226,6 +230,7 @@ else{	// Formulaire
   echo "<input type='hidden' name='id' value='$id' id='id' />\n";
   echo "<input type='hidden' name='valide' value='0' />\n";
   echo "<input type='hidden' id='agent' value='{$_SESSION['login_nom']} {$_SESSION['login_prenom']}' />\n";
+  echo "<input type='hidden' name='conges-recup' id='conges-recup' value='{$config['Conges-Recuperations']}' />\n";
   echo "<table border='0'>\n";
   echo "<tr><td style='width:300px;'>\n";
   echo "Nom, prénom : \n";
@@ -292,37 +297,69 @@ else{	// Formulaire
     <td>
       <div id='nbJours' style='padding:0 5px; width:50px;'></div>
     </td></tr>
-    <td id='nbJours'>$jours</td></tr>
 
   <tr><td colspan='2' style='padding-top:20px;'>
 EOD;
-  if($reliquat){
-    echo "Ces heures seront débitées sur le réliquat de l'année précédente puis sur : ";
-  }
-  else{
-    echo "Ces heures seront débitées sur : ";
-  }
-  echo <<<EOD
-    </td></tr>
-    <tr><td>&nbsp;</td>
-    <td><select name='debit' style='width:98%;' onchange='calculRestes();'>
-    <option value='recuperation' $selectRecup >Le crédit de récupérations</option>
-    <option value='credit' $selectCredit >Le crédit de congés de l'année en cours</option>
-    </select></td></tr>
-EOD;
-  if(!$valide){
+
+  // Si les congés et les récupérations sont traités de la même façon (Conges-Recuperations = Assembler), l'utilisateur peut choisir quel compteur sera débité
+  if( $config['Conges-Recuperations'] == 0 ){
+
+    if($reliquat != '0.00'){
+      echo "Ces heures seront débitées sur le réliquat de l'année précédente puis sur : ";
+    }
+    else{
+      echo "Ces heures seront débitées sur : ";
+    }
     echo <<<EOD
-    <tr><td colspan='2'>
-      <table border='0'>
-	<tr><td style='width:298px;'>Reliquat : </td><td style='width:130px;'>$reliquat2</td><td>(après débit : <font id='reliquat4'>$reliquat2</font>)</td></tr>
-	<tr><td>Crédit de récupérations : </td><td>$recuperation2</td><td><font id='recup3'>(après débit : <font id='recup4'>$recuperation2</font>)</font></td></tr>
-	<tr><td>Crédit de congés: </td><td>$credit2</td><td><font id='credit3'>(après débit : <font id='credit4'>$credit2</font>)</font></td></tr>
-	<tr><td>Solde débiteur : </td><td>$anticipation2</td><td><font id='anticipation3'>(après débit : <font id='anticipation4'>$anticipation2</font>)</font></td></tr>
-      </table>
-    </td></tr>
+      </td></tr>
+      <tr><td>&nbsp;</td>
+      <td><select name='debit' style='width:98%;' onchange='calculRestes();'>
+      <option value='recuperation' $selectRecup >Le crédit de récupérations</option>
+      <option value='credit' $selectCredit >Le crédit de congés de l'année en cours</option>
+      </select></td></tr>
 EOD;
+
+  // Si les congés et les récupérations ne sont pas traités de la même façon (Conges-Recuperations = Dissocier), le compteur "congés" sera débité
+  } else {
+    if($data['debit']=="credit") {
+      if($reliquat != '0.00' ){
+        echo "Ces heures seront débitées sur le réliquat de l'année précédente puis sur les crédits de congés de l'année en cours.";
+      }
+      else{
+        echo "Ces heures seront débitées sur les crédits de congés de l'année en cours.";
+      }
+      echo "<input type='hidden' name='debit' value='credit' />\n";
+      echo "</td></tr>\n";
+
+    } else {
+      echo "Ces heures seront débitées sur les crédits de récupérations.";
+      echo "<input type='hidden' name='debit' value='recuperation' />\n";
+      echo "</td></tr>\n";
+    }
   }
 
+  if(!$valide){
+    echo "<tr><td colspan='2'>\n";
+    echo "<table border='0'>\n";
+    if( $config['Conges-Recuperations'] == 0 ) {
+      echo "<tr><td style='width:298px;'>Reliquat : </td><td style='width:130px;'>$reliquat2</td><td>(après débit : <font id='reliquat4'>$reliquat2</font>)</td></tr>\n";
+      echo "<tr><td>Crédit de récupérations : </td><td>$recuperation2</td><td><font id='recup3'>(après débit : <font id='recup4'>$recuperation2</font>)</font></td></tr>\n";
+      echo "<tr><td>Crédit de congés: </td><td>$credit2</td><td><font id='credit3'>(après débit : <font id='credit4'>$credit2</font>)</font></td></tr>\n";
+      echo "<tr><td>Solde débiteur : </td><td>$anticipation2</td><td><font id='anticipation3'>(après débit : <font id='anticipation4'>$anticipation2</font>)</font></td></tr>\n";
+    } else {
+      if($data['debit']=="credit") {
+        echo "<tr><td style='width:298px;'>Reliquat : </td><td style='width:130px;'>$reliquat2</td><td>(après débit : <font id='reliquat4'>$reliquat2</font>)</td></tr>\n";
+        echo "<tr><td>Crédit de congés: </td><td>$credit2</td><td><font id='credit3'>(après débit : <font id='credit4'>$credit2</font>)</font></td></tr>\n";
+        echo "<tr><td>Solde débiteur : </td><td>$anticipation2</td><td><font id='anticipation3'>(après débit : <font id='anticipation4'>$anticipation2</font>)</font></td></tr>\n";
+      } else {
+        echo "<tr><td>Crédit de récupérations : </td><td>$recuperation2</td><td><font id='recup3'>(après débit : <font id='recup4'>$recuperation2</font>)</font></td></tr>\n";
+      }
+    }
+    echo "</table>\n";
+    echo "</td></tr>\n";
+  }
+
+      
   echo "<tr valign='top'><td style='padding-top:15px;'>\n";
   echo "Commentaires : \n";
   echo "</td><td style='padding-top:15px;'>\n";

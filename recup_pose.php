@@ -5,19 +5,23 @@ Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
 @copyright 2013-2018 Jérôme Combes
 
-Fichier : plugins/conges/enregistrer.php
-Création : 24 juillet 2013
+Fichier : plugins/conges/recup_pose.php
+Création : 12 janvier 2018
 Dernière modification : 12 janvier 2018
 @author Jérôme Combes <jerome@planningbiblio.fr>
-@author Etienne Cavalié <etienne.cavalie@unice.fr>
 
 Description :
-Fichier permettant de poser des congés
-Accessible par le menu congés / Poser des congés
+Fichier permettant de poser des récupérations
+Accessible par le menu congés / Poser des récupérations.
+Si l'option Conges-Recuperations est à 1 (Dissocier, gestion différente des congés et des récupérations)
 Inclus dans le fichier index.php
 */
 
 require_once "class.conges.php";
+
+if($config['Conges-Recuperations'] == 0){
+  include __DIR__.'/../../include/accessDenied.php';
+}
 
 // Initialisation des variables
 $CSRFToken = filter_input(INPUT_GET, 'CSRFToken', FILTER_SANITIZE_STRING);
@@ -30,7 +34,7 @@ $debut=isset($_GET['debut'])?$_GET['debut']:null;
 $fin=isset($_GET['fin'])?$_GET['fin']:null;
 
 echo <<<EOD
-<h3>Poser des congés</h3>
+<h3>Poser des récupérations</h3>
 <table border='0'>
 <tr style='vertical-align:top'>
 <td style='width:700px;'>
@@ -121,7 +125,7 @@ else{
   // Affichage du formulaire
   echo "<form name='form' action='index.php' method='get' id='form'>\n";
   echo "<input type='hidden' name='CSRFToken' value='$CSRFSession' />\n";
-  echo "<input type='hidden' name='page' value='plugins/conges/enregistrer.php' />\n";
+  echo "<input type='hidden' name='page' value='plugins/conges/recup_pose.php' />\n";
   echo "<input type='hidden' name='menu' value='$menu' />\n";
   echo "<input type='hidden' name='confirm' value='confirm' />\n";
   echo "<input type='hidden' name='reliquat' value='$reliquat' />\n";
@@ -129,7 +133,7 @@ else{
   echo "<input type='hidden' name='credit' value='$credit' />\n";
   echo "<input type='hidden' name='anticipation' value='$anticipation' />\n";
   echo "<input type='hidden' id='agent' value='{$_SESSION['login_nom']} {$_SESSION['login_prenom']}' />\n";
-  echo "<input type='hidden' id='conges-recup' value='{$config['Conges-Recuperations']}' />\n";
+  echo "<input type='hidden' id='conges-recup' value='1' />\n";
   echo "<table border='0'>\n";
   echo "<tr><td style='width:300px;'>\n";
   echo "Nom, prénom : \n";
@@ -137,7 +141,7 @@ else{
   if(in_array(2,$droits)){
     $db_perso=new db();
     $db_perso->query("select * from {$dbprefix}personnel where actif='Actif' order by nom,prenom;");
-    echo "<select name='perso_id' id='perso_id' onchange='document.location.href=\"index.php?page=plugins/conges/enregistrer.php&perso_id=\"+this.value;' style='width:98%;'>\n";
+    echo "<select name='perso_id' id='perso_id' onchange='document.location.href=\"index.php?page=plugins/conges/recup_pose.php&perso_id=\"+this.value;' style='width:98%;'>\n";
     foreach($db_perso->result as $elem){
       if($perso_id==$elem['id']){
 	echo "<option value='".$elem['id']."' selected='selected'>".$elem['nom']." ".$elem['prenom']."</option>\n";
@@ -156,14 +160,14 @@ else{
   echo "<tr><td style='padding-top:15px;'>\n";
   echo "Journée(s) entière(s) : \n";
   echo "</td><td style='padding-top:15px;'>\n";
-  echo "<input type='checkbox' name='allday' checked='checked' onclick='all_day();'/>\n";
+  echo "<input type='checkbox' name='allday' onclick='all_day();'/>\n";
   echo "</td></tr>\n";
   echo "<tr><td>\n";
   echo "Date de début : \n";
   echo "</td><td>";
   echo "<input type='text' name='debut' id='debut' value='$debut' class='datepicker googleCalendarTrigger' style='width:97%;'/>&nbsp;\n";
   echo "</td></tr>\n";
-  echo "<tr id='hre_debut' style='display:none;'><td>\n";
+  echo "<tr id='hre_debut'><td>\n";
   echo "Heure de début : \n";
   echo "</td><td>\n";
   echo "<select name='hre_debut' id='hre_debut_select' style='width:98%;' class='googleCalendarTrigger'>\n";
@@ -175,7 +179,7 @@ else{
   echo "</td><td>";
   echo "<input type='text' name='fin' id='fin' value='$fin'  class='datepicker googleCalendarTrigger' style='width:97%;'/>&nbsp;\n";
   echo "</td></tr>\n";
-  echo "<tr id='hre_fin' style='display:none;'><td>\n";
+  echo "<tr id='hre_fin'><td>\n";
   echo "Heure de fin : \n";
   echo "</td><td>\n";
   echo "<select name='hre_fin' id='hre_fin_select' style='width:98%;' class='googleCalendarTrigger' onfocus='setEndHour();'>\n";
@@ -200,45 +204,14 @@ else{
   <tr><td colspan='2' style='padding-top:20px;'>
 EOD;
 
-  // Si les congés et les récupérations sont traités de la même façon (Conges-Recuperations = Assembler), l'utilisateur peut choisir quel compteur sera débité
-  if( $config['Conges-Recuperations'] == 0 ){
-    if($reliquat != '0.00' ){
-      echo "Ces heures seront débitées sur le réliquat de l'année précédente puis sur : ";
-    }
-    else{
-      echo "Ces heures seront débitées sur : ";
-    }
+  echo "Ces heures seront débitées sur les crédits de récupérations.";
+  echo "<input type='hidden' name='debit' value='recuperation' />\n";
+  echo "</td></tr>\n";
+
     echo <<<EOD
-      </td></tr>
-      <tr><td>&nbsp;</td>
-      <td><select name='debit' style='width:98%;' onchange='calculRestes();'>
-      <option value='recuperation'>Le crédit de récupérations</option>
-      <option value='credit'>Le crédit de congés de l'année en cours</option>
-      </select></td></tr>
-EOD;
-  // Si les congés et les récupérations ne sont pas traités de la même façon (Conges-Recuperations = Dissocier), le compteur "congés" sera débité
-  } else {
-    if($reliquat != '0.00' ){
-      echo "Ces heures seront débitées sur le réliquat de l'année précédente puis sur les crédits de congés de l'année en cours.";
-    }
-    else{
-      echo "Ces heures seront débitées sur les crédits de congés de l'année en cours.";
-    }
-    echo "<input type='hidden' name='debit' value='credit' />\n";
-    echo "</td></tr>\n";
-  }
-  
-  echo <<<EOD
     <tr><td colspan='2'>
       <table border='0'>
-        <tr><td style='width:298px;'>Reliquat : </td><td style='width:130px;'>$reliquat2</td><td>(après débit : <font id='reliquat4'>$reliquat2</font>)</td></tr>
-EOD;
-  if( $config['Conges-Recuperations'] == 0 ){
-        echo "<tr><td>Crédit de récupérations : </td><td>$recuperation2</td><td><font id='recup3'>(après débit : <font id='recup4'>$recuperation2</font>)</font></td></tr>\n";
-  }
-echo <<<EOD
-        <tr><td>Crédit de congés : </td><td>$credit2</td><td><font id='credit3'>(après débit : <font id='credit4'>$credit2</font>)</font></td></tr>
-        <tr><td>Solde débiteur : </td><td>$anticipation2</td><td><font id='anticipation3'>(après débit : <font id='anticipation4'>$anticipation2</font>)</font></td></tr>
+        <tr><td>Crédit de récupérations : </td><td>$recuperation2</td><td><font id='recup3'>(après débit : <font id='recup4'>$recuperation2</font>)</font></td></tr>
       </table>
     </td></tr>
 EOD;

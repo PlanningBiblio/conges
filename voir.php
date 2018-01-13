@@ -1,13 +1,13 @@
 <?php
 /**
-Planning Biblio, Plugin Congés Version 2.7
+Planning Biblio, Plugin Congés Version 2.8
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
 @copyright 2013-2018 Jérôme Combes
 
 Fichier : plugins/conges/voir.php
 Création : 24 juillet 2013
-Dernière modification : 25 juillet 2017
+Dernière modification : 12 janvier 2018
 @author Jérôme Combes <jerome@planningbiblio.fr>
 
 Description :
@@ -29,6 +29,7 @@ $congesAffiches=filter_input(INPUT_GET,"congesAffiches",FILTER_SANITIZE_STRING);
 $perso_id=filter_input(INPUT_GET,"perso_id",FILTER_SANITIZE_NUMBER_INT);
 $reset=filter_input(INPUT_GET,"reset",FILTER_CALLBACK,array("options"=>"sanitize_on"));
 $supprimes=filter_input(INPUT_GET,"supprimes",FILTER_CALLBACK,array("options"=>"sanitize_on"));
+$voir_recup=filter_input(INPUT_GET,"recup",FILTER_SANITIZE_NUMBER_INT);
 
 if($admin and $perso_id==null){
   $perso_id=isset($_SESSION['oups']['conges_perso_id'])?$_SESSION['oups']['conges_perso_id']:$_SESSION['login_id'];
@@ -76,6 +77,15 @@ if($perso_id!=0){
 if($agents_supprimes){
   $c->agents_supprimes=array(0,1);
 }
+
+// Si la gestion des congés et des récupérations est dissociée, on ne recherche que les infos voulues
+if($config['Conges-Recuperations'] == '1'){
+  if($voir_recup){
+    $c->debit='recuperation';
+  } else {
+    $c->debit='credit';
+  }
+}
 $c->fetch();
 
 // Recherche des agents pour le menu
@@ -101,7 +111,12 @@ for($d=date("Y")+2;$d>date("Y")-11;$d--){
 }
 
 // Affichage du tableau
-echo "<h3 class='noprint'>Liste des congés</h3>\n";
+if($config['Conges-Recuperations'] == '1' and $voir_recup){
+  echo "<h3 class='noprint'>Liste des récupérations</h3>\n";
+} else {
+  echo "<h3 class='noprint'>Liste des congés</h3>\n";
+}
+
 echo "<h3 class='print_only'>Liste des congés de ".nom($perso_id,"prenom nom",$agents).", année $annee-".($annee+1)."</h3>\n";
 echo <<<EOD
 <form name='form' method='get' action='index.php' class='noprint'>
@@ -162,11 +177,38 @@ if($admin){
 }
 echo "<th colspan='2' class='ui-state-default'>Validation</th>\n";
 echo "<th rowspan='2'>Heures</th>";
-echo "<th rowspan='2'>Crédits</th><th rowspan='2'>Reliquat</th><th rowspan='2'>Récupérations</th><th rowspan='2'>Solde Débiteur</th></tr>\n";
+
+// Si la gestion des congés et des récupérations est dissociée, on n'affiche que les colonnes voulues
+if($config['Conges-Recuperations'] == '0' or !$voir_recup){
+  echo "<th rowspan='2'>Crédits</th><th rowspan='2'>Reliquat</th>\n";
+}
+if($config['Conges-Recuperations'] == '0' or $voir_recup){
+  echo "<th rowspan='2'>Récupérations</th>\n";
+}
+if($config['Conges-Recuperations'] == '0' or !$voir_recup){
+  echo "<th rowspan='2'>Solde Débiteur</th></tr>\n";
+}
 echo "<tr><th>&Eacute;tat</th><th class='dataTableDateFR'>Date</th></tr></thead>\n";
 echo "<tbody>\n";
 
 foreach($c->elements as $elem){
+
+  // Si la gestion des congés et des récupérations est dissociée, la requête recherche également les mises à jour des crédits.
+  // Ici, on filtre les lignes "Mises à jour des crédits" pour n'afficher que celles qui concernent les récupérations ou les congés.
+  if($config['Conges-Recuperations'] == '1'){
+    if($elem['debit'] == null){
+      if($voir_recup and $elem['recup_actuel'] == $elem['recup_prec']){
+        continue;
+      }
+      if(!$voir_recup
+        and $elem['solde_actuel'] == $elem['solde_prec']
+        and $elem['reliquat_actuel'] == $elem['reliquat_prec']
+        and $elem['anticipation_actuel'] == $elem['anticipation_prec']){
+        continue;
+      }
+    }
+  }
+
   $debut=str_replace("00h00","",dateFr($elem['debut'],true));
   $fin=str_replace("23h59","",dateFr($elem['fin'],true));
   $heures=heure4($elem['heures']);
@@ -256,8 +298,17 @@ foreach($c->elements as $elem){
   echo "</td>";
   echo "<td>$debut</td><td>$fin</td>$nom<td style='$validationStyle'>$validation</td><td>$validationDate</td>\n";
   echo "<td class='aRight'>$heures</td>";
-  echo "<td class='$creditClass'>$credits</td><td class='$reliquatClass'>$reliquat</td>";
-  echo "<td class='$recuperationsClass'>$recuperations</td><td class='$anticipationClass'>$anticipation</td></tr>\n";
+
+  // Si la gestion des congés et des récupérations est dissociée, on n'affiche que les colonnes voulues
+  if($config['Conges-Recuperations'] == '0' or !$voir_recup){
+    echo "<td class='$creditClass'>$credits</td><td class='$reliquatClass'>$reliquat</td>";
+  }
+  if($config['Conges-Recuperations'] == '0' or $voir_recup){
+    echo "<td class='$recuperationsClass'>$recuperations</td>\n";
+  }
+  if($config['Conges-Recuperations'] == '0' or !$voir_recup){
+    echo "<td class='$anticipationClass'>$anticipation</td></tr>\n";
+  }
 }
 
 ?>

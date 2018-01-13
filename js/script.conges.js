@@ -1,12 +1,12 @@
 /**
-Planning Biblio, Plugin Congés Version 2.5.4
+Planning Biblio, Plugin Congés Version 2.8
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
 @copyright 2013-2018 Jérôme Combes
 
 Fichier : plugins/conges/js/script.conges.js
 Création : 2 août 2013
-Dernière modification : 10 février 2010
+Dernière modification : 12 janvier 2018
 @author Jérôme Combes <jerome@planningbiblio.fr>
 @author Etienne Cavalié <etienne.cavalie@unice.fr>
 
@@ -92,57 +92,99 @@ function calculRestes(){
   credit = parseFloat(credit.replace(' ',''));
   anticipation = parseFloat(anticipation.replace(' ',''));
 
+  var congesRecup = $('#conges-recup').val();
+
   jours=heures/7;
   $("#nbJours").text(jours.toFixed(2));
 
-  // Calcul du reliquat après décompte
-  reste=0;
-  reliquat=reliquat-heures;
-  if(reliquat<0){
-    reste=-reliquat;
-    reliquat=0;
+  
+  // Si les récupérations et les congés sont gérés de la même façon
+  if(congesRecup == 0){
+    
+    // Calcul du reliquat après décompte
+    reste=0;
+    reliquat=reliquat-heures;
+    if(reliquat<0){
+      reste=-reliquat;
+      reliquat=0;
+    }
+
+    reste2=0;
+    // Calcul du crédit de récupération
+    if(debit=="recuperation"){
+      recuperation=recuperation-reste;
+      if(recuperation<0){
+        reste2=-recuperation;
+        recuperation=0;
+      }
+    }
+    
+    // Calcul du crédit de congés
+    else if(debit=="credit"){
+      credit=credit-reste;
+      if(credit<0){
+        reste2=-credit;
+        credit=0;
+      }
+    }
+    
+    // Si après tous les débits, il reste des heures, on débit le crédit restant
+    reste3=0;
+    if(reste2){
+      if(debit=="recuperation"){
+        credit=credit-reste2;
+        if(credit<0){
+          reste3=-credit;
+          credit=0;
+        }
+      }
+      else if(debit=="credit"){
+        recuperation=recuperation-reste2;
+        if(recuperation<0){
+          reste3=-recuperation;
+          recuperation=0;
+        }
+      }
+    }
+    
+    if(reste3){
+      anticipation=parseFloat(anticipation)+reste3;
+    }
   }
 
-  reste2=0;
-  // Calcul du crédit de récupération
-  if(debit=="recuperation"){
-    recuperation=recuperation-reste;
-    if(recuperation<0){
-      reste2=-recuperation;
-      recuperation=0;
-    }
-  }
-  
-  // Calcul du crédit de congés
-  else if(debit=="credit"){
-    credit=credit-reste;
-    if(credit<0){
-      reste2=-credit;
-      credit=0;
-    }
-  }
-  
-  // Si après tous les débits, il reste des heures, on débit le crédit restant
-  reste3=0;
-  if(reste2){
+  // Si les récupérations et les congés ne sont pas gérés de la même façon
+  else{
+    // Calcul du crédit de récupération
     if(debit=="recuperation"){
-      credit=credit-reste2;
-      if(credit<0){
-	reste3=-credit;
-	credit=0;
-      }
+      recuperation = recuperation - heures;
     }
+
+    // Calcul du crédit de congés
     else if(debit=="credit"){
-      recuperation=recuperation-reste2;
-      if(recuperation<0){
-	reste3=-recuperation;
-	recuperation=0;
+
+      // Calcul du reliquat après décompte
+      reste=0;
+      reliquat=reliquat-heures;
+      if(reliquat<0){
+        reste=-reliquat;
+        reliquat=0;
       }
+        
+      // Calcul du crédit de congés
+      credit=credit-reste;
+      if(credit<0){
+        reste=-credit;
+        credit=0;
+      } else {
+        reste = 0;
+      }
+      
+      // Anticipation
+      if(reste){
+        anticipation=parseFloat(anticipation)+reste;
+      }
+
     }
-  }
-  
-  if(reste3){
-    anticipation=parseFloat(anticipation)+reste3;
   }
   
   // Affichage
@@ -238,6 +280,15 @@ function verifConges(){
     information("La date de fin doit être supérieure à la date de début","error");
     return false;
   }
+  
+  // Vérifions si le solde des récupérations n'est pas négatif
+  var recuperation = parseFloat( $('#recup4').text() );
+  if(parseFloat(recuperation) < 0){
+    CJInfo("Le crédit de récupération ne peut pas être négatif.", "error");
+    return false;
+  }
+  
+
   // Vérifions si un autre congé a été demandé ou validé
   var result=$.ajax({
     url: "plugins/conges/ajax.verifConges.php",

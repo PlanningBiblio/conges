@@ -35,6 +35,7 @@ class conges{
   public $bornesExclues=null;
   public $CSRFToken=null;
   public $data=array();
+  public $debit=null;
   public $debut=null;
   public $elements=array();
   public $error=false;
@@ -293,6 +294,10 @@ class conges{
       $filter .= " AND `supprime` = '0' ";
     }
     
+    if($this->debit){
+      $filter .= " AND ( `debit` = '{$this->debit}' OR `debit` IS NULL ) ";
+    }
+
     // Recherche des agents actifs seulement
     $perso_ids=array(0);
     $p=new personnel();
@@ -462,6 +467,9 @@ class conges{
 	if(!array_key_exists($elem['perso_id'],$tab)){
 	  continue;
 	}
+	if(empty($tab[$elem['perso_id']]['validation'])){
+          $tab[$elem['perso_id']]['validation'] = '0000-00-00 00:00:00';
+        }
 	if(!array_key_exists("maj3",$tab[$elem['perso_id']]) and $elem['validation']>$tab[$elem['perso_id']]['validation']){
 	  $tab[$elem['perso_id']]['recup_restant']=$elem['solde_actuel'];
 	  $tab[$elem['perso_id']]['maj3']=true;
@@ -899,60 +907,94 @@ class conges{
       // Recherche des crédits actuels
       $p=new personnel();
       $p->fetchById($data['perso_id']);
-      $credit=$p->elements[0]['congesCredit'];
-      $reliquat=$p->elements[0]['congesReliquat'];
-      $recuperation=$p->elements[0]['recupSamedi'];
-      $anticipation=$p->elements[0]['congesAnticipation'];
-      $heures=$data['heures'];
+      $credit = floatval($p->elements[0]['congesCredit']);
+      $reliquat = floatval($p->elements[0]['congesReliquat']);
+      $recuperation = floatval($p->elements[0]['recupSamedi']);
+      $anticipation = floatval($p->elements[0]['congesAnticipation']);
+      $heures = floatval($data['heures']);
       
       // Mise à jour des compteurs dans la table conges
       $updateConges=array("solde_prec"=>$credit, "recup_prec"=>$recuperation, "reliquat_prec"=>$reliquat, "anticipation_prec"=>$anticipation);
 
-      // Calcul du reliquat après décompte
-      $reste=0;
-      $reliquat=$reliquat-$heures;
-      if($reliquat<0){
-	$reste=-$reliquat;
-	$reliquat=0;
-      }
-      $reste2=0;
-      // Calcul du crédit de récupération
-      if($data["debit"]=="recuperation"){
-	$recuperation=$recuperation-$reste;
-	if($recuperation<0){
-	  $reste2=-$recuperation;
-	  $recuperation=0;
-	}
-      }
-      // Calcul du crédit de congés
-      else if($data["debit"]=="credit"){
-	$credit=$credit-$reste;
-	if($credit<0){
-	  $reste2=-$credit;
-	  $credit=0;
-	}
-      }
-      // Si après tous les débits, il reste des heures, on débit le crédit restant
-      $reste3=0;
-      if($reste2){
-	if($data["debit"]=="recuperation"){
-	  $credit=$credit-$reste2;
-	  if($credit<0){
-	    $reste3=-$credit;
-	    $credit=0;
-	  }
-	}
-	else if($data["debit"]=="credit"){
-	  $recuperation=$recuperation-$reste2;
-	  if($recuperation<0){
-	    $reste3=-$recuperation;
-	    $recuperation=0;
-	  }
-	}
-      }
+      // Si les congés et les récupérations sont traitées de la même façon (config['Conges-Recuperations'] = 0 / Assembler
+      if( $data['conges-recup'] == 0){
+        // Calcul du reliquat après décompte
+        $reste=0;
+        $reliquat=$reliquat-$heures;
+        if($reliquat<0){
+          $reste=-$reliquat;
+          $reliquat=0;
+        }
+        $reste2=0;
+        // Calcul du crédit de récupération
+        if($data["debit"]=="recuperation"){
+          $recuperation=$recuperation-$reste;
+          if($recuperation<0){
+            $reste2=-$recuperation;
+            $recuperation=0;
+          }
+        }
+        // Calcul du crédit de congés
+        else if($data["debit"]=="credit"){
+          $credit=$credit-$reste;
+          if($credit<0){
+            $reste2=-$credit;
+            $credit=0;
+          }
+        }
+        // Si après tous les débits, il reste des heures, on débit le crédit restant
+        $reste3=0;
+        if($reste2){
+          if($data["debit"]=="recuperation"){
+            $credit=$credit-$reste2;
+            if($credit<0){
+              $reste3=-$credit;
+              $credit=0;
+            }
+          }
+          else if($data["debit"]=="credit"){
+            $recuperation=$recuperation-$reste2;
+            if($recuperation<0){
+              $reste3=-$recuperation;
+              $recuperation=0;
+            }
+          }
+        }
 
-      if($reste3){
-	$anticipation=floatval($anticipation)+$reste3;
+        if($reste3){
+          $anticipation=floatval($anticipation)+$reste3;
+        }
+      }
+      
+      // Si les congés et les récupérations sont traitées différement (config['Conges-Recuperations'] = 1 / Dissocier
+      else {
+
+        if($data["debit"]=="credit"){
+          // Calcul du reliquat après décompte
+          $reste=0;
+          $reliquat=$reliquat-$heures;
+          if($reliquat<0){
+            $reste=-$reliquat;
+            $reliquat=0;
+          }
+          // Calcul du crédit de congés
+          $credit=$credit-$reste;
+          if($credit<0){
+            $reste=-$credit;
+            $credit=0;
+          } else {
+            $reste = 0;
+          }
+          if($reste){
+            $anticipation=floatval($anticipation)+$reste;
+          }
+        }
+        
+        // Calcul du crédit de récupération
+        else {
+          $recuperation = $recuperation - $heures;
+        }
+      
       }
 
       // Mise à jour des compteurs dans la table personnel
@@ -1109,6 +1151,11 @@ class conges{
     if($version < "2.8"){
       $version="2.8";
       $sql[] = "UPDATE `{$dbprefix}config` SET `categorie` = 'Cong&eacute;s' WHERE `categorie` LIKE 'Cong%s';";
+      $sql[] = "INSERT INTO `{$dbprefix}config` (`nom`, `type`, `valeur`, `valeurs`, `categorie`, `commentaires`, `ordre` ) VALUES ('Conges-Recuperations', 'enum2', '0', '[[0,\"Assembler\"],[1,\"Dissocier\"]]', 'Cong&eacute;s', 'Traiter les r&eacute;cup&eacute;rations comme les cong&eacute;s (Assembler), ou les traiter s&eacute;par&eacute;ment (Dissocier)', '3');";
+      $sql[] = "INSERT INTO `{$dbprefix}menu` (`niveau1`,`niveau2`,`titre`,`url`,`condition`) VALUES (15, 24, 'Poser des r&eacute;cup&eacute;rations', 'plugins/conges/recup_pose.php', 'config=Conges-Recuperations');";
+      $sql[] = "INSERT INTO `{$dbprefix}menu` (`niveau1`,`niveau2`,`titre`,`url`,`condition`) VALUES (15, 15, 'Liste des r&eacute;cup&eacute;rations', 'plugins/conges/voir.php&amp;recup=1', 'config=Conges-Recuperations');";
+      $sql[]="INSERT INTO `{$dbprefix}acces` (`nom`,`groupe_id`,`page`) VALUES ('Cong&eacute;s - Poser des r&eacute;cup&eacute;rations','100','plugins/conges/recup_pose.php');";
+
       $sql[]="UPDATE `{$dbprefix}plugins` SET `version`='$version' WHERE `nom`='conges';";
     }
 
