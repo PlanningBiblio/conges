@@ -7,7 +7,7 @@ Voir les fichiers README.md et LICENSE
 
 Fichier : plugins/conges/recup_pose.php
 Création : 12 janvier 2018
-Dernière modification : 12 janvier 2018
+Dernière modification : 28 janvier 2018
 @author Jérôme Combes <jerome@planningbiblio.fr>
 
 Description :
@@ -25,13 +25,30 @@ if($config['Conges-Recuperations'] == 0){
 
 // Initialisation des variables
 $CSRFToken = filter_input(INPUT_GET, 'CSRFToken', FILTER_SANITIZE_STRING);
-$menu=isset($_GET['menu'])?$_GET['menu']:null;
-$perso_id=isset($_GET['perso_id'])?$_GET['perso_id']:$_SESSION['login_id'];
-if(!in_array(2,$droits)){
+$perso_id = filter_input(INPUT_GET, 'perso_id', FILTER_SANITIZE_NUMBER_INT);
+$debut = filter_input(INPUT_GET, 'debut', FILTER_SANITIZE_STRING);
+$fin = filter_input(INPUT_GET, 'fin', FILTER_SANITIZE_STRING);
+
+if(!$perso_id) { $perso_id = $_SESSION['login_id']; }
+if(!$fin) { $fin = $debut; }
+
+// Gestion des droits d'administration
+// NOTE : Ici, pas de différenciation entre les droits niveau 1 et niveau 2
+// NOTE : Les agents ayant les droits niveau 1 ou niveau 2 sont admin ($admin, droits 40x et 60x)
+// TODO : différencier les niveau 1 et 2 si demandé par les utilisateurs du plugin
+
+$admin = false;
+for($i = 1; $i <= $config['Multisites-nombre']; $i++ ){
+  if(in_array((400+$i), $droits) or in_array((600+$i), $droits)){
+    $admin = true;
+    break;
+  }
+}
+
+// Si pas de droits de gestion des congés, on force $perso_id = son propre ID
+if(!$admin){
   $perso_id=$_SESSION['login_id'];
 }
-$debut=isset($_GET['debut'])?$_GET['debut']:null;
-$fin=isset($_GET['fin'])?$_GET['fin']:null;
 
 echo <<<EOD
 <h3>Poser des récupérations</h3>
@@ -42,7 +59,6 @@ EOD;
 
 if(isset($_GET['confirm'])){	// Confirmation
   // Initialisation des variables
-  $fin=$fin?$fin:$debut;
   $debutSQL=dateSQL($debut);
   $finSQL=dateSQL($fin);
   $hre_debut=$_GET['hre_debut']?$_GET['hre_debut']:"00:00:00";
@@ -126,7 +142,6 @@ else{
   echo "<form name='form' action='index.php' method='get' id='form'>\n";
   echo "<input type='hidden' name='CSRFToken' value='$CSRFSession' />\n";
   echo "<input type='hidden' name='page' value='plugins/conges/recup_pose.php' />\n";
-  echo "<input type='hidden' name='menu' value='$menu' />\n";
   echo "<input type='hidden' name='confirm' value='confirm' />\n";
   echo "<input type='hidden' name='reliquat' value='$reliquat' />\n";
   echo "<input type='hidden' name='recuperation' value='$recuperation' />\n";
@@ -138,7 +153,7 @@ else{
   echo "<tr><td style='width:300px;'>\n";
   echo "Nom, prénom : \n";
   echo "</td><td>\n";
-  if(in_array(2,$droits)){
+  if($admin){
     $db_perso=new db();
     $db_perso->query("select * from {$dbprefix}personnel where actif='Actif' order by nom,prenom;");
     echo "<select name='perso_id' id='perso_id' onchange='document.location.href=\"index.php?page=plugins/conges/recup_pose.php&perso_id=\"+this.value;' style='width:98%;'>\n";
@@ -223,12 +238,7 @@ EOD;
   echo "<textarea name='commentaires' cols='16' rows='5' style='width:97%;'></textarea>\n";
   echo "</td></tr><tr><td>&nbsp;\n";
   echo "</td></tr><tr><td colspan='2' style='text-align:center;'>\n";
-  if($menu=="off"){
-    echo "<input type='button' value='Annuler' onclick='popup_closed();' class='ui-button' />";
-  }
-  else{
-    echo "<input type='button' value='Annuler' onclick='document.location.href=\"index.php?page=plugins/conges/index.php\";' class='ui-button'/>";
-  }
+  echo "<input type='button' value='Annuler' onclick='document.location.href=\"index.php?page=plugins/conges/index.php\";' class='ui-button'/>";
   echo "&nbsp;&nbsp;\n";
   echo "<input type='button' value='Valider' class='ui-button' onclick='verifConges();' style='margin-left:20px;'/>\n";
   echo "<div id='google-calendar-div' class='inline'></div>\n";

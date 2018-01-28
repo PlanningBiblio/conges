@@ -7,7 +7,7 @@ Voir les fichiers README.md et LICENSE
 
 Fichier : plugins/conges/modif.php
 Création : 1er août 2013
-Dernière modification : 12 janvier 2018
+Dernière modification : 28 janvier 2018
 @author Jérôme Combes <jerome@planningbiblio.fr>
 @author Etienne Cavalié <etienne.cavalie@unice.fr>
 
@@ -30,7 +30,6 @@ $debut=filter_input(INPUT_GET,"debut",FILTER_CALLBACK,array("options"=>"sanitize
 $fin=filter_input(INPUT_GET,"fin",FILTER_CALLBACK,array("options"=>"sanitize_dateFr"));
 $hre_debut=filter_input(INPUT_GET,"hre_debut",FILTER_CALLBACK,array("options"=>"sanitize_time"));
 $hre_fin=filter_input(INPUT_GET,"hre_fin",FILTER_CALLBACK,array("options"=>"sanitize_time_end"));
-$menu=filter_input(INPUT_GET,"menu",FILTER_SANITIZE_STRING);
 $perso_id=filter_input(INPUT_GET,"perso_id",FILTER_SANITIZE_NUMBER_INT);
 $refus=filter_input(INPUT_GET,"refus",FILTER_SANITIZE_STRING);
 $valide=filter_input(INPUT_GET,"valide",FILTER_SANITIZE_NUMBER_INT);
@@ -47,40 +46,58 @@ if(!array_key_exists(0,$c->elements)){
 $data=$c->elements[0];
 
 if(!$perso_id){
-	$perso_id=$data['perso_id'];
+  $perso_id=$data['perso_id'];
 }
 
-if(!in_array(2,$droits) and $perso_id!=$_SESSION['login_id']){
+
+// Droits d'administration niveau 1 et niveau 2
+// Droits nécessaires en mono-site
+$droitsN1 = array(401);
+$droitsN2 = array(601);
+
+// Droits nécessaires en multisites avec vérification des sites attribués à l'agent concerné par le congé
+if($config['Multisites-nombre']>1){
+  $droitsN1 = Array();
+  $droitsN2 = Array();
+
+  $p=new personnel();
+  $p->fetchById($perso_id);
+
+  if(is_array($p->elements[0]['sites'])){
+    foreach($p->elements[0]['sites'] as $site){
+      $droitsN1[] = 400 + $site;
+      $droitsN2[] = 600 + $site;
+    }
+  }
+}
+
+// Ai-je le droit d'administration niveau 1 pour le congé demandé
+$adminN1 = false;
+foreach($droitsN1 as $elem){
+  if(in_array($elem,$droits)){
+    $adminN1 = true;
+    break;
+  }
+}
+
+// Ai-je le droit d'administration niveau 2 pour le congé demandé
+$adminN2 = false;
+foreach($droitsN2 as $elem){
+  if(in_array($elem,$droits)){
+    $adminN1 = true;
+    $adminN2 = true;
+    break;
+  }
+}
+
+// Si je ne suis pas admin et que ce congé n'est pas le mien, l'accès est refusé
+if(!$adminN1 and $perso_id != $_SESSION['login_id']){
   echo "<h3>Congés</h3>\n";
   echo "<div id='acces_refuse'>Accès refusé</div>\n";
   include "include/footer.php";
   exit;
 }
 
-if($config['Multisites-nombre']>1){
-  $p=new personnel();
-  $p->fetchById($perso_id);
-  // $droitsConges = droits nécessaires pour adminN2 si multisites
-
-  // TODO : Vérifier le bon fonctionnement de la validation N2 en mono et en multisites. 
-  // $droitsConges=array(2); ajouté en 10/2017 suite à la découverte du fait que le droit "Gestion des congés, validation N2" n'est pas géré site par site
-//   $droitsConges=array();
-  $droitsConges=array(2);
-  if(is_array($p->elements[0]['sites'])){
-    foreach($p->elements[0]['sites'] as $site){
-      $droitsConges[]=400+$site;
-    }
-  }
-}
-else{
-  $droitsConges=array(2);
-}
-$admin=in_array(7,$droits)?true:false;
-$admin=in_array(2,$droits)?true:$admin;
-$adminN2=false;
-foreach($droitsConges as $elem){
-  $adminN2=in_array($elem,$droits)?true:$adminN2;
-}
 
 if($confirm){
   $fin=$fin?$fin:$debut;
@@ -179,7 +196,7 @@ else{	// Formulaire
   $selectAccept[2]=($data['valide_n1']>0 and $data['valide']==0)?"selected='selected'":null;
   $selectAccept[3]=($data['valide_n1']<0 and $data['valide']==0)?"selected='selected'":null;
   $displayRefus=$data['valide']>=0?"display:none;":null;
-  $displayRefus=($data['valide_n1']<0 and $admin)?null:$displayRefus;
+  $displayRefus=($data['valide_n1']<0 and $adminN1)?null:$displayRefus;
   $perso_id=$data['perso_id'];
   $debut=dateFr(substr($data['debut'],0,10));
   $fin=dateFr(substr($data['fin'],0,10));
@@ -203,9 +220,9 @@ else{	// Formulaire
   $p->fetchById($perso_id);
   $nom=$p->elements[0]['nom'];
   $prenom=$p->elements[0]['prenom'];
-  $credit=number_format($p->elements[0]['congesCredit'], 2, '.', ' ');
-  $reliquat=number_format($p->elements[0]['congesReliquat'], 2, '.', ' ');
-  $anticipation=number_format($p->elements[0]['congesAnticipation'], 2, '.', ' ');
+  $credit=number_format( (float) $p->elements[0]['congesCredit'], 2, '.', ' ');
+  $reliquat=number_format( (float) $p->elements[0]['congesReliquat'], 2, '.', ' ');
+  $anticipation=number_format( (float) $p->elements[0]['congesAnticipation'], 2, '.', ' ');
   $credit2 = heure4($credit);
   $reliquat2 = heure4($reliquat);
   $anticipation2 = heure4($anticipation);
@@ -221,7 +238,6 @@ else{	// Formulaire
   echo "<form name='form' action='index.php' method='get' id='form' class='googleCalendarForm'>\n";
   echo "<input type='hidden' name='page' value='plugins/conges/modif.php' />\n";
   echo "<input type='hidden' name='CSRFToken' value='$CSRFSession' />\n";
-  echo "<input type='hidden' name='menu' value='$menu' />\n";
   echo "<input type='hidden' name='confirm' value='confirm' />\n";
   echo "<input type='hidden' name='reliquat' value='$reliquat' />\n";
   echo "<input type='hidden' name='recuperation' value='$recuperation' />\n";
@@ -235,7 +251,7 @@ else{	// Formulaire
   echo "<tr><td style='width:300px;'>\n";
   echo "Nom, prénom : \n";
   echo "</td><td>\n";
-  if($admin){
+  if($adminN1){
     $db_perso=new db();
     $db_perso->query("select * from {$dbprefix}personnel where actif='Actif' order by nom,prenom;");
     echo "<select name='perso_id' id='perso_id' style='width:98%;' class='googleCalendarTrigger'>\n";
@@ -254,11 +270,15 @@ else{	// Formulaire
     echo $_SESSION['login_nom']." ".$_SESSION['login_prenom'];
   }
   echo "</td></tr>\n";
-  echo "<tr><td style='padding-top:15px;'>\n";
-  echo "Journée(s) entière(s) : \n";
-  echo "</td><td style='padding-top:15px;'>\n";
-  echo "<input type='checkbox' name='allday' $allday onclick='all_day();'/>\n";
-  echo "</td></tr>\n";
+
+  if(!$config['Conges-Recuperations']){
+    echo "<tr><td style='padding-top:15px;'>\n";
+    echo "Journée(s) entière(s) : \n";
+    echo "</td><td style='padding-top:15px;'>\n";
+    echo "<input type='checkbox' name='allday' $allday onclick='all_day();'/>\n";
+    echo "</td></tr>\n";
+  }
+
   echo "<tr><td>\n";
   echo "Date de début : \n";
   echo "</td><td>";
@@ -377,7 +397,7 @@ EOD;
 
   echo "<tr><td>Validation</td>\n";
   // Affichage de l'état de validation dans un menu déroulant si l'agent a le droit de le modifié et si le congé n'est pas validé
-  if(($adminN2 and !$valide) or ($admin and $data['valide']==0)){
+  if(($adminN2 and !$valide) or ($adminN1 and $data['valide']==0)){
     echo "<td><select name='valide' style='width:98%;' onchange='afficheRefus(this);'>\n";
     echo "<option value='0'>&nbsp;</option>\n";
     echo "<option value='2' {$selectAccept[2]}>Accept&eacute; (En attente de validation hi&eacute;rarchique)</option>\n";
@@ -409,18 +429,13 @@ EOD;
   echo "<tr><td>&nbsp;</td></tr>\n";
 
   echo "</td></tr><tr><td colspan='2' style='text-align:center;'>\n";
-  if($menu=="off"){
-    echo "<input type='button' value='Annuler' onclick='popup_closed();' class='ui-button'/>";
-  }
-  else{
-    echo "<input type='button' value='Annuler' onclick='document.location.href=\"index.php?page=plugins/conges/voir.php\";' class='ui-button'/>";
-  }
+  echo "<input type='button' value='Annuler' onclick='document.location.href=\"index.php?page=plugins/conges/voir.php\";' class='ui-button'/>";
 
-  if((!$valide and $admin) or ($data['valide']==0 and $data['valide_n1']==0)){
+  if((!$valide and $adminN1) or ($data['valide']==0 and $data['valide_n1']==0)){
     echo "<input type='button' value='Enregistrer les modifications' style='margin-left:20px;' class='ui-button' onclick='verifConges();'/>\n";
   }
 
-  if($admin){
+  if($adminN1){
     echo "<input type='button' value='Supprimer' style='margin-left:20px;' onclick='supprimeConges()' class='ui-button'/>\n";
   }
   

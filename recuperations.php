@@ -1,13 +1,13 @@
 <?php
-/*
-Planning Biblio, Plugin Congés Version 2.1
+/**
+Planning Biblio, Plugin Congés Version 2.8
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
 @copyright 2013-2018 Jérôme Combes
 
 Fichier : plugins/conges/recuperations.php
 Création : 27 août 2013
-Dernière modification : 9 janvier 2016
+Dernière modification : 28 janvier 2018
 @author Jérôme Combes <jerome@planningbiblio.fr>
 
 Description :
@@ -18,10 +18,22 @@ include_once "class.conges.php";
 include_once "personnel/class.personnel.php";
 
 // Initialisation des variables
-$admin=in_array(2,$droits)?true:false;
 $annee=filter_input(INPUT_GET,"annee",FILTER_SANITIZE_STRING);
 $reset=filter_input(INPUT_GET,"reset",FILTER_CALLBACK,array("options"=>"sanitize_on"));
 $perso_id=filter_input(INPUT_GET,"perso_id",FILTER_SANITIZE_NUMBER_INT);
+
+// Gestion des droits d'administration
+// NOTE : Ici, pas de différenciation entre les droits niveau 1 et niveau 2
+// NOTE : Les agents ayant les droits niveau 1 ou niveau 2 sont admin ($admin, droits 40x et 60x)
+// TODO : différencier les niveau 1 et 2 si demandé par les utilisateurs du plugin
+
+$admin = false;
+for($i = 1; $i <= $config['Multisites-nombre']; $i++ ){
+  if(in_array((400+$i), $droits) or in_array((600+$i), $droits)){
+    $admin = true;
+    break;
+  }
+}
 
 if($admin and $perso_id===null){
   $perso_id=isset($_SESSION['oups']['recup_perso_id'])?$_SESSION['oups']['recup_perso_id']:$_SESSION['login_id'];
@@ -31,7 +43,7 @@ elseif($perso_id===null){
 }
 
 if(!$annee){
-	$annee=isset($_SESSION['oups']['recup_annee'])?$_SESSION['oups']['recup_annee']:(date("m")<9?date("Y")-1:date("Y"));
+  $annee=isset($_SESSION['oups']['recup_annee'])?$_SESSION['oups']['recup_annee']:(date("m")<9?date("Y")-1:date("Y"));
 }
 
 if($reset){
@@ -44,7 +56,6 @@ $_SESSION['oups']['recup_perso_id']=$perso_id;
 
 $debut=$annee."-09-01";
 $fin=($annee+1)."-08-31";
-$admin=in_array(2,$droits)?true:false;
 $message=null;
 
 // Recherche des demandes de récupérations enregistrées

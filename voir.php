@@ -7,7 +7,7 @@ Voir les fichiers README.md et LICENSE
 
 Fichier : plugins/conges/voir.php
 Création : 24 juillet 2013
-Dernière modification : 12 janvier 2018
+Dernière modification : 28 janvier 2018
 @author Jérôme Combes <jerome@planningbiblio.fr>
 
 Description :
@@ -20,16 +20,24 @@ require_once "class.conges.php";
 require_once "personnel/class.personnel.php";
 
 // Initialisation des variables
-// Gestion des congés niveaux 1 et 2
-$admin=in_array(7,$droits)?true:false;
-$admin=in_array(2,$droits)?true:$admin;
-
 $annee=filter_input(INPUT_GET,"annee",FILTER_SANITIZE_STRING);
 $congesAffiches=filter_input(INPUT_GET,"congesAffiches",FILTER_SANITIZE_STRING);
 $perso_id=filter_input(INPUT_GET,"perso_id",FILTER_SANITIZE_NUMBER_INT);
 $reset=filter_input(INPUT_GET,"reset",FILTER_CALLBACK,array("options"=>"sanitize_on"));
 $supprimes=filter_input(INPUT_GET,"supprimes",FILTER_CALLBACK,array("options"=>"sanitize_on"));
 $voir_recup=filter_input(INPUT_GET,"recup",FILTER_SANITIZE_NUMBER_INT);
+
+// Gestion des droits d'administration
+// NOTE : Ici, pas de différenciation entre les droits niveau 1 et niveau 2
+// NOTE : Les agents ayant les droits niveau 1 ou niveau 2 sont admin ($admin, droits 40x et 60x)
+// TODO : différencier les niveau 1 et 2 si demandé par les utilisateurs du plugin
+$admin = false;
+for($i = 1; $i <= $config['Multisites-nombre']; $i++){
+  if(in_array((400+$i), $droits) or in_array((600+$i), $droits)){
+    $admin = true;
+    break;
+  }
+}
 
 if($admin and $perso_id==null){
   $perso_id=isset($_SESSION['oups']['conges_perso_id'])?$_SESSION['oups']['conges_perso_id']:$_SESSION['login_id'];

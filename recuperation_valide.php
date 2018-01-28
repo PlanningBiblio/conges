@@ -1,13 +1,13 @@
 <?php
 /**
-Planning Biblio, Plugin Congés Version 2.6.4
+Planning Biblio, Plugin Congés Version 2.8
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
 @copyright 2013-2018 Jérôme Combes
 
 Fichier : plugins/conges/recuperation_valide.php
 Création : 30 août 2013
-Dernière modification : 21 avril 2017
+Dernière modification : 28 janvier 2018
 @author Jérôme Combes <jerome@planningbiblio.fr>
 
 Description :
@@ -24,7 +24,19 @@ $heures=filter_input(INPUT_POST,"heures",FILTER_SANITIZE_STRING);
 $refus=trim(filter_input(INPUT_POST,"refus",FILTER_SANITIZE_STRING));
 $validation=filter_input(INPUT_POST,"validation",FILTER_SANITIZE_NUMBER_INT);
 
-$admin=in_array(2,$_SESSION['droits'])?true:false;
+// Gestion des droits d'administration
+// NOTE : Ici, pas de différenciation entre les droits niveau 1 et niveau 2
+// NOTE : Les agents ayant les droits niveau 1 ou niveau 2 sont admin ($admin, droits 40x et 60x)
+// TODO : différencier les niveau 1 et 2 si demandé par les utilisateurs du plugin
+
+$admin = false;
+for($i = 1; $i <= $config['Multisites-nombre']; $i++ ){
+  if(in_array((400+$i), $droits) or in_array((600+$i), $droits)){
+    $admin = true;
+    break;
+  }
+}
+
 $msg=urlencode("Une erreur est survenue lors de la validation de vos modifications.");
 $msgType="error";
 

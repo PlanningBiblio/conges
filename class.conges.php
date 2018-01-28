@@ -7,7 +7,7 @@ Voir les fichiers README.md et LICENSE
 
 Fichier : plugins/conges/class.conges.php
 Création : 24 juillet 2013
-Dernière modification : 12 janvier 2018
+Dernière modification : 28 janvier 2018
 @author Jérôme Combes <jerome@planningbiblio.fr>
 @author Etienne Cavalié
 
@@ -738,11 +738,11 @@ class conges{
 	    $site=1;
 	  }
 	  // Ajout du numéro du droit correspondant à la gestion des congés de ce site
-	  // Validation N1
+	  // Validation niveau 1
 	  if(!in_array((400+$site),$droitsConges) and $site){
 	    $droitsConges[]=400+$site;
 	  }
-	  // Validation N2
+	  // Validation niveau 2
 	  if(!in_array((600+$site),$droitsConges) and $site){
 	    $droitsConges[]=600+$site;
 	  }
@@ -757,9 +757,9 @@ class conges{
 	}
       }
     }
-    // Si un seul site, le droit de gestion de congés N1 est 7, le droit de gestion de congés N2 est 2
+    // Si un seul site, le droit de gestion de congés niveau 1 est 401, le droit de gestion de congés niveau 2 est 601
     else{
-      $droitsConges=array(2,7);
+      $droitsConges=array(401,601);
     }
 
     $db=new db();
@@ -1156,6 +1156,34 @@ class conges{
       $sql[] = "INSERT INTO `{$dbprefix}menu` (`niveau1`,`niveau2`,`titre`,`url`,`condition`) VALUES (15, 15, 'Liste des r&eacute;cup&eacute;rations', 'plugins/conges/voir.php&amp;recup=1', 'config=Conges-Recuperations');";
       $sql[]="INSERT INTO `{$dbprefix}acces` (`nom`,`groupe_id`,`page`) VALUES ('Cong&eacute;s - Poser des r&eacute;cup&eacute;rations','100','plugins/conges/recup_pose.php');";
 
+      // Modification des ID des droits d'administration niveau 1 et 2
+      $db = new db();
+      $db->select('personnel');
+      if($db->result){
+        foreach($db->result as $elem){
+          $update = false;
+          $droits = html_entity_decode($elem['droits'], ENT_QUOTES|ENT_IGNORE, 'UTF-8');
+          $droits = (array) json_decode($droits, true);
+          foreach($droits as $k => $v){
+            if($v == 7){
+              $droits[$k] = 401;
+              $update = true;
+            }
+            if($v == 2){
+              $droits[$k] = 601;
+              $update = true;
+            }
+          }
+          if($update){
+            $droits = json_encode($droits);
+            $sql[] = "UPDATE `{$dbprefix}personnel` SET `droits` = '$droits' WHERE `id` = '{$elem['id']}';";
+          }
+        }
+      }
+
+      $sql[] = "UPDATE `{$dbprefix}acces` SET `groupe_id` = '401', `groupe` = 'Gestion des cong&eacute;s, validation niveau 1' WHERE `groupe_id` = '7';";
+      $sql[] = "UPDATE `{$dbprefix}acces` SET `groupe_id` = '601', `groupe` = 'Gestion des cong&eacute;s, validation niveau 2' WHERE `groupe_id` = '2';";
+      
       $sql[]="UPDATE `{$dbprefix}plugins` SET `version`='$version' WHERE `nom`='conges';";
     }
 

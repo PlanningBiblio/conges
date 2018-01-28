@@ -7,7 +7,7 @@ Voir les fichiers README.md et LICENSE
 
 Fichier : plugins/conges/install.php
 Création : 24 juillet 2013
-Dernière modification : 12 janvier 2018
+Dernière modification : 28 janvier 2018
 @author Jérôme Combes <jerome@planningbiblio.fr>
 
 Description :
@@ -54,11 +54,11 @@ $sql[]="INSERT INTO `{$dbprefix}acces` (`nom`,`groupe_id`,`page`) VALUES ('Cong&
 $sql[]="INSERT INTO `{$dbprefix}acces` (`nom`,`groupe_id`,`page`) VALUES ('Cong&eacute;s - Liste','100','plugins/conges/voir.php');";
 $sql[]="INSERT INTO `{$dbprefix}acces` (`nom`,`groupe_id`,`page`) VALUES ('Cong&eacute;s - Enregistrer','100','plugins/conges/enregistrer.php');";
 $sql[]="INSERT INTO `{$dbprefix}acces` (`nom`,`groupe_id`,`page`) VALUES ('Cong&eacute;s - Modifier','100','plugins/conges/modif.php');";
-$sql[]="INSERT INTO `{$dbprefix}acces` (`nom`,`groupe`,`groupe_id`,`categorie`,`ordre`) VALUES ('Gestion des cong&eacute;s, validation N2','Gestion des cong&eacute;s, validation N2',2,'Cong&eacute;s','76');";
+$sql[]="INSERT INTO `{$dbprefix}acces` (`nom`,`groupe`,`groupe_id`,`categorie`,`ordre`) VALUES ('Gestion des cong&eacute;s, validation niveau 2','Gestion des cong&eacute;s, validation niveau 2',601,'Cong&eacute;s','76');";
 $sql[]="INSERT INTO `{$dbprefix}acces` (`nom`,`groupe_id`,`page`) VALUES ('Cong&eacute;s - Infos','100','plugins/conges/infos.php');";
 $sql[]="INSERT INTO `{$dbprefix}acces` (`nom`,`groupe_id`,`page`) VALUES ('Cong&eacute;s - r&eacute;cuperations','100','plugins/conges/recuperations.php');";
 $sql[]="INSERT INTO `{$dbprefix}acces` (`nom`,`groupe_id`,`page`) VALUES ('Cong&eacute;s - R&eacute;cup&eacute;ration','100','plugins/conges/recuperation_modif.php');";
-$sql[]="INSERT INTO `{$dbprefix}acces` (`nom`,`groupe_id`,`groupe`,`categorie`,`ordre`) VALUES ('Cong&eacute;s - Validation niveau 1','7','Gestion des cong&eacute;s, validation N1','Cong&eacute;s','75');";
+$sql[]="INSERT INTO `{$dbprefix}acces` (`nom`,`groupe_id`,`groupe`,`categorie`,`ordre`) VALUES ('Gestion des cong&eacute;s, validation niveau 1','401','Gestion des cong&eacute;s, validation niveau 1','Cong&eacute;s','75');";
 $sql[]="INSERT INTO `{$dbprefix}acces` (`nom`,`groupe_id`,`page`) VALUES ('Cong&eacute;s - Compte &Eacute;pargne Temps','100','plugins/conges/cet.php');";
 $sql[]="INSERT INTO `{$dbprefix}acces` (`nom`,`groupe_id`,`groupe`,`page`) VALUES ('Cong&eacute;s - Cr&eacute;dits','100','','plugins/conges/credits.php');";
 $sql[]="INSERT INTO `{$dbprefix}acces` (`nom`,`groupe_id`,`page`) VALUES ('Cong&eacute;s - R&eacute;cup&eacute;rations','100','plugins/conges/recuperation_valide.php');";
