@@ -1,13 +1,13 @@
 <?php
 /**
-Planning Biblio, Plugin Congés Version 2.4.8
+Planning Biblio, Plugin Congés Version 2.8
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
 @copyright 2013-2018 Jérôme Combes
 
 Fichier : plugins/conges/ficheAgent.php
 Création : 26 juillet 2013
-Dernière modification : 29 octobre 2016
+Dernière modification : 5 février 2018
 @author Jérôme Combes <jerome@planningbiblio.fr>
 @author Etienne Cavalié
 
@@ -114,7 +114,7 @@ echo "</td></tr>";
 
 // Récupération
 echo "<tr><td>";
-echo "Récupération du samedi :";
+echo "{$lang['recuperation']} :";
 echo "</td><td style='text-align:right;'>";
 if($admin){
   echo "<input type='text' name='recupSamedi' value='{$conges['recupHeures']}'  style='width:70px;text-align:right;'>\n";

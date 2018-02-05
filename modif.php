@@ -7,7 +7,7 @@ Voir les fichiers README.md et LICENSE
 
 Fichier : plugins/conges/modif.php
 Création : 1er août 2013
-Dernière modification : 28 janvier 2018
+Dernière modification : 5 février 2018
 @author Jérôme Combes <jerome@planningbiblio.fr>
 @author Etienne Cavalié <etienne.cavalie@unice.fr>
 
@@ -139,11 +139,11 @@ if($confirm){
       break;
     // Validations Niveau 1
     case 2 :
-      $sujet="Congés en attente de validation hiérarchique";
+      $sujet = $lang['leave_waiting_subject_accepted'];
       $notifications=3;
       break;
     case -2 :
-      $sujet="Congés en attente de validation hiérarchique";
+      $sujet = $lang['leave_waiting_subject_refused'];
       $notifications=3;
       break;
   }
@@ -154,7 +154,7 @@ if($confirm){
   $destinataires=$a->recipients;
 
   // Message qui sera envoyé par email
-  $message="$sujet : <br/>$prenom $nom<br/>Début : $debut";
+  $message="$sujet : <br/><br/>$prenom $nom<br/>Début : $debut";
   if($hre_debut!="00:00:00")
     $message.=" ".heure3($hre_debut);
   $message.="<br/>Fin : $fin";
@@ -416,8 +416,8 @@ EOD;
     echo "<td><select name='valide' style='width:98%;' onchange='afficheRefus(this);'>\n";
     echo "<option value='0'>&nbsp;</option>\n";
     if($adminN1){
-      echo "<option value='2' {$selectAccept[2]}>Accept&eacute; (En attente de validation hi&eacute;rarchique)</option>\n";
-      echo "<option value='-2' {$selectAccept[3]}>Refus&eacute; (En attente de validation hi&eacute;rarchique)</option>\n";
+      echo "<option value='2' {$selectAccept[2]}>{$lang['leave_waiting_dropdown_accepted']}</option>\n";
+      echo "<option value='-2' {$selectAccept[3]}>{$lang['leave_waiting_dropdown_refused']}</option>\n";
     }
     if($adminN2 and ($data['valide_n1'] > 0 or $config['Conges-Validation-N2'] == 0)){
       echo "<option value='1' {$selectAccept[0]}>Accept&eacute;</option>\n";

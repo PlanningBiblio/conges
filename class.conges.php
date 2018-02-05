@@ -7,7 +7,7 @@ Voir les fichiers README.md et LICENSE
 
 Fichier : plugins/conges/class.conges.php
 Création : 24 juillet 2013
-Dernière modification : 28 janvier 2018
+Dernière modification : 5 février 2018
 @author Jérôme Combes <jerome@planningbiblio.fr>
 @author Etienne Cavalié
 
@@ -19,6 +19,12 @@ Inclus dans les autres fichiers PHP du dossier plugins/conges
 // pas de $version=acces direct aux pages de ce dossier => Accès refusé
 if(!isset($version)){
   include_once "../../include/accessDenied.php";
+}
+
+// Localisation
+require_once __DIR__."/lang/fr_FR.php";
+if(file_exists(__DIR__."/lang/custom.php")){
+  include_once __DIR__."/lang/custom.php";
 }
 
 require_once __DIR__."/../../planningHebdo/class.planningHebdo.php";

@@ -7,7 +7,7 @@ Voir les fichiers README.md et LICENSE
 
 Fichier : plugins/conges/voir.php
 Création : 24 juillet 2013
-Dernière modification : 28 janvier 2018
+Dernière modification : 5 février 2018
 @author Jérôme Combes <jerome@planningbiblio.fr>
 
 Description :
@@ -277,7 +277,7 @@ foreach($c->elements as $elem){
 
   }
   elseif($elem['valide_n1']){
-    $validation="En attente de validation hi&eacute;rarchique";
+    $validation = $elem['valide_n1'] > 0 ? $lang['leave_waiting_table_accepted'] : $lang['leave_waiting_table_refused'];
     $validationDate=dateFr($elem['validation_n1'],true);
     $validationStyle="font-weight:bold;";
   }
