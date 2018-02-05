@@ -1184,6 +1184,9 @@ class conges{
       $sql[] = "UPDATE `{$dbprefix}acces` SET `groupe_id` = '401', `groupe` = 'Gestion des cong&eacute;s, validation niveau 1' WHERE `groupe_id` = '7';";
       $sql[] = "UPDATE `{$dbprefix}acces` SET `groupe_id` = '601', `groupe` = 'Gestion des cong&eacute;s, validation niveau 2' WHERE `groupe_id` = '2';";
       
+      // Attente de la validation niveau 1 avant d'autoriser la validation niveau 2
+      $sql[] = "INSERT INTO `{$dbprefix}config` (`nom`, `type`, `valeur`, `valeurs`, `categorie`, `commentaires`, `ordre` ) VALUES ('Conges-Validation-N2', 'enum2', '0', '[[0,\"Validation directe autoris&eacute;e\"],[1,\"Le cong&eacute; doit &ecirc;tre valid&eacute; au niveau 1\"]]', 'Cong&eacute;s', 'La validation niveau 2 des cong&eacute;s peut se faire directement ou doit attendre la validation niveau 1', '4');";
+
       $sql[]="UPDATE `{$dbprefix}plugins` SET `version`='$version' WHERE `nom`='conges';";
     }
 

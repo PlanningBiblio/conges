@@ -84,14 +84,13 @@ foreach($droitsN1 as $elem){
 $adminN2 = false;
 foreach($droitsN2 as $elem){
   if(in_array($elem,$droits)){
-    $adminN1 = true;
     $adminN2 = true;
     break;
   }
 }
 
 // Si je ne suis pas admin et que ce congé n'est pas le mien, l'accès est refusé
-if(!$adminN1 and $perso_id != $_SESSION['login_id']){
+if(!$adminN1 and !$adminN2 and $perso_id != $_SESSION['login_id']){
   echo "<h3>Congés</h3>\n";
   echo "<div id='acces_refuse'>Accès refusé</div>\n";
   include "include/footer.php";
@@ -196,7 +195,7 @@ else{	// Formulaire
   $selectAccept[2]=($data['valide_n1']>0 and $data['valide']==0)?"selected='selected'":null;
   $selectAccept[3]=($data['valide_n1']<0 and $data['valide']==0)?"selected='selected'":null;
   $displayRefus=$data['valide']>=0?"display:none;":null;
-  $displayRefus=($data['valide_n1']<0 and $adminN1)?null:$displayRefus;
+  $displayRefus = ( $data['valide_n1'] <0 and ( $adminN1 or $adminN2 )) ? null : $displayRefus;
   $perso_id=$data['perso_id'];
   $debut=dateFr(substr($data['debut'],0,10));
   $fin=dateFr(substr($data['fin'],0,10));
@@ -251,7 +250,7 @@ else{	// Formulaire
   echo "<tr><td style='width:300px;'>\n";
   echo "Nom, prénom : \n";
   echo "</td><td>\n";
-  if($adminN1){
+  if( $adminN1 or $adminN2 ){
     $db_perso=new db();
     $db_perso->query("select * from {$dbprefix}personnel where actif='Actif' order by nom,prenom;");
     echo "<select name='perso_id' id='perso_id' style='width:98%;' class='googleCalendarTrigger'>\n";
@@ -395,19 +394,38 @@ EOD;
   }
   echo "</td></tr>\n";
 
+  // Si droit de validation niveau 2 sans avoir le droit de validation niveau 1, on affiche l'état de validation niveau 1
+  if($adminN2 and !$adminN1){
+    if($data['valide_n1'] == 0){
+      $validation_n1 = "Congé demandé";
+    } elseif($data['valide_n1'] > 0){
+      $validation_n1 = "Congé accepté au niveau 1";
+    } else {
+      $validation_n1 = "Congé refusé au niveau 1";
+    }
+
+    echo "<tr><td>Validation niveau 1</td>\n";
+    echo "<td>$validation_n1</td></tr>\n";
+  }
+
   echo "<tr><td>Validation</td>\n";
+
   // Affichage de l'état de validation dans un menu déroulant si l'agent a le droit de le modifié et si le congé n'est pas validé
+
   if(($adminN2 and !$valide) or ($adminN1 and $data['valide']==0)){
     echo "<td><select name='valide' style='width:98%;' onchange='afficheRefus(this);'>\n";
     echo "<option value='0'>&nbsp;</option>\n";
-    echo "<option value='2' {$selectAccept[2]}>Accept&eacute; (En attente de validation hi&eacute;rarchique)</option>\n";
-    echo "<option value='-2' {$selectAccept[3]}>Refus&eacute; (En attente de validation hi&eacute;rarchique)</option>\n";
-    if($adminN2){
+    if($adminN1){
+      echo "<option value='2' {$selectAccept[2]}>Accept&eacute; (En attente de validation hi&eacute;rarchique)</option>\n";
+      echo "<option value='-2' {$selectAccept[3]}>Refus&eacute; (En attente de validation hi&eacute;rarchique)</option>\n";
+    }
+    if($adminN2 and ($data['valide_n1'] > 0 or $config['Conges-Validation-N2'] == 0)){
       echo "<option value='1' {$selectAccept[0]}>Accept&eacute;</option>\n";
       echo "<option value='-1' {$selectAccept[1]}>Refus&eacute;</option>\n";
     }
     echo "</select></td>\n";
     }
+
   // Affichage simple de l'état de validation si l'agent n'a pas le droit de le modifié ou si le congé est validé
   else{
     if($data['valide']<0){
@@ -431,11 +449,16 @@ EOD;
   echo "</td></tr><tr><td colspan='2' style='text-align:center;'>\n";
   echo "<input type='button' value='Annuler' onclick='document.location.href=\"index.php?page=plugins/conges/voir.php\";' class='ui-button'/>";
 
-  if((!$valide and $adminN1) or ($data['valide']==0 and $data['valide_n1']==0)){
+  // Si le congé n'est pas validé (ni en niveau 1, ni en niveau 2) : Enregistrement autorisé par l'agent ou par les admins (niveau 1 ou 2)
+  // Si le congé est validé en niveau 1 : Enregistrement autorisé pour les admins seulement (niveau 1 ou 2)
+  // Si le congé est validé en niveau 2 : Enregistrement impossible
+  if((!$valide and ( $adminN1 or $adminN2 )) or ($data['valide']==0 and $data['valide_n1']==0)){
     echo "<input type='button' value='Enregistrer les modifications' style='margin-left:20px;' class='ui-button' onclick='verifConges();'/>\n";
   }
 
-  if($adminN1){
+  // Suppression par un admin niveau 1 autorisée si le congés n'a pas été validé par un niveau 2
+  // Suppression autorisée par un admin niveau 2 dans tous les cas
+  if(($adminN1 and $data['valide']==0) or $adminN2){
     echo "<input type='button' value='Supprimer' style='margin-left:20px;' onclick='supprimeConges()' class='ui-button'/>\n";
   }
   
