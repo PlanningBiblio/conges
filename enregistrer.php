@@ -7,7 +7,7 @@ Voir les fichiers README.md et LICENSE
 
 Fichier : plugins/conges/enregistrer.php
 Création : 24 juillet 2013
-Dernière modification : 28 janvier 2018
+Dernière modification : 6 février 2018
 @author Jérôme Combes <jerome@planningbiblio.fr>
 @author Etienne Cavalié <etienne.cavalie@unice.fr>
 
@@ -269,7 +269,7 @@ EOD;
   echo "<textarea name='commentaires' cols='16' rows='5' style='width:97%;'></textarea>\n";
   echo "</td></tr><tr><td>&nbsp;\n";
   echo "</td></tr><tr><td colspan='2' style='text-align:center;'>\n";
-  echo "<input type='button' value='Annuler' onclick='document.location.href=\"index.php?page=plugins/conges/index.php\";' class='ui-button'/>";
+  echo "<input type='button' value='Annuler' onclick='document.location.href=\"index.php?page=plugins/conges/voir.php\";' class='ui-button'/>";
   echo "&nbsp;&nbsp;\n";
   echo "<input type='button' value='Valider' class='ui-button' onclick='verifConges();' style='margin-left:20px;'/>\n";
   echo "<div id='google-calendar-div' class='inline'></div>\n";

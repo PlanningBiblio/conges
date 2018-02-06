@@ -184,8 +184,11 @@ if($confirm){
     $msg2=urlencode($m->error_CJInfo);
     $msg2Type="error";
   }
+
+  $retour = ( $config['Conges-Recuperations'] and $get['debit'] == 'recuperation' ) ? 'index.php?page=plugins/conges/voir.php&recup=1' : 'index.php?page=plugins/conges/voir.php' ;
+
   $msg=urlencode("Le congé a été modifié avec succès.");
-  echo "<script type='text/JavaScript'>document.location.href=\"index.php?page=plugins/conges/voir.php&msg=$msg&msgType=success&msg2=$msg2&msg2Type=$msg2Type\"</script>\n";
+  echo "<script type='text/JavaScript'>document.location.href=\"$retour&msg=$msg&msgType=success&msg2=$msg2&msg2Type=$msg2Type\"</script>\n";
 }
 
 else{	// Formulaire
@@ -227,6 +230,8 @@ else{	// Formulaire
   $anticipation2 = heure4($anticipation);
   $recuperation=number_format($p->elements[0]['recupSamedi'], 2, '.', ' ');
   $recuperation2=heure4($recuperation);
+
+  $retour = ( $config['Conges-Recuperations'] and $data['debit'] == 'recuperation' ) ? 'index.php?page=plugins/conges/voir.php&amp;recup=1' : 'index.php?page=plugins/conges/voir.php' ;
 
   // Affichage du formulaire
   if($config['Conges-Recuperations'] == 1 and $data['debit']=="recuperation"){
@@ -270,7 +275,7 @@ else{	// Formulaire
   }
   echo "</td></tr>\n";
 
-  if(!$config['Conges-Recuperations']){
+  if(!$config['Conges-Recuperations'] or $data['debit']=="recuperation"){
     echo "<tr><td style='padding-top:15px;'>\n";
     echo "Journée(s) entière(s) : \n";
     echo "</td><td style='padding-top:15px;'>\n";
@@ -447,7 +452,7 @@ EOD;
   echo "<tr><td>&nbsp;</td></tr>\n";
 
   echo "</td></tr><tr><td colspan='2' style='text-align:center;'>\n";
-  echo "<input type='button' value='Annuler' onclick='document.location.href=\"index.php?page=plugins/conges/voir.php\";' class='ui-button'/>";
+  echo "<input type='button' value='Annuler' onclick='document.location.href=\"$retour\";' class='ui-button'/>";
 
   // Si le congé n'est pas validé (ni en niveau 1, ni en niveau 2) : Enregistrement autorisé par l'agent ou par les admins (niveau 1 ou 2)
   // Si le congé est validé en niveau 1 : Enregistrement autorisé pour les admins seulement (niveau 1 ou 2)

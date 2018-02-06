@@ -86,10 +86,14 @@ if($agents_supprimes){
   $c->agents_supprimes=array(0,1);
 }
 
+
+$addLink = 'index.php?page=plugins/conges/enregistrer.php';
+
 // Si la gestion des congés et des récupérations est dissociée, on ne recherche que les infos voulues
 if($config['Conges-Recuperations'] == '1'){
   if($voir_recup){
     $c->debit='recuperation';
+    $addLink = 'index.php?page=plugins/conges/recup_pose.php';
   } else {
     $c->debit='credit';
   }
@@ -129,6 +133,9 @@ echo "<h3 class='print_only'>Liste des congés de ".nom($perso_id,"prenom nom",$
 echo <<<EOD
 <form name='form' method='get' action='index.php' class='noprint'>
 <input type='hidden' name='page' value='plugins/conges/voir.php' />
+
+<span style='float:left; vertical-align:top; margin-bottom:20px;'>
+
 <table class='tableauStandard'><tbody><tr>
 <td>Ann&eacute;e : <select name='annee'>
 EOD;
@@ -171,6 +178,11 @@ echo <<<EOD
 <td><input type='submit' value='OK' id='button-OK' class='ui-button'/></td>
 <td><input type='button' value='Effacer' onclick='location.href="index.php?page=plugins/conges/voir.php&reset=on"' class='ui-button'/></td>
 </tr></tbody></table>
+</span>
+<span style='float:right; vertical-align:top; margin:10px 5px;'>
+<a href='$addLink' class='ui-button'>Ajouter</a>
+</span>
+
 </form>
 <br/>
 <table id='tableConges' class='CJDataTable' data-sort='[[1],[2]]'>

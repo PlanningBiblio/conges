@@ -7,7 +7,7 @@ Voir les fichiers README.md et LICENSE
 
 Fichier : plugins/conges/recup_pose.php
 Création : 12 janvier 2018
-Dernière modification : 28 janvier 2018
+Dernière modification : 6 février 2018
 @author Jérôme Combes <jerome@planningbiblio.fr>
 
 Description :
@@ -118,7 +118,7 @@ if(isset($_GET['confirm'])){	// Confirmation
   }
 
   $msg=urlencode("La demande de congé a été enregistrée");
-  echo "<script type='text/JavaScript'>document.location.href='index.php?page=plugins/conges/voir.php&msg=$msg&msgType=success&msg2=$msg2&msg2Type=$msg2Type';</script>\n";
+  echo "<script type='text/JavaScript'>document.location.href='index.php?page=plugins/conges/voir.php&recup=1&msg=$msg&msgType=success&msg2=$msg2&msg2Type=$msg2Type';</script>\n";
 }
 
 // Formulaire
@@ -152,7 +152,7 @@ else{
   echo "<table border='0'>\n";
   echo "<tr><td style='width:300px;'>\n";
   echo "Nom, prénom : \n";
-  echo "</td><td>\n";
+  echo "</td><td style='width:250px;'>\n";
   if($admin){
     $db_perso=new db();
     $db_perso->query("select * from {$dbprefix}personnel where actif='Actif' order by nom,prenom;");
@@ -238,9 +238,9 @@ EOD;
   echo "<textarea name='commentaires' cols='16' rows='5' style='width:97%;'></textarea>\n";
   echo "</td></tr><tr><td>&nbsp;\n";
   echo "</td></tr><tr><td colspan='2' style='text-align:center;'>\n";
-  echo "<input type='button' value='Annuler' onclick='document.location.href=\"index.php?page=plugins/conges/index.php\";' class='ui-button'/>";
+  echo "<input type='button' value='Annuler' onclick='document.location.href=\"index.php?page=plugins/conges/voir.php&amp;recup=1\";' class='ui-button'/>";
   echo "&nbsp;&nbsp;\n";
-  echo "<input type='button' value='Valider' class='ui-button' onclick='verifConges();' style='margin-left:20px;'/>\n";
+  echo "<input type='button' value='Valider' class='ui-button' onclick='verifConges();' style='margin-left:20px;' id='submit-button'/>\n";
   echo "<div id='google-calendar-div' class='inline'></div>\n";
   echo "</td></tr></table>\n";
   echo "</form>\n";

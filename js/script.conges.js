@@ -6,7 +6,7 @@ Voir les fichiers README.md et LICENSE
 
 Fichier : plugins/conges/js/script.conges.js
 Création : 2 août 2013
-Dernière modification : 12 janvier 2018
+Dernière modification : 6 février 2018
 @author Jérôme Combes <jerome@planningbiblio.fr>
 @author Etienne Cavalié <etienne.cavalie@unice.fr>
 
@@ -157,6 +157,11 @@ function calculRestes(){
     // Calcul du crédit de récupération
     if(debit=="recuperation"){
       recuperation = recuperation - heures;
+
+      $('.recup-alert').remove();
+      if(recuperation < 0){
+        CJInfo("Le crédit de récupération ne peut pas être négatif.", "error", null, 'permanent', 'recup-alert');
+      }
     }
 
     // Calcul du crédit de congés
@@ -284,7 +289,8 @@ function verifConges(){
   // Vérifions si le solde des récupérations n'est pas négatif
   var recuperation = parseFloat( $('#recup4').text() );
   if(parseFloat(recuperation) < 0){
-    CJInfo("Le crédit de récupération ne peut pas être négatif.", "error");
+    $('.recup-alert').remove();
+    CJInfo("Le crédit de récupération ne peut pas être négatif.", "error", null, 'permanent', 'recup-alert');
     return false;
   }
   
