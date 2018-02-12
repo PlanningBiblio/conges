@@ -7,7 +7,7 @@ Voir les fichiers README.md et LICENSE
 
 Fichier : plugins/conges/voir.php
 Création : 24 juillet 2013
-Dernière modification : 5 février 2018
+Dernière modification : 10 février 2018
 @author Jérôme Combes <jerome@planningbiblio.fr>
 
 Description :
@@ -296,7 +296,7 @@ foreach($c->elements as $elem){
   if($elem['information']){
     $nom=$elem['information']<999999999?nom($elem['information'], 'nom p', $agents).", ":null;	// >999999999 = cron
     $validation="Mise à jour des cr&eacute;dits, $nom";
-    $validationDate=dateFr($elem['infoDate'],true);
+    $validationDate=dateFr($elem['info_date'],true);
     $validationStyle=null;
   }
   elseif($elem['supprime']){

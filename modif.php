@@ -7,7 +7,7 @@ Voir les fichiers README.md et LICENSE
 
 Fichier : plugins/conges/modif.php
 Création : 1er août 2013
-Dernière modification : 5 février 2018
+Dernière modification : 10 février 2018
 @author Jérôme Combes <jerome@planningbiblio.fr>
 @author Etienne Cavalié <etienne.cavalie@unice.fr>
 
@@ -222,13 +222,13 @@ else{	// Formulaire
   $p->fetchById($perso_id);
   $nom=$p->elements[0]['nom'];
   $prenom=$p->elements[0]['prenom'];
-  $credit=number_format( (float) $p->elements[0]['congesCredit'], 2, '.', ' ');
-  $reliquat=number_format( (float) $p->elements[0]['congesReliquat'], 2, '.', ' ');
-  $anticipation=number_format( (float) $p->elements[0]['congesAnticipation'], 2, '.', ' ');
+  $credit = number_format( (float) $p->elements[0]['conges_credit'], 2, '.', ' ');
+  $reliquat = number_format( (float) $p->elements[0]['conges_reliquat'], 2, '.', ' ');
+  $anticipation = number_format( (float) $p->elements[0]['conges_anticipation'], 2, '.', ' ');
   $credit2 = heure4($credit);
   $reliquat2 = heure4($reliquat);
   $anticipation2 = heure4($anticipation);
-  $recuperation=number_format($p->elements[0]['recupSamedi'], 2, '.', ' ');
+  $recuperation = number_format($p->elements[0]['recup_samedi'], 2, '.', ' ');
   $recuperation2=heure4($recuperation);
 
   $retour = ( $config['Conges-Recuperations'] and $data['debit'] == 'recuperation' ) ? 'index.php?page=plugins/conges/voir.php&amp;recup=1' : 'index.php?page=plugins/conges/voir.php' ;

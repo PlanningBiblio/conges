@@ -7,7 +7,7 @@ Voir les fichiers README.md et LICENSE
 
 Fichier : plugins/conges/install.php
 Création : 24 juillet 2013
-Dernière modification : 28 janvier 2018
+Dernière modification : 10 février 2018
 @author Jérôme Combes <jerome@planningbiblio.fr>
 
 Description :
@@ -75,7 +75,7 @@ $sql[]="CREATE TABLE `{$dbprefix}conges` (`id` INT(11) NOT NULL AUTO_INCREMENT P
   `recup_prec` FLOAT(10), `recup_actuel` FLOAT(10),`reliquat_prec` FLOAT(10), `reliquat_actuel` FLOAT(10), 
   `anticipation_prec` FLOAT(10), `anticipation_actuel` FLOAT(10), `supprime` INT(11) NOT NULL DEFAULT 0, 
   `suppr_date` TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00', `information` INT(11) NOT NULL DEFAULT 0, 
-  `infoDate` TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00');";
+  `info_date` TIMESTAMP NULL DEFAULT NULL);";
 
 // Création de la table conges_infos
 $sql[]="CREATE TABLE `{$dbprefix}conges_infos` (`id` INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY, `debut` DATE NULL, `fin` DATE NULL, `texte` TEXT NULL, `saisie` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP);";
@@ -98,9 +98,7 @@ $sql[]="INSERT INTO `{$dbprefix}menu` (`niveau1`,`niveau2`,`titre`,`url`,`condit
 $sql[]="INSERT INTO `{$dbprefix}menu` (`niveau1`,`niveau2`,`titre`,`url`,`condition`) VALUES (15, 15, 'Liste des r&eacute;cup&eacute;rations', 'plugins/conges/voir.php&amp;recup=1', 'config=Conges-Recuperations');";
       
 // Modification de la table personnel
-$sql[]="ALTER TABLE `{$dbprefix}personnel` ADD `congesCredit` FLOAT(10), ADD `congesReliquat` FLOAT(10), ADD `congesAnticipation` FLOAT(10);";
-$sql[]="ALTER TABLE `{$dbprefix}personnel` ADD `recupSamedi` FLOAT(10);";
-$sql[]="ALTER TABLE `{$dbprefix}personnel` ADD `congesAnnuel` FLOAT(10);";
+$sql[]="ALTER TABLE `{$dbprefix}personnel` ADD `conges_credit` FLOAT(10) DEFAULT 0, ADD `conges_reliquat` FLOAT(10) DEFAULT 0, ADD `conges_anticipation` FLOAT(10) DEFAULT 0, ADD `recup_samedi` FLOAT(10) DEFAULT 0, ADD `conges_annuel` FLOAT(10) DEFAULT 0;";
 
 // Ajout des taches planifiées
 $sql[]="INSERT INTO `{$dbprefix}cron` (m,h,dom,mon,dow,command,comments) VALUES (0,0,1,1,'*','plugins/conges/cron.jan1.php','Cron Cong&eacute;s 1er Janvier');";
@@ -109,12 +107,13 @@ $sql[]="INSERT INTO `{$dbprefix}cron` (m,h,dom,mon,dow,command,comments) VALUES 
 // Inscription du plugin Congés dans la base
 $sql[]="INSERT INTO `{$dbprefix}plugins` (`nom`,`version`) VALUES ('conges','$version');";
 
-// Création de la table conges_CET
-$sql[]="CREATE TABLE `{$dbprefix}conges_CET` (`id` INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY, `perso_id` INT(11) NOT NULL, 
+// Création de la table conges_cet
+$sql[]="CREATE TABLE `{$dbprefix}conges_cet` (`id` INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY, `perso_id` INT(11) NOT NULL, 
   `jours` INT(11) NOT NULL DEFAULT '0', `commentaires` TEXT, `saisie` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, 
   `saisie_par` INT NOT NULL, `modif` INT(11) NOT NULL DEFAULT '0', `modification` TIMESTAMP, `valide_n1` INT(11) NOT NULL DEFAULT '0', 
   `validation_n1` TIMESTAMP, `valide_n2` INT(11) NOT NULL DEFAULT '0',`validation_n2` TIMESTAMP, `refus` TEXT, 
   `solde_prec` FLOAT(10), `solde_actuel` FLOAT(10), `annee` VARCHAR(10));";
+
 ?>
 <!-- Entête HTML -->
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">

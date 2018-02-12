@@ -1,13 +1,13 @@
 <?php
 /**
-Planning Biblio, Plugin Congés Version 2.7.01
+Planning Biblio, Plugin Congés Version 2.8
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
 @copyright 2013-2018 Jérôme Combes
 
 Fichier : plugins/conges/uninstall.php
 Création : 24 juillet 2013
-Dernière modification : 30 septembre 2017
+Dernière modification : 10 février 2018
 @author Jérôme Combes <jerome@planningbiblio.fr>
 
 Description :
@@ -149,8 +149,11 @@ if($confirm == 2){
   // Suppression de la table conges_infos
   $sql[]="DROP TABLE `{$dbprefix}conges_infos`;";
 
-  // Suppression de la table conges_CET
-  $sql[]="DROP TABLE `{$dbprefix}conges_CET`;";
+  // Suppression de la table conges_cet
+  $sql[]="DROP TABLE `{$dbprefix}conges_cet`;";
+  
+  // Suppression de la table conges_soldes
+  $sql[]="DROP TABLE `{$dbprefix}conges_soldes`;";
 
   // Suppression de la table recuperations
   $sql[]="DROP TABLE `{$dbprefix}recuperations`;";
@@ -159,8 +162,8 @@ if($confirm == 2){
   $sql[]="DELETE FROM `{$dbprefix}menu` WHERE `url` LIKE 'plugins/conges/%';";
 
   // Modification de la table personnel
-  $sql[]="ALTER TABLE `{$dbprefix}personnel` DROP `congesCredit`, DROP `congesReliquat`, DROP `congesAnticipation`, DROP `recupSamedi`;";
-  $sql[]="ALTER TABLE `{$dbprefix}personnel` DROP `congesAnnuel`;";
+  $sql[]="ALTER TABLE `{$dbprefix}personnel` DROP `conges_credit`, DROP `conges_reliquat`, DROP `conges_anticipation`, DROP `recup_samedi`;";
+  $sql[]="ALTER TABLE `{$dbprefix}personnel` DROP `conges_annuel`;";
 
   // Suppression des tâches planifiées
   $sql[]="DELETE FROM `{$dbprefix}cron` WHERE command LIKE 'plugins/conges/';";

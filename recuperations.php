@@ -7,7 +7,7 @@ Voir les fichiers README.md et LICENSE
 
 Fichier : plugins/conges/recuperations.php
 Création : 27 août 2013
-Dernière modification : 28 janvier 2018
+Dernière modification : 10 février 2018
 @author Jérôme Combes <jerome@planningbiblio.fr>
 
 Description :
@@ -88,7 +88,7 @@ echo <<<EOD
 <div id='liste'>
 <h4 class='noprint'>Liste des demandes de récupération</h4>
 <form name='form' method='get' action='index.php' class='noprint'>
-<p>
+<span style='float:left; vertical-align:top; margin-bottom:20px;'>
 <input type='hidden' name='page' value='plugins/conges/recuperations.php' />
 Ann&eacute;e : <select name='annee'>
 EOD;
@@ -99,7 +99,7 @@ foreach($annees as $elem){
 echo "</select>\n";
 
 if($admin){
-  echo "&nbsp;&nbsp;Agent : ";
+  echo "<span style='margin-left:30px;'>Agent : </span>";
   echo "<select name='perso_id'>";
   $selected=$perso_id==0?"selected='selected'":null;
   echo "<option value='0' $selected >Tous</option>";
@@ -110,9 +110,14 @@ if($admin){
   echo "</select>\n";
 }
 echo <<<EOD
-&nbsp;&nbsp;<input type='submit' value='OK' id='button-OK' class='ui-button'/>
-&nbsp;&nbsp;<input type='button' value='Reset' id='button-Effacer' class='ui-button' onclick='location.href="index.php?page=plugins/conges/recuperations.php&reset=on"' />
-</p>
+<span style='margin-left:30px;'><input type='submit' value='Rechercher' id='button-OK' class='ui-button'/></span>
+<span style='margin-left:30px;'><input type='button' value='Effacer' id='button-Effacer' class='ui-button' onclick='location.href="index.php?page=plugins/conges/recuperations.php&reset=on"' /></span>
+</span>
+
+<span style='float:right; vertical-align:top; margin:0px 5px;'>
+<button id='dialog-button' class='ui-button'>Nouvelle demande</button>
+</span>
+
 </form>
 <table id='tableRecup' class='CJDataTable' data-sort='[[1]]'>
 <thead>
@@ -161,10 +166,6 @@ echo <<<EOD
 </tbody>
 </table>
 </div> <!-- liste -->
-
-<div class='noprint'>
-<br/><button id='dialog-button' class='ui-button'>Nouvelle demande</button>
-</div>
 
 <div id="dialog-form" title="Nouvelle demande" class='noprint'>
   <p class="validateTips">Veuillez sélectionner le jour concerné par votre demande et le nombre d'heures à récuperer et un saisir un commentaire.</p>

@@ -7,7 +7,7 @@ Voir les fichiers README.md et LICENSE
 
 Fichier : plugins/conges/class.conges.php
 Création : 24 juillet 2013
-Dernière modification : 5 février 2018
+Dernière modification : 10 février 2018
 @author Jérôme Combes <jerome@planningbiblio.fr>
 @author Etienne Cavalié
 
@@ -212,18 +212,18 @@ class conges{
       if($valide>0){
 	$db=new db();
 	$db->select("personnel",null,"id=$perso_id");
-	$perso_credit=$db->result[0]['congesCredit'];
-	$perso_reliquat=$db->result[0]['congesReliquat'];
-	$perso_anticipation=$db->result[0]['congesAnticipation'];
-	$perso_recup=$db->result[0]['recupSamedi'];
+	$perso_credit=$db->result[0]['conges_credit'];
+	$perso_reliquat=$db->result[0]['conges_reliquat'];
+	$perso_anticipation=$db->result[0]['conges_anticipation'];
+	$perso_recup=$db->result[0]['recup_samedi'];
 
 	$perso_credit_new=floatval($perso_credit)+floatval($credit);
 	$perso_reliquat_new=floatval($perso_reliquat)+floatval($reliquat);
 	$perso_recup_new=floatval($perso_recup)+floatval($recup);
 	$perso_anticipation_new=floatval($perso_anticipation)-floatval($anticipation);
 
-	$update=array("congesCredit"=>$perso_credit_new, "congesReliquat"=>$perso_reliquat_new, 
-	  "congesAnticipation"=>$perso_anticipation_new, "recupSamedi"=>$perso_recup_new);
+	$update=array("conges_credit"=>$perso_credit_new, "conges_reliquat"=>$perso_reliquat_new, 
+	  "conges_anticipation"=>$perso_anticipation_new, "recup_samedi"=>$perso_recup_new);
 	$db=new db();
 	$db->CSRFToken = $this->CSRFToken;
 	$db->update("personnel",$update,array("id"=>$perso_id));
@@ -246,7 +246,7 @@ class conges{
 	  $insert["reliquat_actuel"]=$perso_reliquat_new;
 	  $insert["anticipation_actuel"]=$perso_anticipation_new;
 	  $insert["information"]=$_SESSION['login_id'];
-	  $insert["infoDate"]=date("Y-m-d H:i:s");
+	  $insert["info_date"]=date("Y-m-d H:i:s");
 	  $db=new db();
           $db->CSRFToken = $this->CSRFToken;
 	  $db->insert("conges",$insert);
@@ -377,7 +377,7 @@ class conges{
     }
 
     $db=new db();
-    $db->select("personnel","id,nom,prenom,congesCredit,congesReliquat,congesAnticipation,recupSamedi,congesAnnuel","`supprime` IN ('$supprime') AND `id`<>'2' AND actif like 'Actif' $sitesReq");
+    $db->select("personnel","id,nom,prenom,conges_credit,conges_reliquat,conges_anticipation,recup_samedi,conges_annuel","`supprime` IN ('$supprime') AND `id`<>'2' AND actif like 'Actif' $sitesReq");
     if(!$db->result){
       return false;
     }
@@ -387,11 +387,11 @@ class conges{
     foreach($db->result as $elem){
       $tab[$elem['id']]=$elem;
       $tab[$elem['id']]["agent"]=$elem["nom"]." ".substr($elem["prenom"],0,1);
-      $tab[$elem['id']]['conge_annuel']=$elem['congesAnnuel'];
+      $tab[$elem['id']]['conge_annuel']=$elem['conges_annuel'];
     }
 
     // Crédits initiaux
-    /* Utilise le champ infoDate pour rechercher la première mise à jour des crédits de l'année.
+    /* Utilise le champ info_date pour rechercher la première mise à jour des crédits de l'année.
 	Cette mise à jour peut être faite :
 	  - par le cron au 1er septembre
 	  - par un administrateur lors de la création de l'agent en cours d'année
@@ -401,7 +401,7 @@ class conges{
     $debut=date("n")<9?date("Y")-1:date("Y");
     $debut.="-09-01 00:00:00";
     $db=new db();
-    $db->select("conges",null,"`infoDate` >= '$debut'","ORDER BY `infoDate`");
+    $db->select("conges",null,"`info_date` >= '$debut'","ORDER BY `info_date`");
 
     if($db->result){
       foreach($db->result as $elem){
@@ -441,7 +441,7 @@ class conges{
     // Crédits actuels
     // Sélection des dernières mises à jour de crédits
     $db=new db();
-    $db->select("conges",null,"information>0","ORDER BY `infoDate` desc");
+    $db->select("conges",null,"information>0","ORDER BY `info_date` desc");
 
     if($db->result){
       foreach($db->result as $elem){
@@ -451,12 +451,12 @@ class conges{
 	if(!array_key_exists("validation",$tab[$elem['perso_id']])){
 	  $tab[$elem['perso_id']]['validation']="0000-00-00 00:00:00";
 	}
-	if(!array_key_exists("maj2",$tab[$elem['perso_id']]) and $elem['infoDate']>$tab[$elem['perso_id']]['validation']){
+	if(!array_key_exists("maj2",$tab[$elem['perso_id']]) and $elem['info_date']>$tab[$elem['perso_id']]['validation']){
 	  $tab[$elem['perso_id']]['conge_restant']=$elem['solde_actuel'];
 	  $tab[$elem['perso_id']]['reliquat_restant']=$elem['reliquat_actuel'];
 	  $tab[$elem['perso_id']]['recup_restant']=$elem['recup_actuel'];
 	  $tab[$elem['perso_id']]['anticipation_restant']=$elem['anticipation_actuel'];
-	  $tab[$elem['perso_id']]['validation']=$elem['infoDate'];
+	  $tab[$elem['perso_id']]['validation']=$elem['info_date'];
 	  $tab[$elem['perso_id']]['maj2']=true;
 	}
       }
@@ -596,20 +596,20 @@ class conges{
 
   public function fetchCredit(){
     if(!$this->perso_id){
-      $this->elements=array("annuel"=>null,"anticipation"=>null,"credit"=>null,"recupSamedi"=>null,"reliquat"=>null,
+      $this->elements=array("annuel"=>null,"anticipation"=>null,"credit"=>null,"recup"=>null,"reliquat"=>null,
 	"annuelHeures"=>null, "anticipationHeures"=>null, "creditHeures"=>null, "recupHeures"=>null, "reliquatHeures"=>null,
 	"annuelMinutes"=>null, "anticipationMinutes"=>null, "creditMinutes"=>null, "recupMinutes"=>null, "reliquatMinutes"=>null,
 	"annuelCents"=>null, "anticipationCents"=>null, "creditCents"=>null, "recupCents"=>null, "reliquatCents"=>null );
     }
     else{
       $db=new db();
-      $db->select("personnel","congesCredit,congesReliquat,congesAnticipation,recupSamedi,congesAnnuel","`id`='{$this->perso_id}'");
+      $db->select("personnel","conges_credit,conges_reliquat,conges_anticipation,recup_samedi,conges_annuel","`id`='{$this->perso_id}'");
       if($db->result){
-	$annuel=$db->result[0]['congesAnnuel'];
-	$anticipation=$db->result[0]['congesAnticipation'];
-	$credit=$db->result[0]['congesCredit'];
-	$recup=$db->result[0]['recupSamedi'];
-	$reliquat=$db->result[0]['congesReliquat'];
+	$annuel=$db->result[0]['conges_annuel'];
+	$anticipation=$db->result[0]['conges_anticipation'];
+	$credit=$db->result[0]['conges_credit'];
+	$recup=$db->result[0]['recup_samedi'];
+	$reliquat=$db->result[0]['conges_reliquat'];
 
 	$annuelHeures=floor($annuel);
 	$anticipationHeures=floor($anticipation);
@@ -629,7 +629,7 @@ class conges{
 	$recupMinutes=$recupCents*0.6;
 	$reliquatMinutes=$reliquatCents*0.6;
 
-	$this->elements=array("annuel"=>$annuel, "anticipation"=>$anticipation, "credit"=>$credit, "recupSamedi"=>$recup, "reliquat"=>$reliquat,
+	$this->elements=array("annuel"=>$annuel, "anticipation"=>$anticipation, "credit"=>$credit, "recup"=>$recup, "reliquat"=>$reliquat,
 	  "annuelHeures"=>$annuelHeures, "anticipationHeures"=>$anticipationHeures, "creditHeures"=>$creditHeures, "recupHeures"=>$recupHeures, "reliquatHeures"=>$reliquatHeures,
 	  "annuelMinutes"=>$annuelMinutes, "anticipationMinutes"=>$anticipationMinutes, "creditMinutes"=>$creditMinutes, "recupMinutes"=>$recupMinutes, "reliquatMinutes"=>$reliquatMinutes,
 	  "annuelCents"=>$annuelCents, "anticipationCents"=>$anticipationCents, "creditCents"=>$creditCents, "recupCents"=>$recupCents, "reliquatCents"=>$reliquatCents );
@@ -827,29 +827,29 @@ class conges{
     if($action=="modif"){
       $db=new db();
       $db->select("personnel","*","id='{$this->perso_id}'");
-      $old=array("congesCredit"=>$db->result[0]['congesCredit'], "recupSamedi"=>$db->result[0]['recupSamedi'], 
-	"congesReliquat"=>$db->result[0]['congesReliquat'], "congesAnticipation"=>$db->result[0]['congesAnticipation']);
+      $old=array("conges_credit"=>$db->result[0]['conges_credit'], "recup_samedi"=>$db->result[0]['recup_samedi'], 
+	"conges_reliquat"=>$db->result[0]['conges_reliquat'], "conges_anticipation"=>$db->result[0]['conges_anticipation']);
     }
     else{
-      $old=array("congesCredit"=>0, "recupSamedi"=>0, "congesReliquat"=>0, "congesAnticipation"=>0);
+      $old=array("conges_credit"=>0, "recup_samedi"=>0, "conges_reliquat"=>0, "conges_anticipation"=>0);
     }
 
-    unset($credits["congesAnnuel"]);
+    unset($credits["conges_annuel"]);
     if($credits!=$old){
       $insert=array();
       $insert["perso_id"]=$this->perso_id;
       $insert["debut"]=date("Y-m-d 00:00:00");
       $insert["fin"]=date("Y-m-d 00:00:00");
-      $insert["solde_prec"]=$old['congesCredit'];
-      $insert["recup_prec"]=$old['recupSamedi'];
-      $insert["reliquat_prec"]=$old['congesReliquat'];
-      $insert["anticipation_prec"]=$old['congesAnticipation'];
-      $insert["solde_actuel"]=$credits['congesCredit'];
-      $insert["recup_actuel"]=$credits['recupSamedi'];
-      $insert["reliquat_actuel"]=$credits['congesReliquat'];
-      $insert["anticipation_actuel"]=$credits['congesAnticipation'];
+      $insert["solde_prec"]=$old['conges_credit'];
+      $insert["recup_prec"]=$old['recup_samedi'];
+      $insert["reliquat_prec"]=$old['conges_reliquat'];
+      $insert["anticipation_prec"]=$old['conges_anticipation'];
+      $insert["solde_actuel"]=$credits['conges_credit'];
+      $insert["recup_actuel"]=$credits['recup_samedi'];
+      $insert["reliquat_actuel"]=$credits['conges_reliquat'];
+      $insert["anticipation_actuel"]=$credits['conges_anticipation'];
       $insert["information"]=$cron?999999999:$_SESSION['login_id'];
-      $insert["infoDate"]=date("Y-m-d H:i:s");
+      $insert["info_date"]=date("Y-m-d H:i:s");
 
       $db=new db();
       $db->CSRFToken = $this->CSRFToken;
@@ -862,7 +862,7 @@ class conges{
     $db=new db();
     $db->CSRFToken = $this->CSRFToken;
     $db->update("personnel",
-      array("congesCredit"=>null,"congesReliquat"=>null,"congesAnticipation"=>null,"congesAnnuel"=>null,"recupSamedi"=>null),
+      array("conges_credit"=>null,"conges_reliquat"=>null,"conges_anticipation"=>null,"conges_annuel"=>null,"recup_samedi"=>null),
       "id IN ($liste)");
     $db=new db();
     $db->CSRFToken = $this->CSRFToken;
@@ -913,10 +913,10 @@ class conges{
       // Recherche des crédits actuels
       $p=new personnel();
       $p->fetchById($data['perso_id']);
-      $credit = floatval($p->elements[0]['congesCredit']);
-      $reliquat = floatval($p->elements[0]['congesReliquat']);
-      $recuperation = floatval($p->elements[0]['recupSamedi']);
-      $anticipation = floatval($p->elements[0]['congesAnticipation']);
+      $credit = floatval($p->elements[0]['conges_credit']);
+      $reliquat = floatval($p->elements[0]['conges_reliquat']);
+      $recuperation = floatval($p->elements[0]['recup_samedi']);
+      $anticipation = floatval($p->elements[0]['conges_anticipation']);
       $heures = floatval($data['heures']);
       
       // Mise à jour des compteurs dans la table conges
@@ -1004,7 +1004,7 @@ class conges{
       }
 
       // Mise à jour des compteurs dans la table personnel
-      $updateCredits=array("congesCredit"=>$credit,"congesReliquat"=>$reliquat,"recupSamedi"=>$recuperation,"congesAnticipation"=>$anticipation);
+      $updateCredits=array("conges_credit"=>$credit,"conges_reliquat"=>$reliquat,"recup_samedi"=>$recuperation,"conges_anticipation"=>$anticipation);
       $db=new db();
       $db->CSRFToken = $this->CSRFToken;
       $db->update("personnel",$updateCredits,array("id"=>$data["perso_id"]));
@@ -1024,7 +1024,7 @@ class conges{
       $jours=$data['jours'];
       $heures=intval($jours)*7;
       $db=new db();
-      $db->query("UPDATE `{$GLOBALS['config']['dbprefix']}personnel` SET `congesReliquat`=(`congesReliquat`-$heures)
+      $db->query("UPDATE `{$GLOBALS['config']['dbprefix']}personnel` SET `conges_reliquat`=(`conges_reliquat`-$heures)
 	WHERE `id`='{$data['perso_id']}'");
 
       // METTRE A JOUR LES CHAMPS solde_prec et solde_actuel
@@ -1192,6 +1192,14 @@ class conges{
       
       // Attente de la validation niveau 1 avant d'autoriser la validation niveau 2
       $sql[] = "INSERT INTO `{$dbprefix}config` (`nom`, `type`, `valeur`, `valeurs`, `categorie`, `commentaires`, `ordre` ) VALUES ('Conges-Validation-N2', 'enum2', '0', '[[0,\"Validation directe autoris&eacute;e\"],[1,\"Le cong&eacute; doit &ecirc;tre valid&eacute; au niveau 1\"]]', 'Cong&eacute;s', 'La validation niveau 2 des cong&eacute;s peut se faire directement ou doit attendre la validation niveau 1', '4');";
+
+      // Suppression des majuscules dans les noms des tables et des champs
+      $sql[] = "ALTER TABLE `{$dbprefix}conges` CHANGE `infoDate` `info_date` TIMESTAMP NULL DEFAULT NULL;";
+      $sql[] = "UPDATE `{$dbprefix}conges` SET `info_date` = NULL WHERE `info_date` = '0000-00-00 00:00:00';";
+
+      $sql[] = "RENAME TABLE `{$dbprefix}conges_CET` TO `{$dbprefix}conges_cet`;";
+
+      $sql[]="ALTER TABLE `{$dbprefix}personnel` CHANGE `congesCredit` `conges_credit` FLOAT(10) DEFAULT 0, CHANGE `congesReliquat` `conges_reliquat` FLOAT(10) DEFAULT 0, CHANGE `congesAnticipation` `conges_anticipation` FLOAT(10) DEFAULT 0, CHANGE `recupSamedi` `recup_samedi` FLOAT(10) DEFAULT 0, CHANGE `congesAnnuel` `conges_annuel` FLOAT(10) DEFAULT 0;";
 
       $sql[]="UPDATE `{$dbprefix}plugins` SET `version`='$version' WHERE `nom`='conges';";
     }

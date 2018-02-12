@@ -7,7 +7,7 @@ Voir les fichiers README.md et LICENSE
 
 Fichier : plugins/conges/recuperation_valide.php
 Création : 30 août 2013
-Dernière modification : 28 janvier 2018
+Dernière modification : 10 février 2018
 @author Jérôme Combes <jerome@planningbiblio.fr>
 
 Description :
@@ -75,15 +75,15 @@ if(isset($update)){
   // Modification du crédit d'heures de récupérations s'il y a validation
   if(isset($update['valide']) and $update['valide']>0){
     $db=new db();
-    $db->select("personnel","recupSamedi","id='$perso_id'");
-    $solde_prec=$db->result[0]['recupSamedi'];
-    $recupSamedi=$solde_prec+$update['heures'];
+    $db->select("personnel","recup_samedi","id='$perso_id'");
+    $solde_prec=$db->result[0]['recup_samedi'];
+    $recup_update=$solde_prec+$update['heures'];
     $db=new db();
     $db->CSRFToken = $CSRFToken;
-    $db->update("personnel",array("recupSamedi"=>$recupSamedi),array("id"=>$perso_id));
+    $db->update("personnel",array("recup_samedi"=>$recup_update),array("id"=>$perso_id));
     $db=new db();
     $db->CSRFToken = $CSRFToken;
-    $db->update("recuperations",array("solde_prec"=>$solde_prec,"solde_actuel"=>$recupSamedi),array("id"=>$id));
+    $db->update("recuperations",array("solde_prec"=>$solde_prec,"solde_actuel"=>$recup_update),array("id"=>$id));
   }
 
   // Envoi d'un e-mail à l'agent et aux responsables
