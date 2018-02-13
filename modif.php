@@ -7,7 +7,7 @@ Voir les fichiers README.md et LICENSE
 
 Fichier : plugins/conges/modif.php
 Création : 1er août 2013
-Dernière modification : 10 février 2018
+Dernière modification : 12 février 2018
 @author Jérôme Combes <jerome@planningbiblio.fr>
 @author Etienne Cavalié <etienne.cavalie@unice.fr>
 
@@ -49,6 +49,9 @@ if(!$perso_id){
   $perso_id=$data['perso_id'];
 }
 
+// Calcul des crédits de récupération disponibles lors de l'ouverture du formulaire (date du jour)
+$c = new conges();
+$balance = $c->calculCreditRecup($perso_id);
 
 // Droits d'administration niveau 1 et niveau 2
 // Droits nécessaires en mono-site
@@ -228,7 +231,7 @@ else{	// Formulaire
   $credit2 = heure4($credit);
   $reliquat2 = heure4($reliquat);
   $anticipation2 = heure4($anticipation);
-  $recuperation = number_format($p->elements[0]['recup_samedi'], 2, '.', ' ');
+  $recuperation = number_format((float) $balance[1], 2, '.', ' ');
   $recuperation2=heure4($recuperation);
 
   $retour = ( $config['Conges-Recuperations'] and $data['debit'] == 'recuperation' ) ? 'index.php?page=plugins/conges/voir.php&amp;recup=1' : 'index.php?page=plugins/conges/voir.php' ;
@@ -244,7 +247,7 @@ else{	// Formulaire
   echo "<input type='hidden' name='CSRFToken' value='$CSRFSession' />\n";
   echo "<input type='hidden' name='confirm' value='confirm' />\n";
   echo "<input type='hidden' name='reliquat' value='$reliquat' />\n";
-  echo "<input type='hidden' name='recuperation' value='$recuperation' />\n";
+  echo "<input type='hidden' name='recuperation' id='recuperation' value='$recuperation' />\n";
   echo "<input type='hidden' name='credit' value='$credit' />\n";
   echo "<input type='hidden' name='anticipation' value='$anticipation' />\n";
   echo "<input type='hidden' name='id' value='$id' id='id' />\n";
@@ -367,7 +370,10 @@ EOD;
     echo "<table border='0'>\n";
     if( $config['Conges-Recuperations'] == 0 ) {
       echo "<tr><td style='width:298px;'>Reliquat : </td><td style='width:130px;'>$reliquat2</td><td>(après débit : <font id='reliquat4'>$reliquat2</font>)</td></tr>\n";
-      echo "<tr><td>Crédit de récupérations : </td><td>$recuperation2</td><td><font id='recup3'>(après débit : <font id='recup4'>$recuperation2</font>)</font></td></tr>\n";
+      echo "<tr id='balance_tr'><td>Crédit de récupération disponible au <span id='balance_date'>".dateFr($balance[0])."</span> : </td>\n";
+      echo "<td id='balance_before'>".heure4($balance[1])."</td>\n";
+      echo "<td>(après débit : <span id='recup4'>".heure4($balance[1])."</span>)</td></tr>\n";
+
       echo "<tr><td>Crédit de congés: </td><td>$credit2</td><td><font id='credit3'>(après débit : <font id='credit4'>$credit2</font>)</font></td></tr>\n";
       echo "<tr><td>Solde débiteur : </td><td>$anticipation2</td><td><font id='anticipation3'>(après débit : <font id='anticipation4'>$anticipation2</font>)</font></td></tr>\n";
     } else {
@@ -376,7 +382,9 @@ EOD;
         echo "<tr><td>Crédit de congés: </td><td>$credit2</td><td><font id='credit3'>(après débit : <font id='credit4'>$credit2</font>)</font></td></tr>\n";
         echo "<tr><td>Solde débiteur : </td><td>$anticipation2</td><td><font id='anticipation3'>(après débit : <font id='anticipation4'>$anticipation2</font>)</font></td></tr>\n";
       } else {
-        echo "<tr><td>Crédit de récupérations : </td><td>$recuperation2</td><td><font id='recup3'>(après débit : <font id='recup4'>$recuperation2</font>)</font></td></tr>\n";
+        echo "<tr id='balance_tr'><td>Solde disponible au <span id='balance_date'>".dateFr($balance[0])."</span> : </td>\n";
+        echo "<td id='balance_before'>".heure4($balance[1])."</td>\n";
+        echo "<td>(après débit : <span id='recup4'>".heure4($balance[1])."</span>)</td></tr>\n";
       }
     }
     echo "</table>\n";
@@ -464,7 +472,7 @@ EOD;
   // Suppression par un admin niveau 1 autorisée si le congés n'a pas été validé par un niveau 2
   // Suppression autorisée par un admin niveau 2 dans tous les cas
   if(($adminN1 and $data['valide']==0) or $adminN2){
-    echo "<input type='button' value='Supprimer' style='margin-left:20px;' onclick='supprimeConges()' class='ui-button'/>\n";
+    echo "<input type='button' value='Supprimer' style='margin-left:20px;' onclick='supprimeConges(\"$retour\")' class='ui-button'/>\n";
   }
   
   echo "<div id='google-calendar-div' class='inline'></div>\n";

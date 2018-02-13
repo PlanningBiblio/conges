@@ -6,7 +6,7 @@ Voir les fichiers README.md et LICENSE
 
 Fichier : plugins/conges/js/script.conges.js
 Création : 2 août 2013
-Dernière modification : 6 février 2018
+Dernière modification : 12 février 2018
 @author Jérôme Combes <jerome@planningbiblio.fr>
 @author Etienne Cavalié <etienne.cavalie@unice.fr>
 
@@ -62,12 +62,19 @@ function calculCredit(){
 	var minutes=tmp[1];             // centièmes
         var heures2=result[2];          // heures h minutes
 
+        var balance_date = result[3][0];  // Date de début, affichée pour le réajustement des crédits disponibles
+        var balance = result[3][1];       // Crédits de récupérations disponible à la date choisie
+        $('#recuperation').val(balance);
+        $('#balance_date').text(dateFr(balance_date));
+        $('#balance_before').text(heure4(balance));
+        $("#balance_tr").effect("highlight",null,4000);
+
         document.form.elements["heures"].value=heures;
 	document.form.elements["minutes"].value=minutes;
 
         $("#nbHeures").text(heures2);
-	$("#nbHeures").effect("highlight",null,3000);
-	$("#nbJours").effect("highlight",null,3000);
+        $("#nbHeures").effect("highlight",null,4000);
+        $("#nbJours").effect("highlight",null,4000);
 	$("#erreurCalcul").val("false");
       }
     },
@@ -160,7 +167,8 @@ function calculRestes(){
 
       $('.recup-alert').remove();
       if(recuperation < 0){
-        CJInfo("Le crédit de récupération ne peut pas être négatif.", "error", null, 'permanent', 'recup-alert');
+        CJInfo("Le crédit de récupération ne peut pas être négatif.", "error", null, 5000, 'recup-alert');
+        $("#balance_tr").effect("highlight",null,4000);
       }
     }
 
@@ -236,7 +244,11 @@ function googleCalendarIcon(){
 }
 
 
-function supprimeConges(){
+function supprimeConges(retour){
+  if(retour == undefined){
+    retour = "index.php?page=plugins/conges/voir.php";
+  }
+
   conf=confirm("Etes-vous sûr(e) de vouloir supprimer ce congé ?");
   if(conf){
     $.ajax({
@@ -244,7 +256,7 @@ function supprimeConges(){
       type: "get",
       data: "id="+$("#id").val()+"&CSRFToken="+$("#CSRFSession").val(),
       success: function(){
-	location.href="index.php?page=plugins/conges/voir.php";
+	location.href = retour;
       },
       error: function(){
 	information("Une erreur est survenue lors de la suppresion du congé.","error");
@@ -290,7 +302,8 @@ function verifConges(){
   var recuperation = parseFloat( $('#recup4').text() );
   if(parseFloat(recuperation) < 0){
     $('.recup-alert').remove();
-    CJInfo("Le crédit de récupération ne peut pas être négatif.", "error", null, 'permanent', 'recup-alert');
+    CJInfo("Le crédit de récupération ne peut pas être négatif.", "error", null, 5000, 'recup-alert');
+    $("#balance_tr").effect("highlight",null,4000);
     return false;
   }
   

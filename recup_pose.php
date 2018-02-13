@@ -7,7 +7,7 @@ Voir les fichiers README.md et LICENSE
 
 Fichier : plugins/conges/recup_pose.php
 Création : 12 janvier 2018
-Dernière modification : 10 février 2018
+Dernière modification : 12 février 2018
 @author Jérôme Combes <jerome@planningbiblio.fr>
 
 Description :
@@ -49,6 +49,10 @@ for($i = 1; $i <= $config['Multisites-nombre']; $i++ ){
 if(!$admin){
   $perso_id=$_SESSION['login_id'];
 }
+
+// Calcul des crédits de récupération disponibles lors de l'ouverture du formulaire (date du jour)
+$c = new conges();
+$balance = $c->calculCreditRecup($perso_id);
 
 echo <<<EOD
 <h3>Poser des récupérations</h3>
@@ -135,7 +139,7 @@ else{
   $credit2 = heure4($credit);
   $reliquat2 = heure4($reliquat);
   $anticipation2 = heure4($anticipation);
-  $recuperation = number_format((float) $p->elements[0]['recup_samedi'], 2, '.', ' ');
+  $recuperation = number_format((float) $balance[1], 2, '.', ' ');
   $recuperation2=heure4($recuperation);
 
   // Affichage du formulaire
@@ -144,7 +148,7 @@ else{
   echo "<input type='hidden' name='page' value='plugins/conges/recup_pose.php' />\n";
   echo "<input type='hidden' name='confirm' value='confirm' />\n";
   echo "<input type='hidden' name='reliquat' value='$reliquat' />\n";
-  echo "<input type='hidden' name='recuperation' value='$recuperation' />\n";
+  echo "<input type='hidden' name='recuperation' id='recuperation' value='$recuperation' />\n";
   echo "<input type='hidden' name='credit' value='$credit' />\n";
   echo "<input type='hidden' name='anticipation' value='$anticipation' />\n";
   echo "<input type='hidden' id='agent' value='{$_SESSION['login_nom']} {$_SESSION['login_prenom']}' />\n";
@@ -223,14 +227,14 @@ EOD;
   echo "<input type='hidden' name='debit' value='recuperation' />\n";
   echo "</td></tr>\n";
 
-    echo <<<EOD
-    <tr><td colspan='2'>
-      <table border='0'>
-        <tr><td>Crédit de récupérations : </td><td>$recuperation2</td><td><font id='recup3'>(après débit : <font id='recup4'>$recuperation2</font>)</font></td></tr>
-      </table>
-    </td></tr>
-EOD;
+  echo "<tr><td colspan='2'>\n";
+  echo "<table border='0'>\n";
 
+  echo "<tr id='balance_tr'><td>Solde disponible au <span id='balance_date'>".dateFr($balance[0])."</span> : </td>\n";
+  echo "<td id='balance_before'>".heure4($balance[1])."</td>\n";
+  echo "<td>(après débit : <span id='recup4'>".heure4($balance[1])."</span>)</td></tr>\n";
+  echo "</table>\n";
+  echo "</td></tr>\n";
 
   echo "<tr valign='top'><td style='padding-top:15px;'>\n";
   echo "Commentaires : \n";

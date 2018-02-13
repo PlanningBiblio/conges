@@ -7,7 +7,7 @@ Voir les fichiers README.md et LICENSE
 
 Fichier : plugins/conges/class.conges.php
 Création : 24 juillet 2013
-Dernière modification : 10 février 2018
+Dernière modification : 12 février 2018
 @author Jérôme Combes <jerome@planningbiblio.fr>
 @author Etienne Cavalié
 
@@ -150,6 +150,42 @@ class conges{
     $this->minutes=$difference/60;                                      // nombre de minutes (ex 2h30 => 150)
     $this->heures=number_format($difference/3600, 2, '.', '');         // heures et centièmes (ex 2h30 => 2.50)
     $this->heures2 = heure4($this->heures);                             // heures et minutes (ex: 2h30 => 2h30)
+  }
+
+  /**
+  * @method calculCreditRecup
+  * @param int $perso_id
+  * @param string $date, format YYYY-MM-DD HH:ii:ss
+  * Calcule les crédits de récupération disponible pour l'agent $perso_id à la date $date
+  * Les crédits obtenus à des dates supérieures sont déduits
+  */
+  function calculCreditRecup($perso_id, $date = null){
+
+    if(!$date){
+      $date = date('Y-m-d');
+    }
+
+    $db = new db();
+    $db->select2('personnel', 'recup_samedi', array('id' => $perso_id));
+    $balance1 = (float) $db->result[0]['recup_samedi'];
+    $balance2 = $balance1;
+
+    $db = new db();
+    $db->select2('recuperations', array('heures','date','date2'), array('perso_id' => $perso_id, 'valide' => ">1"), "ORDER BY `date`");
+    $recup_tab = $db->result;
+
+    if(!empty($recup_tab)){
+      foreach($recup_tab as $elem){
+        if($elem['date'] > $date){
+          $balance1 -= (float) $elem['heures'];
+        }
+      }
+    }
+
+    $last = end($recup_tab);
+    $last = $last['date'];
+
+    return array($date, $balance1, $last, $balance2);
   }
 
   /**

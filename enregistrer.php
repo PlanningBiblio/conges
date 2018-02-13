@@ -7,7 +7,7 @@ Voir les fichiers README.md et LICENSE
 
 Fichier : plugins/conges/enregistrer.php
 Création : 24 juillet 2013
-Dernière modification : 10 février 2018
+Dernière modification : 12 février 2018
 @author Jérôme Combes <jerome@planningbiblio.fr>
 @author Etienne Cavalié <etienne.cavalie@unice.fr>
 
@@ -45,6 +45,10 @@ for($i = 1; $i <= $config['Multisites-nombre']; $i++ ){
 if(!$admin){
   $perso_id=$_SESSION['login_id'];
 }
+
+// Calcul des crédits de récupération disponibles lors de l'ouverture du formulaire (date du jour)
+$c = new conges();
+$balance = $c->calculCreditRecup($perso_id);
 
 echo <<<EOD
 <h3>Poser des congés</h3>
@@ -131,7 +135,7 @@ else{
   $credit2 = heure4($credit);
   $reliquat2 = heure4($reliquat);
   $anticipation2 = heure4($anticipation);
-  $recuperation = number_format((float) $p->elements[0]['recup_samedi'], 2, '.', ' ');
+  $recuperation = number_format((float) $balance[1], 2, '.', ' ');
   $recuperation2=heure4($recuperation);
 
   // Affichage du formulaire
@@ -140,7 +144,7 @@ else{
   echo "<input type='hidden' name='page' value='plugins/conges/enregistrer.php' />\n";
   echo "<input type='hidden' name='confirm' value='confirm' />\n";
   echo "<input type='hidden' name='reliquat' value='$reliquat' />\n";
-  echo "<input type='hidden' name='recuperation' value='$recuperation' />\n";
+  echo "<input type='hidden' name='recuperation' id='recuperation' value='$recuperation' />\n";
   echo "<input type='hidden' name='credit' value='$credit' />\n";
   echo "<input type='hidden' name='anticipation' value='$anticipation' />\n";
   echo "<input type='hidden' id='agent' value='{$_SESSION['login_nom']} {$_SESSION['login_prenom']}' />\n";
@@ -253,7 +257,9 @@ EOD;
         <tr><td style='width:298px;'>Reliquat : </td><td style='width:130px;'>$reliquat2</td><td>(après débit : <font id='reliquat4'>$reliquat2</font>)</td></tr>
 EOD;
   if( $config['Conges-Recuperations'] == 0 ){
-        echo "<tr><td>Crédit de récupérations : </td><td>$recuperation2</td><td><font id='recup3'>(après débit : <font id='recup4'>$recuperation2</font>)</font></td></tr>\n";
+    echo "<tr id='balance_tr'><td>Crédit de récupération disponible au <span id='balance_date'>".dateFr($balance[0])."</span> : </td>\n";
+    echo "<td id='balance_before'>".heure4($balance[1])."</td>\n";
+    echo "<td>(après débit : <span id='recup4'>".heure4($balance[1])."</span>)</td></tr>\n";
   }
 echo <<<EOD
         <tr><td>Crédit de congés : </td><td>$credit2</td><td><font id='credit3'>(après débit : <font id='credit4'>$credit2</font>)</font></td></tr>
