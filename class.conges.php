@@ -1237,6 +1237,23 @@ class conges{
 
       $sql[]="ALTER TABLE `{$dbprefix}personnel` CHANGE `congesCredit` `conges_credit` FLOAT(10) DEFAULT 0, CHANGE `congesReliquat` `conges_reliquat` FLOAT(10) DEFAULT 0, CHANGE `congesAnticipation` `conges_anticipation` FLOAT(10) DEFAULT 0, CHANGE `recupSamedi` `recup_samedi` FLOAT(10) DEFAULT 0, CHANGE `congesAnnuel` `conges_annuel` FLOAT(10) DEFAULT 0;";
 
+      // Suppression des doublons dans la table cron
+      $db = new db();
+      $db->select2('cron', 'id', array('command' => 'plugins/conges/cron.sept1.php'));
+      if($db->result){
+        for($i = 1; $i < $db->nb; $i++){
+          $sql[] = "DELETE FROM `{$dbprefix}cron` WHERE `id` = '".$db->result[$i]['id']."';";
+        }
+      }
+
+      $db = new db();
+      $db->select2('cron', 'id', array('command' => 'plugins/conges/cron.jan1.php'));
+      if($db->result){
+        for($i = 1; $i < $db->nb; $i++){
+          $sql[] = "DELETE FROM `{$dbprefix}cron` WHERE `id` = '".$db->result[$i]['id']."';";
+        }
+      }
+
       $sql[]="UPDATE `{$dbprefix}plugins` SET `version`='$version' WHERE `nom`='conges';";
     }
 
