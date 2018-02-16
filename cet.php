@@ -7,7 +7,7 @@ Voir les fichiers README.md et LICENSE
 
 Fichier : plugins/conges/cet.php
 Création : 6 mars 2014
-Dernière modification : 28 janvier 2018
+Dernière modification : 16 février 2018
 @author Jérôme Combes <jerome@planningbiblio.fr>
 
 Description :
@@ -27,22 +27,10 @@ if(!$annee){
   $annee = !empty($_SESSION['oups']['cet_annee']) ? $_SESSION['oups']['cet_annee'] : date("Y")+1 ;
 }
 
-// Gestion des droits d'administration
-$adminN1 = false;
-for($i = 1; $i <= $config['Multisites-nombre']; $i++ ){
-  if(in_array((400+$i), $droits)){
-    $adminN1 = true;
-    break;
-  }
-}
-
-$adminN2 = false;
-for($i = 1; $i <= $config['Multisites-nombre']; $i++ ){
-  if(in_array((600+$i), $droits)){
-    $adminN2 = true;
-    break;
-  }
-}
+// Droits d'administration niveau 1 et niveau 2
+$c = new conges();
+$roles = $c->roles($perso_id, true);
+list($adminN1, $adminN2) = $roles;
 
 $displayValidation=$adminN1?null:"style='display:none;'";
 $displayValidationN2=$adminN2?null:"style='display:none;'";

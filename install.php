@@ -7,7 +7,7 @@ Voir les fichiers README.md et LICENSE
 
 Fichier : plugins/conges/install.php
 Création : 24 juillet 2013
-Dernière modification : 10 février 2018
+Dernière modification : 16 février 2018
 @author Jérôme Combes <jerome@planningbiblio.fr>
 
 Description :
@@ -84,8 +84,8 @@ $sql[]="CREATE TABLE `{$dbprefix}conges_infos` (`id` INT(11) NOT NULL AUTO_INCRE
 $sql[]="CREATE TABLE `{$dbprefix}recuperations` (`id` INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY, `perso_id` INT(11) NOT NULL, 
   `date` DATE NULL, `date2` DATE NULL, `heures` FLOAT(5), `etat` VARCHAR(20), `commentaires` TEXT, 
   `saisie` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, `saisie_par` INT NOT NULL, `modif` INT(11) NOT NULL DEFAULT '0', 
-  `modification` TIMESTAMP, `valide` INT(11) NOT NULL DEFAULT '0',`validation` TIMESTAMP,`refus` TEXT, 
-  `solde_prec` FLOAT(10), `solde_actuel` FLOAT(10));";
+  `modification` TIMESTAMP, `valide_n1` INT(11) NOT NULL DEFAULT 0, `validation_n1` DATETIME NULL DEFAULT NULL, `valide` INT(11) NOT NULL DEFAULT '0',`validation` TIMESTAMP, 
+  `refus` TEXT, `solde_prec` FLOAT(10), `solde_actuel` FLOAT(10));";
 
 // Menu
 $sql[]="INSERT INTO `{$dbprefix}menu` (`niveau1`,`niveau2`,`titre`,`url`) VALUES (15,0,'Cong&eacute;s','plugins/conges/voir.php');";

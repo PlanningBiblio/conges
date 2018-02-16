@@ -7,7 +7,7 @@ Voir les fichiers README.md et LICENSE
 
 Fichier : plugins/conges/recuperations.php
 Création : 27 août 2013
-Dernière modification : 10 février 2018
+Dernière modification : 16 février 2018
 @author Jérôme Combes <jerome@planningbiblio.fr>
 
 Description :
@@ -121,25 +121,35 @@ echo <<<EOD
 </form>
 <table id='tableRecup' class='CJDataTable' data-sort='[[1]]'>
 <thead>
-<tr><th class='dataTableNoSort' >&nbsp;</th>
+<tr><th rowspan='2' class='dataTableNoSort' >&nbsp;</th>
 EOD;
-echo "<th class='dataTableDateFR'>Date</th>\n";
+echo "<th rowspan='2' class='dataTableDateFR'>Date</th>\n";
 if($admin){
-  echo "<th>Agent</th>";
+  echo "<th rowspan='2'>Agent</th>";
 }
-echo "<th>Heures</th><th>Commentaires</th><th>Validation</th><th>Crédits</th></tr>\n";
+echo "<th rowspan='2'>Heures</th>\n";
+echo "<th colspan='2' >Validation</th>\n";
+echo "<th rowspan='2'>Crédits</th>\n";
+echo "<th rowspan='2'>Commentaires</th></tr>\n";
+
+echo "<tr><th>&Eacute;tat</th>\n";
+echo "<th class='dataTableDateFR'>Date</th></tr>\n";
+
 echo "</thead>\n";
 echo "<tbody>\n";
 
 foreach($recup as $elem){
-  $validation="Demand&eacute;e, ".dateFr($elem['saisie'],true);
+  $validation="Demand&eacute;";
+  $validation_date = dateFr($elem['saisie'],true);
   $validationStyle="font-weight:bold;";
   if($elem['saisie_par'] and $elem['saisie_par']!=$elem['perso_id']){
     $validation.=" par ".nom($elem['saisie_par']);
   }
   $credits=null;
+
   if($elem['valide']>0){
-    $validation=nom($elem['valide']).", ".dateFr($elem['validation'],true);
+    $validation = $lang['leave_table_accepted'] ." par ". nom($elem['valide']);
+    $validation_date = dateFr($elem['validation'],true);
     $validationStyle=null;
     if($elem['solde_prec']!=null and $elem['solde_actuel']!=null){
       $credits=heure4($elem['solde_prec'])." &rarr; ".heure4($elem['solde_actuel']);
@@ -147,8 +157,19 @@ foreach($recup as $elem){
 
   }
   elseif($elem['valide']<0){
-    $validation="Refus&eacute;, ".nom(-$elem['valide']).", ".dateFr($elem['validation'],true);
+    $validation = $lang['leave_table_refused'] ." par ". nom(-$elem['valide']);
+    $validation_date = dateFr($elem['validation'],true);
     $validationStyle="color:red;font-weight:bold;";
+  }
+  elseif($elem['valide_n1'] > 0){
+    $validation = $lang['leave_table_accepted_pending'] .", ". nom($elem['valide_n1']);
+    $validation_date = dateFr($elem['validation_n1'],true);
+    $validationStyle="font-weight:bold;";
+  }
+  elseif($elem['valide_n1'] < 0){
+    $validation = $lang['leave_table_refused_pending'] .", ". nom(-$elem['valide_n1']);
+    $validation_date = dateFr($elem['validation_n1'],true);
+    $validationStyle="font-weight:bold;";
   }
 
   echo "<tr>";
@@ -159,7 +180,10 @@ foreach($recup as $elem){
     echo "<td>".nom($elem['perso_id'])."</td>";
   }
   echo "<td>".heure4($elem['heures'])."</td>\n";
-  echo "<td>".str_replace("\n","<br/>",$elem['commentaires'])."</td><td style='$validationStyle'>$validation</td><td>$credits</td></tr>\n";
+  echo "<td style='$validationStyle'>$validation</td>\n";
+  echo "<td>$validation_date</td>\n";
+  echo "<td>$credits</td>\n";
+  echo "<td>".str_replace("\n","<br/>",$elem['commentaires'])."</td></tr>\n";
 }
 
 echo <<<EOD

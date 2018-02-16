@@ -7,7 +7,7 @@ Voir les fichiers README.md et LICENSE
 
 Fichier : plugins/conges/ficheAgent.php
 Création : 26 juillet 2013
-Dernière modification : 10 février 2018
+Dernière modification : 16 février 2018
 @author Jérôme Combes <jerome@planningbiblio.fr>
 @author Etienne Cavalié
 
@@ -114,7 +114,7 @@ echo "</td></tr>";
 
 // Récupération
 echo "<tr><td>";
-echo "{$lang['recuperation']} :";
+echo "{$lang['comp_time']} :";
 echo "</td><td style='text-align:right;'>";
 if($admin){
   echo "<input type='text' name='recup' value='{$conges['recupHeures']}'  style='width:70px;text-align:right;'>\n";

@@ -7,7 +7,7 @@ Voir les fichiers README.md et LICENSE
 
 Fichier : plugins/conges/recuperation_valide.php
 Création : 30 août 2013
-Dernière modification : 10 février 2018
+Dernière modification : 16 février 2018
 @author Jérôme Combes <jerome@planningbiblio.fr>
 
 Description :
@@ -24,26 +24,8 @@ $heures=filter_input(INPUT_POST,"heures",FILTER_SANITIZE_STRING);
 $refus=trim(filter_input(INPUT_POST,"refus",FILTER_SANITIZE_STRING));
 $validation=filter_input(INPUT_POST,"validation",FILTER_SANITIZE_NUMBER_INT);
 
-// Gestion des droits d'administration
-// NOTE : Ici, pas de différenciation entre les droits niveau 1 et niveau 2
-// NOTE : Les agents ayant les droits niveau 1 ou niveau 2 sont admin ($admin, droits 40x et 60x)
-// TODO : différencier les niveau 1 et 2 si demandé par les utilisateurs du plugin
-
-$admin = false;
-for($i = 1; $i <= $config['Multisites-nombre']; $i++ ){
-  if(in_array((400+$i), $droits) or in_array((600+$i), $droits)){
-    $admin = true;
-    break;
-  }
-}
-
 $msg=urlencode("Une erreur est survenue lors de la validation de vos modifications.");
 $msgType="error";
-
-// Sécurité
-if(!$admin and $perso_id!=$_SESSION['login_id']){ // Undefined $perso_id
-  include_once "../../include/accessDenied.php";
-}
 
 // Récupération des éléments
 $c=new conges();
@@ -52,13 +34,30 @@ $c->getRecup();
 $recup=$c->elements[0];
 $perso_id=$recup['perso_id'];
 
+// Droits d'administration niveau 1 et niveau 2
+$c = new conges();
+$roles = $c->roles($perso_id);
+list($adminN1, $adminN2) = $roles;
+
+
 // Modification des heures
 $update=array("heures"=>$heures,"commentaires"=>$commentaires,"modif"=>$_SESSION['login_id'],"modification"=>date("Y-m-d H:i:s"));
 
 // Modification des heures  et validation par l'administrateur
-if($validation!==null and $admin){
-  $update['valide']=$validation;
-  $update['validation']=date("Y-m-d H:i:s");
+if($validation!==null and $adminN1){
+
+  // Validation niveau 1
+  if($validation == 2 or $validation == -2){
+    $update['valide_n1'] = $validation / 2 * $_SESSION['login_id'] ;
+    $update['validation_n1'] = date("Y-m-d H:i:s");
+  }
+
+  // Validation niveau 2
+  if($validation == 1 or $validation == -1){
+    $update['valide'] = $validation * $_SESSION['login_id'] ;
+    $update['validation'] = date("Y-m-d H:i:s");
+  }
+
   $update['refus']=$refus;
 }
 
@@ -97,21 +96,39 @@ if(isset($update)){
   $c->getResponsables($recup['date'],$recup['date'],$perso_id);
   $responsables=$c->responsables;
 
-  if(isset($update['valide']) and $update['valide']>0){
-    $sujet="Demande de récupération validée";
-    $message="Demande de récupération du ".dateFr($recup['date'])." validée pour $prenom $nom";
-    $notifications=4;
+  if(isset($update['valide']) and $update['valide'] > 0){
+    $sujet = $lang['comp_time_subject_accepted'];
+    $notifications = 4;
   }
-  elseif(isset($update['valide']) and $update['valide']<0){
-    $sujet="Demande de récupération refusée";
-    $message="Demande de récupération du ".dateFr($recup['date'])." refusée pour $prenom $nom";
-    $message.="<br/><br/>".str_replace("\n","<br/>",$update['refus']);
-    $notifications=4;
+  elseif(isset($update['valide']) and $update['valide'] < 0){
+    $sujet = $lang['comp_time_subject_refused'];
+    $notifications = 4;
+  }
+  elseif(isset($update['valide_n1']) and $update['valide_n1'] > 0){
+    $sujet = $lang['comp_time_subject_accepted_pending'];
+    $notifications = 3;
+  }
+  elseif(isset($update['valide_n1']) and $update['valide_n1'] < 0){
+    $sujet = $lang['comp_time_subject_refused_pending'];
+    $notifications = 3;
   }
   else{
     $sujet="Demande de récupération modifiée";
-    $message="Demande de récupération du ".dateFr($recup['date'])." modifiée pour $prenom $nom";
-    $notifications=2;
+    $notifications = 2;
+  }
+  
+  $message = $sujet;
+  $message .= "<br/><br/>\n";
+  $message .= "Pour l'agent : $prenom $nom";
+  $message .= "<br/>\n";
+  $message .= "Date : ".dateFr($recup['date']);
+  $message .= "<br/>\n";
+  $message .= "Nombre d'heures : ".heure4($update['heures']);
+  if($update['commentaires']){
+    $message.="<br/><br/><u>Commentaires</u> :<br/>".str_replace("\n","<br/>",$update['commentaires']);
+  }
+  if($update['refus']){
+    $message.="<br/><br/><u>Motif du refus</u> :<br/>".str_replace("\n","<br/>",$update['refus']);
   }
 
   // Choix des destinataires en fonction de la configuration

@@ -7,7 +7,7 @@ Voir les fichiers README.md et LICENSE
 
 Fichier : plugins/conges/modif.php
 Création : 1er août 2013
-Dernière modification : 12 février 2018
+Dernière modification : 16 février 2018
 @author Jérôme Combes <jerome@planningbiblio.fr>
 @author Etienne Cavalié <etienne.cavalie@unice.fr>
 
@@ -54,51 +54,9 @@ $c = new conges();
 $balance = $c->calculCreditRecup($perso_id);
 
 // Droits d'administration niveau 1 et niveau 2
-// Droits nécessaires en mono-site
-$droitsN1 = array(401);
-$droitsN2 = array(601);
-
-// Droits nécessaires en multisites avec vérification des sites attribués à l'agent concerné par le congé
-if($config['Multisites-nombre']>1){
-  $droitsN1 = Array();
-  $droitsN2 = Array();
-
-  $p=new personnel();
-  $p->fetchById($perso_id);
-
-  if(is_array($p->elements[0]['sites'])){
-    foreach($p->elements[0]['sites'] as $site){
-      $droitsN1[] = 400 + $site;
-      $droitsN2[] = 600 + $site;
-    }
-  }
-}
-
-// Ai-je le droit d'administration niveau 1 pour le congé demandé
-$adminN1 = false;
-foreach($droitsN1 as $elem){
-  if(in_array($elem,$droits)){
-    $adminN1 = true;
-    break;
-  }
-}
-
-// Ai-je le droit d'administration niveau 2 pour le congé demandé
-$adminN2 = false;
-foreach($droitsN2 as $elem){
-  if(in_array($elem,$droits)){
-    $adminN2 = true;
-    break;
-  }
-}
-
-// Si je ne suis pas admin et que ce congé n'est pas le mien, l'accès est refusé
-if(!$adminN1 and !$adminN2 and $perso_id != $_SESSION['login_id']){
-  echo "<h3>Congés</h3>\n";
-  echo "<div id='acces_refuse'>Accès refusé</div>\n";
-  include "include/footer.php";
-  exit;
-}
+$c = new conges();
+$roles = $c->roles($perso_id, true);
+list($adminN1, $adminN2) = $roles;
 
 
 if($confirm){
@@ -142,11 +100,11 @@ if($confirm){
       break;
     // Validations Niveau 1
     case 2 :
-      $sujet = $lang['leave_waiting_subject_accepted'];
+      $sujet = $lang['leave_subject_accepted_pending'];
       $notifications=3;
       break;
     case -2 :
-      $sujet = $lang['leave_waiting_subject_refused'];
+      $sujet = $lang['leave_subject_refused_pending'];
       $notifications=3;
       break;
   }
@@ -429,8 +387,8 @@ EOD;
     echo "<td><select name='valide' style='width:98%;' onchange='afficheRefus(this);'>\n";
     echo "<option value='0'>&nbsp;</option>\n";
     if($adminN1){
-      echo "<option value='2' {$selectAccept[2]}>{$lang['leave_waiting_dropdown_accepted']}</option>\n";
-      echo "<option value='-2' {$selectAccept[3]}>{$lang['leave_waiting_dropdown_refused']}</option>\n";
+      echo "<option value='2' {$selectAccept[2]}>{$lang['leave_dropdown_accepted_pending']}</option>\n";
+      echo "<option value='-2' {$selectAccept[3]}>{$lang['leave_dropdown_refused_pending']}</option>\n";
     }
     if($adminN2 and ($data['valide_n1'] > 0 or $config['Conges-Validation-N2'] == 0)){
       echo "<option value='1' {$selectAccept[0]}>Accept&eacute;</option>\n";
