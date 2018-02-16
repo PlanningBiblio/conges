@@ -175,14 +175,19 @@ if($admin){
   
 }
 echo <<<EOD
-<td><input type='submit' value='OK' id='button-OK' class='ui-button'/></td>
-<td><input type='button' value='Effacer' onclick='location.href="index.php?page=plugins/conges/voir.php&reset=on"' class='ui-button'/></td>
+<td><input type='submit' value='Rechercher' id='button-OK' class='ui-button'/></td>
+<td><input type='button' value='Effacer' onclick='location.href="index.php?page=plugins/conges/voir.php&amp;recup=$voir_recup&amp;reset=on"' class='ui-button'/></td>
 </tr></tbody></table>
 </span>
 <span style='float:right; vertical-align:top; margin:10px 5px;'>
 <a href='$addLink' class='ui-button'>Ajouter</a>
 </span>
+EOD;
 
+if($voir_recup){
+  echo "<input type='hidden' name='recup' value='1' />\n";
+}
+echo <<<EOD
 </form>
 <br/>
 <table id='tableConges' class='CJDataTable' data-sort='[[1],[2]]'>

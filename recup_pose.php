@@ -7,7 +7,7 @@ Voir les fichiers README.md et LICENSE
 
 Fichier : plugins/conges/recup_pose.php
 Création : 12 janvier 2018
-Dernière modification : 12 février 2018
+Dernière modification : 16 février 2018
 @author Jérôme Combes <jerome@planningbiblio.fr>
 
 Description :
@@ -149,12 +149,13 @@ else{
   echo "<input type='hidden' name='confirm' value='confirm' />\n";
   echo "<input type='hidden' name='reliquat' value='$reliquat' />\n";
   echo "<input type='hidden' name='recuperation' id='recuperation' value='$recuperation' />\n";
+  echo "<input type='hidden' name='recuperation_prev' id='recuperation_prev' value='{$balance[4]}' />\n";
   echo "<input type='hidden' name='credit' value='$credit' />\n";
   echo "<input type='hidden' name='anticipation' value='$anticipation' />\n";
   echo "<input type='hidden' id='agent' value='{$_SESSION['login_nom']} {$_SESSION['login_prenom']}' />\n";
   echo "<input type='hidden' id='conges-recup' value='1' />\n";
   echo "<table border='0'>\n";
-  echo "<tr><td style='width:300px;'>\n";
+  echo "<tr><td style='width:350px;'>\n";
   echo "Nom, prénom : \n";
   echo "</td><td style='width:250px;'>\n";
   if($admin){
@@ -230,9 +231,14 @@ EOD;
   echo "<tr><td colspan='2'>\n";
   echo "<table border='0'>\n";
 
-  echo "<tr id='balance_tr'><td>Solde disponible au <span id='balance_date'>".dateFr($balance[0])."</span> : </td>\n";
+  echo "<tr class='balance_tr'><td style='width:348px;'>Solde disponible au <span class='balance_date'>".dateFr($balance[0])."</span> : </td>\n";
   echo "<td id='balance_before'>".heure4($balance[1])."</td>\n";
   echo "<td>(après débit : <span id='recup4'>".heure4($balance[1])."</span>)</td></tr>\n";
+
+  echo "<tr class='balance_tr'><td>Solde prévisionnel<sup>*</sup> au <span class='balance_date'>".dateFr($balance[0])."</span> : </td>\n";
+  echo "<td id='balance2_before'>".heure4($balance[4])."</td>\n";
+  echo "<td>(après débit : <span id='balance2_after'>".heure4($balance[4])."</span>)</td></tr>\n";
+
   echo "</table>\n";
   echo "</td></tr>\n";
 
@@ -246,7 +252,9 @@ EOD;
   echo "&nbsp;&nbsp;\n";
   echo "<input type='button' value='Valider' class='ui-button' onclick='verifConges();' style='margin-left:20px;' id='submit-button'/>\n";
   echo "<div id='google-calendar-div' class='inline'></div>\n";
-  echo "</td></tr></table>\n";
+  echo "</td></tr>\n";
+  echo "<tr><td colspan='2' style='padding-top:30px; font-style:italic;'><sup>*</sup> Le solde prévisionnel tient compte des demandes des récupérations non validées (crédits et utilisations).</td></tr>\n";
+  echo "</table>\n";
   echo "</form>\n";
 }
 

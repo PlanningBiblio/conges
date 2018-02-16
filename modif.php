@@ -186,11 +186,13 @@ else{	// Formulaire
   $credit = number_format( (float) $p->elements[0]['conges_credit'], 2, '.', ' ');
   $reliquat = number_format( (float) $p->elements[0]['conges_reliquat'], 2, '.', ' ');
   $anticipation = number_format( (float) $p->elements[0]['conges_anticipation'], 2, '.', ' ');
-  $credit2 = heure4($credit);
-  $reliquat2 = heure4($reliquat);
-  $anticipation2 = heure4($anticipation);
+  $credit2 = heure4($credit, true);
+  $reliquat2 = heure4($reliquat, true);
+  $anticipation2 = heure4($anticipation, true);
   $recuperation = number_format((float) $balance[1], 2, '.', ' ');
-  $recuperation2=heure4($recuperation);
+  $recuperation2=heure4($recuperation, true);
+
+  if($balance[4] < 0) { $balance[4] = 0; }
 
   $retour = ( $config['Conges-Recuperations'] and $data['debit'] == 'recuperation' ) ? 'index.php?page=plugins/conges/voir.php&amp;recup=1' : 'index.php?page=plugins/conges/voir.php' ;
 
@@ -206,6 +208,7 @@ else{	// Formulaire
   echo "<input type='hidden' name='confirm' value='confirm' />\n";
   echo "<input type='hidden' name='reliquat' value='$reliquat' />\n";
   echo "<input type='hidden' name='recuperation' id='recuperation' value='$recuperation' />\n";
+  echo "<input type='hidden' name='recuperation_prev' id='recuperation_prev' value='{$balance[4]}' />\n";
   echo "<input type='hidden' name='credit' value='$credit' />\n";
   echo "<input type='hidden' name='anticipation' value='$anticipation' />\n";
   echo "<input type='hidden' name='id' value='$id' id='id' />\n";
@@ -213,7 +216,7 @@ else{	// Formulaire
   echo "<input type='hidden' id='agent' value='{$_SESSION['login_nom']} {$_SESSION['login_prenom']}' />\n";
   echo "<input type='hidden' name='conges-recup' id='conges-recup' value='{$config['Conges-Recuperations']}' />\n";
   echo "<table border='0'>\n";
-  echo "<tr><td style='width:300px;'>\n";
+  echo "<tr><td style='width:350px;'>\n";
   echo "Nom, prénom : \n";
   echo "</td><td>\n";
   if( $adminN1 or $adminN2 ){
@@ -327,22 +330,31 @@ EOD;
     echo "<tr><td colspan='2'>\n";
     echo "<table border='0'>\n";
     if( $config['Conges-Recuperations'] == 0 ) {
-      echo "<tr><td style='width:298px;'>Reliquat : </td><td style='width:130px;'>$reliquat2</td><td>(après débit : <font id='reliquat4'>$reliquat2</font>)</td></tr>\n";
-      echo "<tr id='balance_tr'><td>Crédit de récupération disponible au <span id='balance_date'>".dateFr($balance[0])."</span> : </td>\n";
+      echo "<tr><td style='width:348px;'>Reliquat : </td><td style='width:130px;'>$reliquat2</td><td>(après débit : <font id='reliquat4'>$reliquat2</font>)</td></tr>\n";
+      echo "<tr class='balance_tr'><td>Crédit de récupérations disponible au <span class='balance_date'>".dateFr($balance[0])."</span> : </td>\n";
       echo "<td id='balance_before'>".heure4($balance[1])."</td>\n";
-      echo "<td>(après débit : <span id='recup4'>".heure4($balance[1])."</span>)</td></tr>\n";
+      echo "<td>(après débit : <span id='recup4'>".heure4($balance[1], true)."</span>)</td></tr>\n";
+
+      echo "<tr class='balance_tr'><td>Crédit de récupérations prévisionnel<sup>*</sup> au <span class='balance_date'>".dateFr($balance[0])."</span> : </td>\n";
+      echo "<td id='balance2_before'>".heure4($balance[4], true)."</td>\n";
+      echo "<td>(après débit : <span id='balance2_after'>".heure4($balance[4], true)."</span>)</td></tr>\n";
 
       echo "<tr><td>Crédit de congés: </td><td>$credit2</td><td><font id='credit3'>(après débit : <font id='credit4'>$credit2</font>)</font></td></tr>\n";
       echo "<tr><td>Solde débiteur : </td><td>$anticipation2</td><td><font id='anticipation3'>(après débit : <font id='anticipation4'>$anticipation2</font>)</font></td></tr>\n";
     } else {
       if($data['debit']=="credit") {
-        echo "<tr><td style='width:298px;'>Reliquat : </td><td style='width:130px;'>$reliquat2</td><td>(après débit : <font id='reliquat4'>$reliquat2</font>)</td></tr>\n";
+        echo "<tr><td style='width:348px;'>Reliquat : </td><td style='width:130px;'>$reliquat2</td><td>(après débit : <font id='reliquat4'>$reliquat2</font>)</td></tr>\n";
         echo "<tr><td>Crédit de congés: </td><td>$credit2</td><td><font id='credit3'>(après débit : <font id='credit4'>$credit2</font>)</font></td></tr>\n";
         echo "<tr><td>Solde débiteur : </td><td>$anticipation2</td><td><font id='anticipation3'>(après débit : <font id='anticipation4'>$anticipation2</font>)</font></td></tr>\n";
       } else {
-        echo "<tr id='balance_tr'><td>Solde disponible au <span id='balance_date'>".dateFr($balance[0])."</span> : </td>\n";
-        echo "<td id='balance_before'>".heure4($balance[1])."</td>\n";
-        echo "<td>(après débit : <span id='recup4'>".heure4($balance[1])."</span>)</td></tr>\n";
+        echo "<tr class='balance_tr'><td style='width:348px;'>Solde disponible au <span class='balance_date'>".dateFr($balance[0])."</span> : </td>\n";
+        echo "<td id='balance_before'>".heure4($balance[1], true)."</td>\n";
+        echo "<td>(après débit : <span id='recup4'>".heure4($balance[1], true)."</span>)</td></tr>\n";
+
+        echo "<tr class='balance_tr'><td>Solde prévisionnel<sup>*</sup> au <span class='balance_date'>".dateFr($balance[0])."</span> : </td>\n";
+        echo "<td id='balance2_before'>".heure4($balance[4], true)."</td>\n";
+        echo "<td>(après débit : <span id='balance2_after'>".heure4($balance[4], true)."</span>)</td></tr>\n";
+
       }
     }
     echo "</table>\n";
@@ -434,7 +446,16 @@ EOD;
   }
   
   echo "<div id='google-calendar-div' class='inline'></div>\n";
-  echo "</td></tr></table>\n";
+  echo "</td></tr>\n";
+
+  if( $config['Conges-Recuperations'] == 0 ) {
+    echo "<tr><td colspan='2' style='padding-top:30px; font-style:italic;'><sup>*</sup> Le crédit de récupérations prévisionnel tient compte des demandes non validées (crédits et utilisations).</td></tr>\n";
+  }
+  elseif($data['debit'] == 'recuperation'){
+    echo "<tr><td colspan='2' style='padding-top:30px; font-style:italic;'><sup>*</sup> Le solde prévisionnel tient compte des demandes des récupérations non validées (crédits et utilisations).</td></tr>\n";
+  }
+
+  echo "</table>\n";
   echo "</form>\n";
 
   // Calcul des crédits restant au chargement de la page

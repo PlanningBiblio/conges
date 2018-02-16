@@ -6,7 +6,7 @@ Voir les fichiers README.md et LICENSE
 
 Fichier : plugins/conges/js/script.conges.js
 Création : 2 août 2013
-Dernière modification : 12 février 2018
+Dernière modification : 16 février 2018
 @author Jérôme Combes <jerome@planningbiblio.fr>
 @author Etienne Cavalié <etienne.cavalie@unice.fr>
 
@@ -63,11 +63,21 @@ function calculCredit(){
         var heures2=result[2];          // heures h minutes
 
         var balance_date = result[3][0];  // Date de début, affichée pour le réajustement des crédits disponibles
-        var balance = result[3][1];       // Crédits de récupérations disponible à la date choisie
+        var balance = result[3][1];       // Crédits de récupérations disponibles à la date choisie
+
+        var balance_estimated = result[3][4];       // Crédits de récupérations prévisionnels à la date choisie
+
+        if($('#conges-recup').val() == 0 && balance_estimated < 0 ){
+          balance_estimated = 0;
+        }
+        
+
         $('#recuperation').val(balance);
-        $('#balance_date').text(dateFr(balance_date));
+        $('.balance_date').text(dateFr(balance_date));
         $('#balance_before').text(heure4(balance));
-        $("#balance_tr").effect("highlight",null,4000);
+        $('#balance2_before').text(heure4(balance_estimated));
+        $("#recuperation_prev").val(balance_estimated);
+        $(".balance_tr").effect("highlight",null,4000);
 
         document.form.elements["heures"].value=heures;
 	document.form.elements["minutes"].value=minutes;
@@ -89,6 +99,7 @@ function calculRestes(){
   heures=document.form.elements["heures"].value+"."+document.form.elements["minutes"].value;
   reliquat=document.form.elements["reliquat"].value;
   recuperation=document.form.elements["recuperation"].value;
+  recuperation_prev = $('#recuperation_prev').val();
   credit=document.form.elements["credit"].value;
   anticipation=document.form.elements["anticipation"].value;
   debit=document.form.elements["debit"].value;
@@ -120,9 +131,14 @@ function calculRestes(){
     // Calcul du crédit de récupération
     if(debit=="recuperation"){
       recuperation=recuperation-reste;
+      recuperation_prev = recuperation_prev - reste;
       if(recuperation<0){
         reste2=-recuperation;
         recuperation=0;
+      }
+
+      if(recuperation_prev < 0){
+        recuperation_prev = 0;
       }
     }
     
@@ -147,9 +163,13 @@ function calculRestes(){
       }
       else if(debit=="credit"){
         recuperation=recuperation-reste2;
+        recuperation_prev = recuperation_prev - reste2;
         if(recuperation<0){
           reste3=-recuperation;
           recuperation=0;
+        }
+        if(recuperation_prev < 0){
+          recuperation_prev = 0;
         }
       }
     }
@@ -164,11 +184,12 @@ function calculRestes(){
     // Calcul du crédit de récupération
     if(debit=="recuperation"){
       recuperation = recuperation - heures;
+      recuperation_prev = recuperation_prev - heures;
 
       $('.recup-alert').remove();
       if(recuperation < 0){
         CJInfo("Le crédit de récupération ne peut pas être négatif.", "error", null, 5000, 'recup-alert');
-        $("#balance_tr").effect("highlight",null,4000);
+        $(".balance_tr").effect("highlight",null,4000);
       }
     }
 
@@ -203,6 +224,8 @@ function calculRestes(){
   // Affichage
   $("#reliquat4").text(heure4(reliquat));
   $("#recup4").text(heure4(recuperation));
+//   $("#recuperation_prev").val(recuperation_prev);
+  $("#balance2_after").text(heure4(recuperation_prev));
   $("#credit4").text(heure4(credit));
   $("#anticipation4").text(heure4(anticipation));
 }
@@ -303,7 +326,7 @@ function verifConges(){
   if(parseFloat(recuperation) < 0){
     $('.recup-alert').remove();
     CJInfo("Le crédit de récupération ne peut pas être négatif.", "error", null, 5000, 'recup-alert');
-    $("#balance_tr").effect("highlight",null,4000);
+    $(".balance_tr").effect("highlight",null,4000);
     return false;
   }
   

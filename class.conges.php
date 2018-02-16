@@ -167,17 +167,49 @@ class conges{
 
     $db = new db();
     $db->select2('personnel', 'recup_samedi', array('id' => $perso_id));
+    
+    // $balance1 : solde à la date choisie
     $balance1 = (float) $db->result[0]['recup_samedi'];
+    // $balance2 : solde définitif, disponible à la date du dernier ajout
     $balance2 = $balance1;
+    // $balance3 : solde prévisionnel
+    $balance3 = $balance1;
 
     $db = new db();
-    $db->select2('recuperations', array('heures','date','date2'), array('perso_id' => $perso_id, 'valide' => ">1"), "ORDER BY `date`");
+    $db->select2('recuperations', null, array('perso_id' => $perso_id), "ORDER BY `date`");
     $recup_tab = $db->result;
 
     if(!empty($recup_tab)){
       foreach($recup_tab as $elem){
+
+        // On ajoute les demande de crédits non validées au solde prévisionnel
+        if($elem['valide'] == 0 and ($elem['valide_n1'] >= 0 or $config['Conges-Validation-N2'] == 0)) {
+          $balance3 += (float) $elem['heures'];
+        }
+
+        // Retire les crédits applicables aux dates supérieures à celle choisie
         if($elem['date'] > $date){
-          $balance1 -= (float) $elem['heures'];
+
+          // Crédits validés ou non
+          $balance3 -= (float) $elem['heures'];
+
+          // Crédits validés
+          if($elem['valide'] > 0) {
+            $balance1 -= (float) $elem['heures'];
+          }
+        }
+      }
+    }
+    
+    $db = new db();
+    $db->select2('conges', null, array('perso_id' => $perso_id, 'debit' => 'recuperation'));
+    $leave_tab = $db->result;
+
+    // On déduit les demandes de récupérations non-validées au solde prévisionnel
+    if(!empty($leave_tab)){
+      foreach($leave_tab as $elem){
+        if($elem['valide'] == 0 and ($elem['valide_n1'] >= 0 or $config['Conges-Validation-N2'] == 0)) {
+          $balance3 -= (float) $elem['heures'];
         }
       }
     }
@@ -185,7 +217,7 @@ class conges{
     $last = end($recup_tab);
     $last = $last['date'];
 
-    return array($date, $balance1, $last, $balance2);
+    return array($date, $balance1, $last, $balance2, $balance3);
   }
 
   /**
