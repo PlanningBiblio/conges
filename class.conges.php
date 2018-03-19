@@ -170,11 +170,24 @@ class conges{
     
     // $balance1 : solde à la date choisie
     $balance1 = (float) $db->result[0]['recup_samedi'];
+
+    // Date à laquelle le compteur doit être remis à zéro
+    $reset_date = strtotime("09/01");
+    if($reset_date <= time()){
+      $reset_date = strtotime('+1 year', $reset_date);
+    }
+    $reset_date = date('Y-m-d', $reset_date);
+
+    // Mise à zéro du compte si la date choisie est après la remise à zéro
+    if($date >= $reset_date){
+      $balance1 = 0;
+    }
+    
     // $balance2 : solde définitif, disponible à la date du dernier ajout
     $balance2 = $balance1;
-    // $balance3 : solde prévisionnel
+    // $balance3 : solde prévisionnel à la date choisie
     $balance3 = $balance1;
-
+    
     $db = new db();
     $db->select2('recuperations', null, array('perso_id' => $perso_id), "ORDER BY `date`");
     $recup_tab = $db->result;
@@ -182,20 +195,32 @@ class conges{
     if(!empty($recup_tab)){
       foreach($recup_tab as $elem){
 
-        // On ajoute les demande de crédits non validées au solde prévisionnel
-        if($elem['valide'] == 0 and ($elem['valide_n1'] >= 0 or $config['Conges-Validation-N2'] == 0)) {
-          $balance3 += (float) $elem['heures'];
-        }
+        // On adapte les compteurs avec les enregistrements de la table récupération
+        // - si la date choisie est inférieure à la date de remise à zéro
+        // - ou si la date de l'enregistrement est supérieure ou égale à la date de remise à zéro
+        if($date < $reset_date or $elem['date'] >= $reset_date){
 
-        // Retire les crédits applicables aux dates supérieures à celle choisie
-        if($elem['date'] > $date){
+          // On ajoute les demandes de crédits non validées au solde prévisionnel
+          if($elem['valide'] == 0 and ($elem['valide_n1'] >= 0 or $GLOBALS['config']['Conges-Validation-N2'] == 0)) {
+            $balance3 += (float) $elem['heures'];
+          }
 
-          // Crédits validés ou non
-          $balance3 -= (float) $elem['heures'];
+          // On ajoute les crédits validés aux compteurs si la date choisie est supérieure à la date de remise à zéro
+          if($elem['valide'] > 0 and $date >= $reset_date) {
+            $balance1 += (float) $elem['heures'];
+            $balance3 += (float) $elem['heures'];
+          }
 
-          // Crédits validés
-          if($elem['valide'] > 0) {
-            $balance1 -= (float) $elem['heures'];
+          // Retire les crédits applicables aux dates supérieures à celle choisie
+          if($elem['date'] > $date){
+
+            // Crédits validés ou non
+            $balance3 -= (float) $elem['heures'];
+
+            // Crédits validés
+            if($elem['valide'] > 0) {
+              $balance1 -= (float) $elem['heures'];
+            }
           }
         }
       }
@@ -208,8 +233,15 @@ class conges{
     // On déduit les demandes de récupérations non-validées au solde prévisionnel
     if(!empty($leave_tab)){
       foreach($leave_tab as $elem){
-        if($elem['valide'] == 0 and ($elem['valide_n1'] >= 0 or $config['Conges-Validation-N2'] == 0)) {
-          $balance3 -= (float) $elem['heures'];
+
+        // On adapte le compteur prévisionnel avec les enregistrements de la table congés
+        // - si la date choisie est inférieure à la date de remise à zéro
+        // - ou si la date de l'enregistrement est supérieure ou égale à la date de remise à zéro
+        if($date < $reset_date or $elem['debut'] >= $reset_date){
+
+          if($elem['valide'] == 0 and ($elem['valide_n1'] >= 0 or $GLOBALS['config']['Conges-Validation-N2'] == 0)) {
+            $balance3 -= (float) $elem['heures'];
+          }
         }
       }
     }
