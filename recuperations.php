@@ -7,7 +7,7 @@ Voir les fichiers README.md et LICENSE
 
 Fichier : plugins/conges/recuperations.php
 Création : 27 août 2013
-Dernière modification : 16 février 2018
+Dernière modification : 4 avril 2018
 @author Jérôme Combes <jerome@planningbiblio.fr>
 
 Description :
@@ -375,11 +375,11 @@ $(function() {
 		// Ferme le dialog
 		$( this ).dialog( "close" );
 	      }else{
-		updateTips("Erreur lors de l'enregistrement de la récupération");
+		updateTips("Erreur lors de l'enregistrement de la récupération", "error");
 	      }
 	    },
 	    error: function (result){
-	      updateTips("Erreur lors de l'enregistrement de la récupération");
+	      updateTips("Erreur lors de l'enregistrement de la récupération", "error");
 	    },
 	  });
 	}
@@ -392,6 +392,7 @@ $(function() {
 
     close: function() {
       allFields.val( "" ).removeClass( "ui-state-error" );
+      $('.validateTips').text("Veuillez sélectionner le jour concerné par votre demande et le nombre d'heures à récuperer et un saisir un commentaire.");
     }
   });
 

@@ -6,7 +6,7 @@ Voir les fichiers README.md et LICENSE
 
 Fichier : plugins/conges/js/script.conges.js
 Création : 2 août 2013
-Dernière modification : 16 février 2018
+Dernière modification : 4 avril 2018
 @author Jérôme Combes <jerome@planningbiblio.fr>
 @author Etienne Cavalié <etienne.cavalie@unice.fr>
 
@@ -360,13 +360,13 @@ function verifRecup(o){
     success: function(result){
       if(result=="Demande"){
 	o.addClass( "ui-state-error" );
-	updateTips( "Une demande a déjà été enregistrée pour le "+o.val()+"." );
+	updateTips( "Une demande a déjà été enregistrée pour le "+o.val()+".", "error" );
       }else{
 	retour=true;
       }
     },
     error: function(result){
-      updateTips( "Une erreur s'est produite lors de la vérification des récupérations enregistrées");
+      updateTips( "Une erreur s'est produite lors de la vérification des récupérations enregistrées", "error");
     }
   });
   return retour;
@@ -378,7 +378,7 @@ function verifRecup(o){
 function checkLength( o, n, min, max ) {
   if ( o.val().length > max || o.val().length < min ) {
     o.addClass( "ui-state-error" );
-    updateTips( "Veuillez sélectionner le nombre d'heures.");
+    updateTips( "Veuillez sélectionner le nombre d'heures.", "error");
   return false;
   } else {
     return true;
@@ -388,7 +388,7 @@ function checkLength( o, n, min, max ) {
 function checkInt( o, n, min, max, tips ) {
   if ( o.val() > max || o.val() < min ) {
     o.addClass("ui-state-error");
-    updateTips(tips);
+    updateTips(tips, "error");
   return false;
   } else {
     return true;
@@ -407,7 +407,7 @@ function checkDateAge( o, limit, n, tip ) {
   if(diff.day>limit){
     if(tip){
       o.addClass( "ui-state-error" );
-      updateTips( n );
+      updateTips( n , "error");
     }
     return false;
   } else {
@@ -420,7 +420,7 @@ function checkSamedi( o, n ) {
   var d=new Date(tmp[2],tmp[1]-1,tmp[0]);
   if(d.getDay()!=6){
     o.addClass( "ui-state-error" );
-    updateTips( n );
+    updateTips( n , "error");
     return false;
   } else {
     return true;

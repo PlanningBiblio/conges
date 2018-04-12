@@ -17,7 +17,7 @@ Localisation personnalisée
 $lang['leave_dropdown_accepted_pending'] = 'Accepté par le N+1';
 $lang['leave_dropdown_refused_pending'] = 'Refusé par le N+1';
 $lang['leave_table_accepted_pending'] = 'Accepté par le N+1';
-$lang['leave_table_refused_pending'] = 'Refusé par le N+1';
+$lang['leave_table_refused_pending'] = 'Refusé par le N+2';
 $lang['leave_subject_accepted_pending'] = 'Demande de congés acceptée par le N+1';
 $lang['leave_subject_refused_pending'] = 'Demande de congés refusée par le N+1';
 // $lang['comp_time'] = 'Récupération du samedi';
