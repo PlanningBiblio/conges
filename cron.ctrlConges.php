@@ -1,13 +1,13 @@
 <?php
 /**
-Planning Biblio, Plugin Congés Version 2.7
+Planning Biblio, Plugin Congés Version 2.8
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
 @copyright 2013-2018 Jérôme Combes
 
 Fichier : plugins/conges/cron.ctrlConges.php
 Création : 21 juillet 2017
-Dernière modification : 29 août 2017
+Dernière modification : 19 avril 2018
 @author Jérôme Combes <jerome@planningbiblio.fr>
 
 Description :
@@ -124,7 +124,7 @@ if($db->result){
           $tmp['destinaires'] = array_merge($tmp['destinaires'], explode(';', $config['Mail-Planning']));
         }
         if(in_array('mails_responsables', $destN2)){
-          $tmp['destinaires'] = array_merge($tmp['destinaires'], explode(';', $tmp['mails_responsables']));
+          $tmp['destinaires'] = array_merge($tmp['destinaires'], $tmp['mails_responsables']);
         }
       }
 
@@ -135,7 +135,7 @@ if($db->result){
           $tmp['destinaires'] = array_merge($tmp['destinaires'], explode(';', $config['Mail-Planning']));
         }
         if(in_array('mails_responsables', $destN1)){
-          $tmp['destinaires'] = array_merge($tmp['destinaires'], explode(';', $tmp['mails_responsables']));
+          $tmp['destinaires'] = array_merge($tmp['destinaires'], $tmp['mails_responsables']);
         }
       }
       
