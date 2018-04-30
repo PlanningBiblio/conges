@@ -22,6 +22,8 @@ ET le lundi suivant (3 jours ouvrés + samedi + jour courant)
 0 7 * * 1-5 /usr/bin/php5 -f /var/www/html/planning/plugins/conges/cron.ctrlConges.php
 Remplacer si besoin le chemin d'accès au programme php et le chemin d'accès à ce fichier
 @note : Modifiez la variable $path suivante en renseignant le chemin absolu vers votre dossier planningBiblio
+
+TODO : voir comment gérer les notifications avec le paramètre Absences-notifications-agent-par-agent
 */
 
 $path="/var/www/html/planning";

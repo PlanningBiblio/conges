@@ -7,7 +7,7 @@ Voir les fichiers README.md et LICENSE
 
 Fichier : plugins/conges/ajax.enregistreCet.php
 Création : 7 mars 2014
-Dernière modification : 10 février 2018
+Dernière modification : 30 avril 2018
 @author Jérôme Combes <jerome@planningbiblio.fr>
 
 Description :
@@ -120,14 +120,21 @@ else{
   $mail=$p->elements[0]['mail'];
   $mailsResponsables=$p->elements[0]['mails_responsables'];
 
-  $c=new conges();
-  $c->getResponsables(null,null,$perso_id);
-  $responsables=$c->responsables;
+  if($config['Absences-notifications-agent-par-agent']){
+    $a = new absences();
+    $a->getRecipients2(null, $perso_id, 1);
+    $destinataires = $a->recipients;
+    
+  } else {
+    $c = new conges();
+    $c->getResponsables(null, null, $perso_id);
+    $responsables = $c->responsables;
 
-  // Choix des destinataires en fonction de la configuration
-  $a=new absences();
-  $a->getRecipients(1,$responsables,$mail,$mailsResponsables);
-  $destinataires=$a->recipients;
+    // Choix des destinataires en fonction de la configuration
+    $a = new absences();
+    $a->getRecipients(1, $responsables, $mail, $mailsResponsables);
+    $destinataires = $a->recipients;
+  }
 
   if(!empty($destinataires)){
     $sujet="Nouvelle demande de CET";

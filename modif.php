@@ -7,7 +7,7 @@ Voir les fichiers README.md et LICENSE
 
 Fichier : plugins/conges/modif.php
 Création : 1er août 2013
-Dernière modification : 16 février 2018
+Dernière modification : 30 avril 2018
 @author Jérôme Combes <jerome@planningbiblio.fr>
 @author Etienne Cavalié <etienne.cavalie@unice.fr>
 
@@ -71,10 +71,6 @@ if($confirm){
 
   // Envoi d'une notification par email
   // Récupération des adresses e-mails de l'agent et des responsables pour m'envoi des alertes
-  $c=new conges();
-  $c->getResponsables($debutSQL,$finSQL,$perso_id);
-  $responsables=$c->responsables;
-
   $p=new personnel();
   $p->fetchById($perso_id);
   $nom=$p->elements[0]['nom'];
@@ -110,9 +106,20 @@ if($confirm){
   }
 
   // Choix des destinataires en fonction de la configuration
-  $a=new absences();
-  $a->getRecipients($notifications,$responsables,$mail,$mailsResponsables);
-  $destinataires=$a->recipients;
+  if($config['Absences-notifications-agent-par-agent']){
+    $a = new absences();
+    $a->getRecipients2(null, $perso_id, $notifications, 600, $debutSQL, $finSQL);
+    $destinataires = $a->recipients;
+    
+  } else {
+    $c = new conges();
+    $c->getResponsables($debutSQL, $finSQL, $perso_id);
+    $responsables = $c->responsables;
+
+    $a = new absences();
+    $a->getRecipients($notifications, $responsables, $mail, $mailsResponsables);
+    $destinataires = $a->recipients;
+  }
 
   // Message qui sera envoyé par email
   $message="$sujet : <br/><br/>$prenom $nom<br/>Début : $debut";

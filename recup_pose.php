@@ -7,7 +7,7 @@ Voir les fichiers README.md et LICENSE
 
 Fichier : plugins/conges/recup_pose.php
 Création : 12 janvier 2018
-Dernière modification : 16 février 2018
+Dernière modification : 30 avril 2018
 @author Jérôme Combes <jerome@planningbiblio.fr>
 
 Description :
@@ -76,10 +76,6 @@ if(isset($_GET['confirm'])){	// Confirmation
   $id=$c->id;
 
   // Récupération des adresses e-mails de l'agent et des responsables pour l'envoi des alertes
-  $c=new conges();
-  $c->getResponsables($debutSQL,$finSQL,$perso_id);
-  $responsables=$c->responsables;
-
   $p=new personnel();
   $p->fetchById($perso_id);
   $nom=$p->elements[0]['nom'];
@@ -88,9 +84,20 @@ if(isset($_GET['confirm'])){	// Confirmation
   $mailsResponsables=$p->elements[0]['mails_responsables'];
 
   // Choix des destinataires en fonction de la configuration
-  $a=new absences();
-  $a->getRecipients(1,$responsables,$mail,$mailsResponsables);
-  $destinataires=$a->recipients;
+  if($config['Absences-notifications-agent-par-agent']){
+    $a = new absences();
+    $a->getRecipients2(null, $perso_id, 1);
+    $destinataires = $a->recipients;
+    
+  } else {
+    $c = new conges();
+    $c->getResponsables($debutSQL, $finSQL, $perso_id);
+    $responsables = $c->responsables;
+
+    $a = new absences();
+    $a->getRecipients(1, $responsables, $mail, $mailsResponsables);
+    $destinataires = $a->recipients;
+  }
 
   // Message qui sera envoyé par email
   $message="Nouveau congés: <br/>$prenom $nom<br/>Début : $debut";

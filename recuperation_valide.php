@@ -7,7 +7,7 @@ Voir les fichiers README.md et LICENSE
 
 Fichier : plugins/conges/recuperation_valide.php
 Création : 30 août 2013
-Dernière modification : 16 février 2018
+Dernière modification : 30 avril 2018
 @author Jérôme Combes <jerome@planningbiblio.fr>
 
 Description :
@@ -93,9 +93,6 @@ if(isset($update)){
   $mail=$p->elements[0]['mail'];
   $mailsResponsables=$p->elements[0]['mails_responsables'];
 
-  $c->getResponsables($recup['date'],$recup['date'],$perso_id);
-  $responsables=$c->responsables;
-
   if(isset($update['valide']) and $update['valide'] > 0){
     $sujet = $lang['comp_time_subject_accepted'];
     $notifications = 4;
@@ -132,9 +129,19 @@ if(isset($update)){
   }
 
   // Choix des destinataires en fonction de la configuration
-  $a=new absences();
-  $a->getRecipients($notifications,$responsables,$mail,$mailsResponsables);
-  $destinataires=$a->recipients;
+  if($config['Absences-notifications-agent-par-agent']){
+    $a = new absences();
+    $a->getRecipients2(null, $perso_id, $notifications, 600, $recup['date'], $recup['date']);
+    $destinataires = $a->recipients;
+    
+  } else {
+    $c->getResponsables($recup['date'], $recup['date'], $perso_id);
+    $responsables = $c->responsables;
+
+    $a = new absences();
+    $a->getRecipients($notifications, $responsables, $mail, $mailsResponsables);
+    $destinataires = $a->recipients;
+  }
 
   // Envoi du mail
   $m=new CJMail();
