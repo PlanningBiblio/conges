@@ -34,10 +34,13 @@ if(!$fin) { $fin = $debut; }
 // TODO : différencier les niveau 1 et 2 si demandé par les utilisateurs du plugin
 
 $admin = false;
+$adminN2 = false;
 for($i = 1; $i <= $config['Multisites-nombre']; $i++ ){
   if(in_array((400+$i), $droits) or in_array((600+$i), $droits)){
     $admin = true;
-    break;
+  }
+  if(in_array((600+$i), $droits)){
+    $adminN2 = true;
   }
 }
 
@@ -164,9 +167,33 @@ else{
   echo "<tr><td style='width:350px;'>\n";
   echo "Nom, prénom : \n";
   echo "</td><td>\n";
+
   if($admin){
-    $db_perso=new db();
-    $db_perso->query("select * from {$dbprefix}personnel where actif='Actif' order by nom,prenom;");
+
+    // Si l'option "Absences-notifications-agent-par-agent" est cochée, filtrer les agents à afficher dans le menu déroulant pour permettre la sélection des seuls agents gérés
+    if($config['Absences-notifications-agent-par-agent'] and !$adminN2){
+      $perso_ids = array($_SESSION['login_id']);
+
+      $db = new db();
+      $db->select2('responsables', 'perso_id', array('responsable' => $_SESSION['login_id']) );
+      if($db->result){
+        foreach($db->result as $elem){
+          $perso_ids[] = $elem['perso_id'];
+        }
+      }
+
+      $perso_ids = implode(',', $perso_ids);
+
+      $db_perso=new db();
+      $db_perso->select2('personnel', null, array('supprime' => '0', 'id' => "IN$perso_ids"), 'ORDER BY nom,prenom');
+    }
+
+    // Si l'option "Absences-notifications-agent-par-agent" n'est pas cochée, on affiche tous les agents dans le menu déroulant
+    else {
+      $db_perso=new db();
+      $db_perso->select2('personnel', null, array('supprime' => '0'), 'ORDER BY nom,prenom');
+    }
+    
     echo "<select name='perso_id' id='perso_id' onchange='document.location.href=\"index.php?page=plugins/conges/enregistrer.php&perso_id=\"+this.value;' style='width:98%;'>\n";
     foreach($db_perso->result as $elem){
       if($perso_id==$elem['id']){

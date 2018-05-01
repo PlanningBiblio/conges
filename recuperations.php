@@ -7,7 +7,7 @@ Voir les fichiers README.md et LICENSE
 
 Fichier : plugins/conges/recuperations.php
 Création : 27 août 2013
-Dernière modification : 4 avril 2018
+Dernière modification : 30 avril 2018
 @author Jérôme Combes <jerome@planningbiblio.fr>
 
 Description :
@@ -28,10 +28,13 @@ $perso_id=filter_input(INPUT_GET,"perso_id",FILTER_SANITIZE_NUMBER_INT);
 // TODO : différencier les niveau 1 et 2 si demandé par les utilisateurs du plugin
 
 $admin = false;
+$adminN2 = false;
 for($i = 1; $i <= $config['Multisites-nombre']; $i++ ){
   if(in_array((400+$i), $droits) or in_array((600+$i), $droits)){
     $admin = true;
-    break;
+  }
+  if(in_array((600+$i), $droits)){
+    $adminN2 = true;
   }
 }
 
@@ -71,8 +74,28 @@ $recup=$c->elements;
 
 // Recherche des agents
 $p=new personnel();
+$p->responsablesParAgent = true;
 $p->fetch();
 $agents=$p->elements;
+
+// Filtre pour n'afficher que les agents gérés si l'option "Absences-notifications-agent-par-agent" est cochée
+if($config['Absences-notifications-agent-par-agent'] and !$adminN2){
+  $tmp = array();
+
+  foreach($agents as $elem){
+    foreach($elem['responsables'] as $resp){
+      if($resp['responsable'] == $_SESSION['login_id']){
+        $tmp[$elem['id']] = $elem;
+        break;
+      }
+    }
+  }
+
+  $agents = $tmp;
+}
+
+// Liste des agents à conserver :
+$perso_ids = array_keys($agents);
 
 // Années universitaires
 $annees=array();
@@ -139,6 +162,12 @@ echo "</thead>\n";
 echo "<tbody>\n";
 
 foreach($recup as $elem){
+
+  // Filtre les agents non-gérés (notamment avec l'option Absences-notifications-agent-par-agent)
+  if( !in_array($elem['perso_id'], $perso_ids) ){
+    continue;
+  }
+
   $validation="Demand&eacute;";
   $validation_date = dateFr($elem['saisie'],true);
   $validationStyle="font-weight:bold;";

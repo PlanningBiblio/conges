@@ -7,7 +7,7 @@ Voir les fichiers README.md et LICENSE
 
 Fichier : plugins/conges/voir.php
 Création : 24 juillet 2013
-Dernière modification : 16 février 2018
+Dernière modification : 30 avril 2018
 @author Jérôme Combes <jerome@planningbiblio.fr>
 
 Description :
@@ -32,10 +32,13 @@ $voir_recup=filter_input(INPUT_GET,"recup",FILTER_SANITIZE_NUMBER_INT);
 // NOTE : Les agents ayant les droits niveau 1 ou niveau 2 sont admin ($admin, droits 40x et 60x)
 // TODO : différencier les niveau 1 et 2 si demandé par les utilisateurs du plugin
 $admin = false;
+$adminN2 = false;
 for($i = 1; $i <= $config['Multisites-nombre']; $i++){
   if(in_array((400+$i), $droits) or in_array((600+$i), $droits)){
     $admin = true;
-    break;
+  }
+  if(in_array((600+$i), $droits)){
+    $adminN2 = true;
   }
 }
 
@@ -103,12 +106,40 @@ $c->fetch();
 // Recherche des agents pour le menu
 if($admin){
   $p=new personnel();
+  $p->responsablesParAgent = true;
   if($agents_supprimes){
     $p->supprime=array(0,1);
   }
   $p->fetch();
   $agents_menu=$p->elements;
 }
+
+// Filtre pour n'afficher que les agents gérés si l'option "Absences-notifications-agent-par-agent" est cochée
+if($config['Absences-notifications-agent-par-agent'] and !$adminN2){
+  $tmp = array();
+
+  foreach($agents_menu as $elem){
+
+    if($elem['id'] == $_SESSION['login_id']){
+      $tmp[$elem['id']] = $elem;
+    }
+
+    else {
+
+      foreach($elem['responsables'] as $resp){
+        if($resp['responsable'] == $_SESSION['login_id']){
+          $tmp[$elem['id']] = $elem;
+          break;
+        }
+      }
+    }
+  }
+
+  $agents_menu = $tmp;
+}
+
+// Liste des agents à conserver :
+$perso_ids = array_keys($agents_menu);
 
 // Recherche des agents pour la fonction nom()
 $p=new personnel();
@@ -217,6 +248,11 @@ echo "<tr><th>&Eacute;tat</th><th class='dataTableDateFR'>Date</th></tr></thead>
 echo "<tbody>\n";
 
 foreach($c->elements as $elem){
+
+  // Filtre les agents non-gérés (notamment avec l'option Absences-notifications-agent-par-agent)
+  if( !in_array($elem['perso_id'], $perso_ids) ){
+    continue;
+  }
 
   // Si la gestion des congés et des récupérations est dissociée, la requête recherche également les mises à jour des crédits.
   // Ici, on filtre les lignes "Mises à jour des crédits" pour n'afficher que celles qui concernent les récupérations ou les congés.

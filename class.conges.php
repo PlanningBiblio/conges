@@ -7,7 +7,7 @@ Voir les fichiers README.md et LICENSE
 
 Fichier : plugins/conges/class.conges.php
 Création : 24 juillet 2013
-Dernière modification : 16 février 2018
+Dernière modification : 30 avril 2018
 @author Jérôme Combes <jerome@planningbiblio.fr>
 @author Etienne Cavalié
 
@@ -988,10 +988,28 @@ class conges{
 
     // Ai-je le droit d'administration niveau 1 pour le congé demandé
     $adminN1 = false;
-    foreach($droitsN1 as $elem){
-      if(in_array($elem, $_SESSION['droits'])){
-        $adminN1 = true;
-        break;
+
+    // Si le paramètre "Absences-notifications-agent-par-agent" est coché, vérification du droit N1 à partir de la table "responsables"
+    if($GLOBALS['config']['Absences-notifications-agent-par-agent']){
+
+      $db = new db();
+      $db->select2('responsables', 'perso_id', array('responsable' => $_SESSION['login_id']) );
+      if($db->result){
+        foreach($db->result as $elem){
+          if($elem['perso_id'] == $perso_id){
+            $adminN1 = true;
+            break;
+          }
+        }
+      }
+
+    // Si le paramètre "Absences-notifications-agent-par-agent" n'est pascoché, vérification du droit N1 à partir des droits cochés dans la fiche de l'agent logué ($_SESSION['droits']
+    } else {
+      foreach($droitsN1 as $elem){
+        if(in_array($elem, $_SESSION['droits'])){
+          $adminN1 = true;
+          break;
+        }
       }
     }
 
