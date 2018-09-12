@@ -1,13 +1,13 @@
 <?php
 /**
-Planning Biblio, Plugin Congés Version 2.8
+Planning Biblio, Plugin Congés Version 2.8.03
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
 @copyright 2013-2018 Jérôme Combes
 
 Fichier : plugins/conges/class.conges.php
 Création : 24 juillet 2013
-Dernière modification : 30 avril 2018
+Dernière modification : 12 septembre 2018
 @author Jérôme Combes <jerome@planningbiblio.fr>
 @author Etienne Cavalié
 
@@ -1398,6 +1398,11 @@ class conges{
       $sql[] = "ALTER TABLE `{$dbprefix}recuperations` ADD `validation_n1` DATETIME NULL DEFAULT NULL AFTER `modification`;";
       $sql[] = "ALTER TABLE `{$dbprefix}recuperations` ADD `valide_n1` INT(11) NOT NULL DEFAULT 0 AFTER `modification`;";
 
+      $sql[]="UPDATE `{$dbprefix}plugins` SET `version`='$version' WHERE `nom`='conges';";
+    }
+
+    if($version < "2.8.03"){
+      $version="2.8.03";
       $sql[]="UPDATE `{$dbprefix}plugins` SET `version`='$version' WHERE `nom`='conges';";
     }
 
