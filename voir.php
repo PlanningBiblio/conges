@@ -1,13 +1,13 @@
 <?php
 /**
-Planning Biblio, Plugin Congés Version 2.8
+Planning Biblio, Plugin Congés Version 2.8.03
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
 @copyright 2013-2018 Jérôme Combes
 
 Fichier : plugins/conges/voir.php
 Création : 24 juillet 2013
-Dernière modification : 30 avril 2018
+Dernière modification : 12 septembre 2018
 @author Jérôme Combes <jerome@planningbiblio.fr>
 
 Description :
@@ -112,34 +112,39 @@ if($admin){
   }
   $p->fetch();
   $agents_menu=$p->elements;
-}
 
-// Filtre pour n'afficher que les agents gérés si l'option "Absences-notifications-agent-par-agent" est cochée
-if($config['Absences-notifications-agent-par-agent'] and !$adminN2){
-  $tmp = array();
+  // Filtre pour n'afficher que les agents gérés si l'option "Absences-notifications-agent-par-agent" est cochée
+  if($config['Absences-notifications-agent-par-agent'] and !$adminN2){
+    $tmp = array();
 
-  foreach($agents_menu as $elem){
+    foreach($agents_menu as $elem){
 
-    if($elem['id'] == $_SESSION['login_id']){
-      $tmp[$elem['id']] = $elem;
-    }
+      if($elem['id'] == $_SESSION['login_id']){
+        $tmp[$elem['id']] = $elem;
+      }
 
-    else {
+      else {
 
-      foreach($elem['responsables'] as $resp){
-        if($resp['responsable'] == $_SESSION['login_id']){
-          $tmp[$elem['id']] = $elem;
-          break;
+        foreach($elem['responsables'] as $resp){
+          if($resp['responsable'] == $_SESSION['login_id']){
+            $tmp[$elem['id']] = $elem;
+            break;
+          }
         }
       }
     }
+
+    $agents_menu = $tmp;
   }
 
-  $agents_menu = $tmp;
+  // Liste des agents à conserver :
+  $perso_ids = array_keys($agents_menu);
+  $perso_ids = array_merge($perso_ids, array($_SESSION['login_id']));
 }
 
-// Liste des agents à conserver :
-$perso_ids = array_keys($agents_menu);
+else {
+  $perso_ids = array($_SESSION['login_id']);
+}
 
 // Recherche des agents pour la fonction nom()
 $p=new personnel();
