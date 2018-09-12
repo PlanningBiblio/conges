@@ -1,13 +1,13 @@
 <?php
 /**
-Planning Biblio, Plugin Congés Version 2.8
+Planning Biblio, Plugin Congés Version 2.8.03
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
 @copyright 2013-2018 Jérôme Combes
 
 Fichier : plugins/conges/modif.php
 Création : 1er août 2013
-Dernière modification : 30 avril 2018
+Dernière modification : 12 septembre 2018
 @author Jérôme Combes <jerome@planningbiblio.fr>
 @author Etienne Cavalié <etienne.cavalie@unice.fr>
 
@@ -403,7 +403,7 @@ EOD;
   // Affichage de l'état de validation dans un menu déroulant si l'agent a le droit de le modifié et si le congé n'est pas validé
 
   if(($adminN2 and !$valide) or ($adminN1 and $data['valide']==0)){
-    echo "<td><select name='valide' style='width:98%;' onchange='afficheRefus(this);'>\n";
+    echo "<td><select name='valide' id='validation' style='width:98%;' onchange='afficheRefus(this);'>\n";
     echo "<option value='0'>&nbsp;</option>\n";
     if($adminN1){
       echo "<option value='2' {$selectAccept[2]}>{$lang['leave_dropdown_accepted_pending']}</option>\n";

@@ -1,12 +1,12 @@
 /**
-Planning Biblio, Plugin Congés Version 2.8
+Planning Biblio, Plugin Congés Version 2.8.03
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
 @copyright 2013-2018 Jérôme Combes
 
 Fichier : plugins/conges/js/script.conges.js
 Création : 2 août 2013
-Dernière modification : 4 avril 2018
+Dernière modification : 12 septembre 2018
 @author Jérôme Combes <jerome@planningbiblio.fr>
 @author Etienne Cavalié <etienne.cavalie@unice.fr>
 
@@ -323,7 +323,7 @@ function verifConges(){
   
   // Vérifions si le solde des récupérations n'est pas négatif
   var recuperation = parseFloat( $('#recup4').text() );
-  if(parseFloat(recuperation) < 0){
+  if(parseFloat(recuperation) < 0 && $('#validation').val() >= 0 ){
     $('.recup-alert').remove();
     CJInfo("Le crédit de récupération ne peut pas être négatif.", "error", null, 5000, 'recup-alert');
     $(".balance_tr").effect("highlight",null,4000);
