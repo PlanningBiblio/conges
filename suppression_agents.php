@@ -22,4 +22,3 @@ require_once "class.conges.php";
 $c=new conges();
 $c->CSRFToken = $this->CSRFToken;   // $->this = personnel::delete
 $c->suppression_agents($liste);
-?>

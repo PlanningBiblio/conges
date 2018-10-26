@@ -34,43 +34,38 @@ $c->valide=true;
 $c->fetch();
 $conges_affichage=array();
 
-if(!empty($c->elements)){
-  for($i=0;$i<count($c->elements);$i++){
-    $conge=$c->elements[$i];
-    // Si en congé toute la journée, n'affiche pas les horaires de présence habituels et les absences enregistrées 
-    // (remplace le message d'absence)
-    if($conge['debut']<=$current." 00:00:00" and $conge['fin']>=$current." 23:59:59"){
-      $absent=true;
-      $conges_affichage[]="Toute la journ&eacute;e : Cong&eacute;";
-    }
-    elseif(substr($conge['debut'],0,10)==$current and substr($conge['fin'],0,10)==$current){
-      $deb=heure2(substr($conge['debut'],-8));
-      $fi=heure2(substr($conge['fin'],-8));
-      $conges_affichage[]="De $deb &agrave; $fi : Cong&eacute;";
-    }
-    elseif(substr($conge['debut'],0,10)==$current and $conge['fin']>=$current." 23:59:59"){
-      $deb=heure2(substr($conge['debut'],-8));
-      $conges_affichage[]="&Agrave; partir de $deb : Cong&eacute;";
-    }
-    elseif($conge['debut']<=$current." 00:00:00" and substr($conge['fin'],0,10)==$current){
-      $fi=heure2(substr($conge['fin'],-8));
-      $conges_affichage[]="Jusqu'&agrave; $fi : Cong&eacute;";
-    }
-    else{
-      $conges_affichage[]="{$conge['debut']} &rarr; {$conge['fin']} : Cong&eacute;";
-    }
+if (!empty($c->elements)) {
+    for ($i=0;$i<count($c->elements);$i++) {
+        $conge=$c->elements[$i];
+        // Si en congé toute la journée, n'affiche pas les horaires de présence habituels et les absences enregistrées
+        // (remplace le message d'absence)
+        if ($conge['debut']<=$current." 00:00:00" and $conge['fin']>=$current." 23:59:59") {
+            $absent=true;
+            $conges_affichage[]="Toute la journ&eacute;e : Cong&eacute;";
+        } elseif (substr($conge['debut'], 0, 10)==$current and substr($conge['fin'], 0, 10)==$current) {
+            $deb=heure2(substr($conge['debut'], -8));
+            $fi=heure2(substr($conge['fin'], -8));
+            $conges_affichage[]="De $deb &agrave; $fi : Cong&eacute;";
+        } elseif (substr($conge['debut'], 0, 10)==$current and $conge['fin']>=$current." 23:59:59") {
+            $deb=heure2(substr($conge['debut'], -8));
+            $conges_affichage[]="&Agrave; partir de $deb : Cong&eacute;";
+        } elseif ($conge['debut']<=$current." 00:00:00" and substr($conge['fin'], 0, 10)==$current) {
+            $fi=heure2(substr($conge['fin'], -8));
+            $conges_affichage[]="Jusqu'&agrave; $fi : Cong&eacute;";
+        } else {
+            $conges_affichage[]="{$conge['debut']} &rarr; {$conge['fin']} : Cong&eacute;";
+        }
 
-    // Modifie l'index "absent" du tableau $current_postes pour barrer les postes concernés par le congé
-    for($j=0;$j<count($current_postes);$j++){
-      if($current." ".$current_postes[$j]['debut']<$conge['fin'] and $current." ".$current_postes[$j]['fin']>$conge['debut']){
-	$current_postes[$j]['absent']=1;
-      }
+        // Modifie l'index "absent" du tableau $current_postes pour barrer les postes concernés par le congé
+        for ($j=0;$j<count($current_postes);$j++) {
+            if ($current." ".$current_postes[$j]['debut']<$conge['fin'] and $current." ".$current_postes[$j]['fin']>$conge['debut']) {
+                $current_postes[$j]['absent']=1;
+            }
+        }
     }
-  }
 }
 
 // Si congé sur une partie de la journée seulement, complète le message d'absence
-if(!empty($conges_affichage)){
-  $absences_affichage=array_merge($absences_affichage,$conges_affichage);
+if (!empty($conges_affichage)) {
+    $absences_affichage=array_merge($absences_affichage, $conges_affichage);
 }
-?>

@@ -51,10 +51,10 @@ Variable modifiée
 require_once "class.conges.php";
 
 $perso_ids=array();
-foreach($tab as $elem){
-  $perso_ids[]=$elem['perso_id'];
+foreach ($tab as $elem) {
+    $perso_ids[]=$elem['perso_id'];
 }
-$perso_ids=join(",",$perso_ids);
+$perso_ids=join(",", $perso_ids);
 
 $c=new conges();
 $c->debut="$date $debut";
@@ -65,19 +65,18 @@ $c->valide=false;
 $c->bornesExclues=true;
 $c->fetch();
 
-if(!empty($c->elements)){
-  for($i=0;$i<count($tab);$i++){
-    $tab[$i]['conges']=0;
-    foreach($c->elements as $elem){
-      if($tab[$i]['perso_id']==$elem['perso_id']){
-        if($elem['valide']>0){
-          $tab[$i]['conges']=1;
-          continue;  // Garder le continue à cet endroit pour que les absences validées prennent le dessus sur les non-validées
-        }else{
-          $tab[$i]['conges']=2;
+if (!empty($c->elements)) {
+    for ($i=0;$i<count($tab);$i++) {
+        $tab[$i]['conges']=0;
+        foreach ($c->elements as $elem) {
+            if ($tab[$i]['perso_id']==$elem['perso_id']) {
+                if ($elem['valide']>0) {
+                    $tab[$i]['conges']=1;
+                    continue;  // Garder le continue à cet endroit pour que les absences validées prennent le dessus sur les non-validées
+                } else {
+                    $tab[$i]['conges']=2;
+                }
+            }
         }
-      }
     }
-  }
 }
-?>

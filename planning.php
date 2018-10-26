@@ -17,13 +17,12 @@ Ajoute les agents en congés à la liste des absents
 
 // $conges = liste des congés du jour, créé par planning_cellules.php inclus plutôt dans planning/poste/index.php
 
-foreach($conges as $elem){
-  if($elem['valide']>0){
-    $elem['motif']="Cong&eacute; pay&eacute;";
-    $absences_planning[]=$elem;
-    $absences_id[]=$elem['perso_id'];
-  }
+foreach ($conges as $elem) {
+    if ($elem['valide']>0) {
+        $elem['motif']="Cong&eacute; pay&eacute;";
+        $absences_planning[]=$elem;
+        $absences_id[]=$elem['perso_id'];
+    }
 }
 
-usort($absences_planning,'cmp_nom_prenom_debut_fin');
-?>
+usort($absences_planning, 'cmp_nom_prenom_debut_fin');

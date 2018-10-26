@@ -23,23 +23,22 @@ require_once "personnel/class.personnel.php";
 $p=new personnel();
 $p->supprime=array(0,1);
 $p->fetch();
-if($p->elements){
-  foreach($p->elements as $elem){
-    $credits=array();
-    $credits['conges_credit'] = $elem['conges_credit'];
-    $credits['recup_samedi'] = $elem['recup_samedi'];
-    $credits['conges_anticipation'] = $elem['conges_anticipation'];
-    $credits['conges_reliquat'] = 0;
+if ($p->elements) {
+    foreach ($p->elements as $elem) {
+        $credits=array();
+        $credits['conges_credit'] = $elem['conges_credit'];
+        $credits['recup_samedi'] = $elem['recup_samedi'];
+        $credits['conges_anticipation'] = $elem['conges_anticipation'];
+        $credits['conges_reliquat'] = 0;
 
-    $c=new conges();
-    $c->perso_id=$elem['id'];
-    $c->CSRFToken = $CSRFSession;
-    $c->maj($credits,"modif",true);
-  }
+        $c=new conges();
+        $c->perso_id=$elem['id'];
+        $c->CSRFToken = $CSRFSession;
+        $c->maj($credits, "modif", true);
+    }
 }
 
 // Modifie les crédits
 $db=new db();
 $db->CSRFToken = $CSRFSession;
 $db->update('personnel', array('conges_reliquat' => '0.00'));
-?>

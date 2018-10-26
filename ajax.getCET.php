@@ -23,4 +23,3 @@ $c=new conges();
 $c->id=$_GET['id'];
 $c->getCET();
 echo json_encode($c->elements[0]);
-?>

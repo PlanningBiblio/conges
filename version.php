@@ -16,5 +16,3 @@ Appelé par la fonction plugins::checkUpdateDB dans /plugins/plugins.php (planni
 */
 
 $pluginVersion="2.8.03";
-
-?>

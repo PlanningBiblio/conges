@@ -18,9 +18,9 @@ include_once "class.conges.php";
 include_once "personnel/class.personnel.php";
 
 // Initialisation des variables
-$annee=filter_input(INPUT_GET,"annee",FILTER_SANITIZE_STRING);
-$reset=filter_input(INPUT_GET,"reset",FILTER_CALLBACK,array("options"=>"sanitize_on"));
-$perso_id=filter_input(INPUT_GET,"perso_id",FILTER_SANITIZE_NUMBER_INT);
+$annee=filter_input(INPUT_GET, "annee", FILTER_SANITIZE_STRING);
+$reset=filter_input(INPUT_GET, "reset", FILTER_CALLBACK, array("options"=>"sanitize_on"));
+$perso_id=filter_input(INPUT_GET, "perso_id", FILTER_SANITIZE_NUMBER_INT);
 
 // Gestion des droits d'administration
 // NOTE : Ici, pas de différenciation entre les droits niveau 1 et niveau 2
@@ -29,29 +29,28 @@ $perso_id=filter_input(INPUT_GET,"perso_id",FILTER_SANITIZE_NUMBER_INT);
 
 $admin = false;
 $adminN2 = false;
-for($i = 1; $i <= $config['Multisites-nombre']; $i++ ){
-  if(in_array((400+$i), $droits) or in_array((600+$i), $droits)){
-    $admin = true;
-  }
-  if(in_array((600+$i), $droits)){
-    $adminN2 = true;
-  }
+for ($i = 1; $i <= $config['Multisites-nombre']; $i++) {
+    if (in_array((400+$i), $droits) or in_array((600+$i), $droits)) {
+        $admin = true;
+    }
+    if (in_array((600+$i), $droits)) {
+        $adminN2 = true;
+    }
 }
 
-if($admin and $perso_id===null){
-  $perso_id=isset($_SESSION['oups']['recup_perso_id'])?$_SESSION['oups']['recup_perso_id']:$_SESSION['login_id'];
-}
-elseif($perso_id===null){
-  $perso_id=$_SESSION['login_id'];
-}
-
-if(!$annee){
-  $annee=isset($_SESSION['oups']['recup_annee'])?$_SESSION['oups']['recup_annee']:(date("m")<9?date("Y")-1:date("Y"));
+if ($admin and $perso_id===null) {
+    $perso_id=isset($_SESSION['oups']['recup_perso_id'])?$_SESSION['oups']['recup_perso_id']:$_SESSION['login_id'];
+} elseif ($perso_id===null) {
+    $perso_id=$_SESSION['login_id'];
 }
 
-if($reset){
-  $annee=date("m")<9?date("Y")-1:date("Y");
-  $perso_id=$_SESSION['login_id'];
+if (!$annee) {
+    $annee=isset($_SESSION['oups']['recup_annee'])?$_SESSION['oups']['recup_annee']:(date("m")<9?date("Y")-1:date("Y"));
+}
+
+if ($reset) {
+    $annee=date("m")<9?date("Y")-1:date("Y");
+    $perso_id=$_SESSION['login_id'];
 }
 
 $_SESSION['oups']['recup_annee']=$annee;
@@ -66,8 +65,8 @@ $c=new conges();
 $c->admin=$admin;
 $c->debut=$debut;
 $c->fin=$fin;
-if($perso_id!=0){
-  $c->perso_id=$perso_id;
+if ($perso_id!=0) {
+    $c->perso_id=$perso_id;
 }
 $c->getRecup();
 $recup=$c->elements;
@@ -79,19 +78,19 @@ $p->fetch();
 $agents=$p->elements;
 
 // Filtre pour n'afficher que les agents gérés si l'option "Absences-notifications-agent-par-agent" est cochée
-if($config['Absences-notifications-agent-par-agent'] and !$adminN2){
-  $tmp = array();
+if ($config['Absences-notifications-agent-par-agent'] and !$adminN2) {
+    $tmp = array();
 
-  foreach($agents as $elem){
-    foreach($elem['responsables'] as $resp){
-      if($resp['responsable'] == $_SESSION['login_id']){
-        $tmp[$elem['id']] = $elem;
-        break;
-      }
+    foreach ($agents as $elem) {
+        foreach ($elem['responsables'] as $resp) {
+            if ($resp['responsable'] == $_SESSION['login_id']) {
+                $tmp[$elem['id']] = $elem;
+                break;
+            }
+        }
     }
-  }
 
-  $agents = $tmp;
+    $agents = $tmp;
 }
 
 // Liste des agents à conserver :
@@ -99,12 +98,12 @@ $perso_ids = array_keys($agents);
 
 // Années universitaires
 $annees=array();
-for($d=date("Y")+2;$d>date("Y")-11;$d--){
-  $annees[]=array($d,$d."-".($d+1));
+for ($d=date("Y")+2;$d>date("Y")-11;$d--) {
+    $annees[]=array($d,$d."-".($d+1));
 }
 
 // Affichage
-echo "<h3 class='print_only'>Liste des congés de ".nom($perso_id,"prenom nom").", année $annee-".($annee+1)."</h3>\n";
+echo "<h3 class='print_only'>Liste des congés de ".nom($perso_id, "prenom nom").", année $annee-".($annee+1)."</h3>\n";
 echo <<<EOD
 <h3 class='noprint'>Récupérations</h3>
 
@@ -115,22 +114,22 @@ echo <<<EOD
 <input type='hidden' name='page' value='plugins/conges/recuperations.php' />
 Ann&eacute;e : <select name='annee'>
 EOD;
-foreach($annees as $elem){
-  $selected=$annee==$elem[0]?"selected='selected'":null;
-  echo "<option value='{$elem[0]}' $selected >{$elem[1]}</option>";
+foreach ($annees as $elem) {
+    $selected=$annee==$elem[0]?"selected='selected'":null;
+    echo "<option value='{$elem[0]}' $selected >{$elem[1]}</option>";
 }
 echo "</select>\n";
 
-if($admin){
-  echo "<span style='margin-left:30px;'>Agent : </span>";
-  echo "<select name='perso_id'>";
-  $selected=$perso_id==0?"selected='selected'":null;
-  echo "<option value='0' $selected >Tous</option>";
-  foreach($agents as $agent){
-    $selected=$agent['id']==$perso_id?"selected='selected'":null;
-    echo "<option value='{$agent['id']}' $selected >{$agent['nom']} {$agent['prenom']}</option>";
-  }
-  echo "</select>\n";
+if ($admin) {
+    echo "<span style='margin-left:30px;'>Agent : </span>";
+    echo "<select name='perso_id'>";
+    $selected=$perso_id==0?"selected='selected'":null;
+    echo "<option value='0' $selected >Tous</option>";
+    foreach ($agents as $agent) {
+        $selected=$agent['id']==$perso_id?"selected='selected'":null;
+        echo "<option value='{$agent['id']}' $selected >{$agent['nom']} {$agent['prenom']}</option>";
+    }
+    echo "</select>\n";
 }
 echo <<<EOD
 <span style='margin-left:30px;'><input type='submit' value='Rechercher' id='button-OK' class='ui-button'/></span>
@@ -147,8 +146,8 @@ echo <<<EOD
 <tr><th rowspan='2' class='dataTableNoSort' >&nbsp;</th>
 EOD;
 echo "<th rowspan='2' class='dataTableDateFR'>Date</th>\n";
-if($admin){
-  echo "<th rowspan='2'>Agent</th>";
+if ($admin) {
+    echo "<th rowspan='2'>Agent</th>";
 }
 echo "<th rowspan='2'>Heures</th>\n";
 echo "<th colspan='2' >Validation</th>\n";
@@ -161,58 +160,54 @@ echo "<th class='dataTableDateFR'>Date</th></tr>\n";
 echo "</thead>\n";
 echo "<tbody>\n";
 
-foreach($recup as $elem){
+foreach ($recup as $elem) {
 
   // Filtre les agents non-gérés (notamment avec l'option Absences-notifications-agent-par-agent)
-  if( !in_array($elem['perso_id'], $perso_ids) ){
-    continue;
-  }
-
-  $validation="Demand&eacute;";
-  $validation_date = dateFr($elem['saisie'],true);
-  $validationStyle="font-weight:bold;";
-  if($elem['saisie_par'] and $elem['saisie_par']!=$elem['perso_id']){
-    $validation.=" par ".nom($elem['saisie_par']);
-  }
-  $credits=null;
-
-  if($elem['valide']>0){
-    $validation = $lang['leave_table_accepted'] ." par ". nom($elem['valide']);
-    $validation_date = dateFr($elem['validation'],true);
-    $validationStyle=null;
-    if($elem['solde_prec']!=null and $elem['solde_actuel']!=null){
-      $credits=heure4($elem['solde_prec'])." &rarr; ".heure4($elem['solde_actuel']);
+    if (!in_array($elem['perso_id'], $perso_ids)) {
+        continue;
     }
 
-  }
-  elseif($elem['valide']<0){
-    $validation = $lang['leave_table_refused'] ." par ". nom(-$elem['valide']);
-    $validation_date = dateFr($elem['validation'],true);
-    $validationStyle="color:red;font-weight:bold;";
-  }
-  elseif($elem['valide_n1'] > 0){
-    $validation = $lang['leave_table_accepted_pending'] .", ". nom($elem['valide_n1']);
-    $validation_date = dateFr($elem['validation_n1'],true);
+    $validation="Demand&eacute;";
+    $validation_date = dateFr($elem['saisie'], true);
     $validationStyle="font-weight:bold;";
-  }
-  elseif($elem['valide_n1'] < 0){
-    $validation = $lang['leave_table_refused_pending'] .", ". nom(-$elem['valide_n1']);
-    $validation_date = dateFr($elem['validation_n1'],true);
-    $validationStyle="font-weight:bold;";
-  }
+    if ($elem['saisie_par'] and $elem['saisie_par']!=$elem['perso_id']) {
+        $validation.=" par ".nom($elem['saisie_par']);
+    }
+    $credits=null;
 
-  echo "<tr>";
-  echo "<td><a href='index.php?page=plugins/conges/recuperation_modif.php&amp;id={$elem['id']}'><span class='pl-icon pl-icon-edit' title='Modifier'></span></a></td>\n";
-  $date2=($elem['date2'] and $elem['date2']!="0000-00-00")?" &amp; ".dateFr($elem['date2']):null;
-  echo "<td>".dateFr($elem['date'])."$date2</td>\n";
-  if($admin){
-    echo "<td>".nom($elem['perso_id'])."</td>";
-  }
-  echo "<td>".heure4($elem['heures'])."</td>\n";
-  echo "<td style='$validationStyle'>$validation</td>\n";
-  echo "<td>$validation_date</td>\n";
-  echo "<td>$credits</td>\n";
-  echo "<td>".str_replace("\n","<br/>",$elem['commentaires'])."</td></tr>\n";
+    if ($elem['valide']>0) {
+        $validation = $lang['leave_table_accepted'] ." par ". nom($elem['valide']);
+        $validation_date = dateFr($elem['validation'], true);
+        $validationStyle=null;
+        if ($elem['solde_prec']!=null and $elem['solde_actuel']!=null) {
+            $credits=heure4($elem['solde_prec'])." &rarr; ".heure4($elem['solde_actuel']);
+        }
+    } elseif ($elem['valide']<0) {
+        $validation = $lang['leave_table_refused'] ." par ". nom(-$elem['valide']);
+        $validation_date = dateFr($elem['validation'], true);
+        $validationStyle="color:red;font-weight:bold;";
+    } elseif ($elem['valide_n1'] > 0) {
+        $validation = $lang['leave_table_accepted_pending'] .", ". nom($elem['valide_n1']);
+        $validation_date = dateFr($elem['validation_n1'], true);
+        $validationStyle="font-weight:bold;";
+    } elseif ($elem['valide_n1'] < 0) {
+        $validation = $lang['leave_table_refused_pending'] .", ". nom(-$elem['valide_n1']);
+        $validation_date = dateFr($elem['validation_n1'], true);
+        $validationStyle="font-weight:bold;";
+    }
+
+    echo "<tr>";
+    echo "<td><a href='index.php?page=plugins/conges/recuperation_modif.php&amp;id={$elem['id']}'><span class='pl-icon pl-icon-edit' title='Modifier'></span></a></td>\n";
+    $date2=($elem['date2'] and $elem['date2']!="0000-00-00")?" &amp; ".dateFr($elem['date2']):null;
+    echo "<td>".dateFr($elem['date'])."$date2</td>\n";
+    if ($admin) {
+        echo "<td>".nom($elem['perso_id'])."</td>";
+    }
+    echo "<td>".heure4($elem['heures'])."</td>\n";
+    echo "<td style='$validationStyle'>$validation</td>\n";
+    echo "<td>$validation_date</td>\n";
+    echo "<td>$credits</td>\n";
+    echo "<td>".str_replace("\n", "<br/>", $elem['commentaires'])."</td></tr>\n";
 }
 
 echo <<<EOD
@@ -226,17 +221,17 @@ echo <<<EOD
   <fieldset>
     <table class='tableauFiches'>
 EOD;
-if($admin){
-  echo <<<EOD
+if ($admin) {
+    echo <<<EOD
     <tr><td><label for="agent">Agent</label></td>
     <td><select id='agent' name='agent' style='text-align:center;'>
       <option value=''>&nbsp;</option>
 EOD;
-  foreach($agents as $elem){
-    $selected=$elem['id']==$perso_id?"selected='selected'":null;
-    echo "<option value='{$elem['id']}' $selected >".nom($elem['id'])."</option>\n";
-  }
-  echo "</select></td></tr>\n";
+    foreach ($agents as $elem) {
+        $selected=$elem['id']==$perso_id?"selected='selected'":null;
+        echo "<option value='{$elem['id']}' $selected >".nom($elem['id'])."</option>\n";
+    }
+    echo "</select></td></tr>\n";
 }
 
 $label=($config['Recup-DeuxSamedis'])?"Date (1<sup>er</sup> samedi)":"Date";
@@ -246,23 +241,23 @@ echo <<<EOD
     <td><input type="text" name="date" id="date" class="text ui-widget-content ui-corner-all datepicker"/></td></tr>
 EOD;
 
-  if($config['Recup-DeuxSamedis']){
-    echo <<<EOD
+  if ($config['Recup-DeuxSamedis']) {
+      echo <<<EOD
       <tr><td><label for="date2">Date (2<sup>ème</sup> samedi) (optionel)</label></td>
       <td><input type="text" name="date2" id="date2" class="text ui-widget-content ui-corner-all datepicker"/></td></tr>
 EOD;
-    }
+  }
 
 echo <<<EOD
     <tr><td><label for="heures">Heures</label></td>
     <td><select id='heures' name='heures' style='text-align:center;'>
       <option value=''>&nbsp;</option>
 EOD;
-    for($i=0;$i<17;$i++){
-      echo "<option value='{$i}.00' >{$i}h00</option>\n";
-      echo "<option value='{$i}.25' >{$i}h15</option>\n";
-      echo "<option value='{$i}.50' >{$i}h30</option>\n";
-      echo "<option value='{$i}.75' >{$i}h45</option>\n";
+    for ($i=0;$i<17;$i++) {
+        echo "<option value='{$i}.00' >{$i}h00</option>\n";
+        echo "<option value='{$i}.25' >{$i}h15</option>\n";
+        echo "<option value='{$i}.50' >{$i}h30</option>\n";
+        echo "<option value='{$i}.75' >{$i}h45</option>\n";
     }
 echo <<<EOD
       </select></td></tr>
@@ -285,13 +280,13 @@ echo "var limitContractuel1='{$config['Recup-DelaiContractuel1']}';";
 echo "var limitContractuel2='{$config['Recup-DelaiContractuel2']}';";
 echo "var perso_id=$perso_id;";
 echo "var categories=new Array();";
-foreach($agents as $elem){
-  echo "categories[{$elem['id']}]='{$elem['categorie']}';";
+foreach ($agents as $elem) {
+    echo "categories[{$elem['id']}]='{$elem['categorie']}';";
 }
 // Samedis seulement
 echo "var samediSeulement=false;";
-if($config['Recup-SamediSeulement']){
-  echo "var samediSeulement=true;";
+if ($config['Recup-SamediSeulement']) {
+    echo "var samediSeulement=true;";
 }
 ?>
 $(function() {
@@ -373,11 +368,11 @@ $(function() {
 	bValid = bValid && verifRecup($("#date"));
 
 	<?php
-	if($config['Recup-DeuxSamedis']){
-	  echo "if($(\"#date2\").val())\n";
-	  echo "bValid = bValid && verifRecup($(\"#date2\"));\n";
-	}
-	?>
+    if ($config['Recup-DeuxSamedis']) {
+        echo "if($(\"#date2\").val())\n";
+        echo "bValid = bValid && verifRecup($(\"#date2\"));\n";
+    }
+    ?>
 
 	if ( bValid ) {
 	  // Enregistre la demande

@@ -39,16 +39,14 @@ $credits["conges_anticipation"] = $conges_anticipation + $conges_anticipation_mi
 $credits["recup_samedi"] = $recup + $recup_min;
 $credits["conges_annuel"] = $conges_annuel + $conges_annuel_min;
 
-if($action=="modif"){
-  $update=array_merge($update,$credits);
-}else{
-  $insert=array_merge($insert,$credits);
+if ($action=="modif") {
+    $update=array_merge($update, $credits);
+} else {
+    $insert=array_merge($insert, $credits);
 }
 
 // Ajout d'un ligne d'information dans la liste des congés
 $c=new conges();
 $c->perso_id=$id;
 $c->CSRFToken = $CSRFToken;
-$c->maj($credits,$action);
-
-?>
+$c->maj($credits, $action);

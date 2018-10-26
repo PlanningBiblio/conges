@@ -27,4 +27,3 @@ $c->supprime = false;
 $c->fetch();
 $conges=$c->elements;
 global $conges;
-?>

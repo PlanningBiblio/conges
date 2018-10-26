@@ -31,21 +31,19 @@ echo "<div id='conges' style='margin-left:80px;padding-top:30px;'>\n";
 echo "<table class='tableauFiches'><tr><td>";
 echo "Nombre d'heures de congés par an :";
 echo "</td><td style='text-align:right;'>";
-if($admin){
-  echo "<input type='text' name='conges_annuel' value='{$conges['annuelHeures']}'  style='width:70px;text-align:right;'>\n";
-  echo "<label style='text-align:center;padding:5px;'>h</label>";
-  echo "<select name='conges_annuel_min' style='width:50px;'>\n";
+if ($admin) {
+    echo "<input type='text' name='conges_annuel' value='{$conges['annuelHeures']}'  style='width:70px;text-align:right;'>\n";
+    echo "<label style='text-align:center;padding:5px;'>h</label>";
+    echo "<select name='conges_annuel_min' style='width:50px;'>\n";
 
-  for($min=0;$min<1;$min=$min+(5/60)){
-    $minutes=sprintf("%02s",$min*60);
-    $selected=$minutes==$conges['annuelCents']?"selected='selected'":null;
-    echo "<option value='". $min ."' $selected>$minutes</option>\n";
-  }
-  echo "</select>\n";
-  
-}
-else{
-  echo heure4($conges['annuel']);
+    for ($min=0;$min<1;$min=$min+(5/60)) {
+        $minutes=sprintf("%02s", $min*60);
+        $selected=$minutes==$conges['annuelCents']?"selected='selected'":null;
+        echo "<option value='". $min ."' $selected>$minutes</option>\n";
+    }
+    echo "</select>\n";
+} else {
+    echo heure4($conges['annuel']);
 }
 echo "</td></tr>";
 
@@ -53,20 +51,19 @@ echo "</td></tr>";
 echo "<tr><td>";
 echo "Crédit d'heures de congés actuel :";
 echo "</td><td style='text-align:right;'>";
-if($admin){
-  echo "<input type='text' name='conges_credit' value='{$conges['creditHeures']}'  style='width:70px;text-align:right;'>\n";
-  echo "<label style='text-align:center;padding:5px;'>h</label>";
-  echo "<select name='conges_credit_min' style='width:50px;'>\n";
+if ($admin) {
+    echo "<input type='text' name='conges_credit' value='{$conges['creditHeures']}'  style='width:70px;text-align:right;'>\n";
+    echo "<label style='text-align:center;padding:5px;'>h</label>";
+    echo "<select name='conges_credit_min' style='width:50px;'>\n";
 
-  for($min=0;$min<1;$min=$min+(5/60)){
-    $minutes=sprintf("%02s",$min*60);
-    $selected=$minutes==$conges['creditCents']?"selected='selected'":null;
-    echo "<option value='".$min . "' $selected>$minutes</option>\n";
-  }
-  echo "</select>\n";
-}
-else{
-  echo heure4($conges['credit']);
+    for ($min=0;$min<1;$min=$min+(5/60)) {
+        $minutes=sprintf("%02s", $min*60);
+        $selected=$minutes==$conges['creditCents']?"selected='selected'":null;
+        echo "<option value='".$min . "' $selected>$minutes</option>\n";
+    }
+    echo "</select>\n";
+} else {
+    echo heure4($conges['credit']);
 }
 echo "</td></tr>";
 
@@ -74,20 +71,19 @@ echo "</td></tr>";
 echo "<tr><td>";
 echo "Reliquat de congés :";
 echo "</td><td style='text-align:right;'>";
-if($admin){
-  echo "<input type='text' name='conges_reliquat' value='{$conges['reliquatHeures']}'  style='width:70px;text-align:right;'>\n";
-  echo "<label style='text-align:center;padding:5px;'>h</label>";
-  echo "<select name='conges_reliquat_min' style='width:50px;'>\n";
+if ($admin) {
+    echo "<input type='text' name='conges_reliquat' value='{$conges['reliquatHeures']}'  style='width:70px;text-align:right;'>\n";
+    echo "<label style='text-align:center;padding:5px;'>h</label>";
+    echo "<select name='conges_reliquat_min' style='width:50px;'>\n";
 
-  for($min=0;$min<1;$min=$min+(5/60)){
-    $minutes=sprintf("%02s",$min*60);
-    $selected=$minutes==$conges['reliquatCents']?"selected='selected'":null;
-    echo "<option value='".$min ."' $selected>$minutes</option>\n";
-  }
-  echo "</select>\n";
-}
-else{
-  echo heure4($conges['reliquat']);
+    for ($min=0;$min<1;$min=$min+(5/60)) {
+        $minutes=sprintf("%02s", $min*60);
+        $selected=$minutes==$conges['reliquatCents']?"selected='selected'":null;
+        echo "<option value='".$min ."' $selected>$minutes</option>\n";
+    }
+    echo "</select>\n";
+} else {
+    echo heure4($conges['reliquat']);
 }
 echo "</td></tr>";
 
@@ -95,20 +91,19 @@ echo "</td></tr>";
 echo "<tr><td>";
 echo "Solde débiteur :";
 echo "</td><td style='text-align:right;'>";
-if($admin){
-  echo "<input type='text' name='conges_anticipation' value='{$conges['anticipationHeures']}'  style='width:70px;text-align:right;'>\n";
-  echo "<label style='text-align:center;padding:5px;'>h</label>";
-  echo "<select name='conges_anticipation_min' style='width:50px;'>\n";
+if ($admin) {
+    echo "<input type='text' name='conges_anticipation' value='{$conges['anticipationHeures']}'  style='width:70px;text-align:right;'>\n";
+    echo "<label style='text-align:center;padding:5px;'>h</label>";
+    echo "<select name='conges_anticipation_min' style='width:50px;'>\n";
 
-  for($min=0;$min<1;$min=$min+(5/60)){
-    $minutes=sprintf("%02s",$min*60);
-    $selected=$minutes==$conges['anticipationCents']?"selected='selected'":null;
-    echo "<option value='".$min ."' $selected>$minutes</option>\n";
-  }
-  echo "</select>\n";
-}
-else{
-  echo heure4($conges['anticipation']);
+    for ($min=0;$min<1;$min=$min+(5/60)) {
+        $minutes=sprintf("%02s", $min*60);
+        $selected=$minutes==$conges['anticipationCents']?"selected='selected'":null;
+        echo "<option value='".$min ."' $selected>$minutes</option>\n";
+    }
+    echo "</select>\n";
+} else {
+    echo heure4($conges['anticipation']);
 }
 echo "</td></tr>";
 
@@ -116,20 +111,19 @@ echo "</td></tr>";
 echo "<tr><td>";
 echo "{$lang['comp_time']} :";
 echo "</td><td style='text-align:right;'>";
-if($admin){
-  echo "<input type='text' name='recup' value='{$conges['recupHeures']}'  style='width:70px;text-align:right;'>\n";
-  echo "<label style='text-align:center;padding:5px;'>h</label>";
-  echo "<select name='recup_min' style='width:50px;'>\n";
+if ($admin) {
+    echo "<input type='text' name='recup' value='{$conges['recupHeures']}'  style='width:70px;text-align:right;'>\n";
+    echo "<label style='text-align:center;padding:5px;'>h</label>";
+    echo "<select name='recup_min' style='width:50px;'>\n";
 
-  for($min=0;$min<1;$min=$min+(5/60)){
-    $minutes=sprintf("%02s",$min*60);
-    $selected=$minutes==$conges['recupCents']?"selected='selected'":null;
-    echo "<option value='".$min ."' $selected>$minutes</option>\n";
-  }
-  echo "</select>\n";
-}
-else{
-  echo heure4($conges['recup_samedi']);
+    for ($min=0;$min<1;$min=$min+(5/60)) {
+        $minutes=sprintf("%02s", $min*60);
+        $selected=$minutes==$conges['recupCents']?"selected='selected'":null;
+        echo "<option value='".$min ."' $selected>$minutes</option>\n";
+    }
+    echo "</select>\n";
+} else {
+    echo heure4($conges['recup_samedi']);
 }
 echo "</td></tr>";
 ?>

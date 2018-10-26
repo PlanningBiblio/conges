@@ -20,7 +20,6 @@ include "class.conges.php";
 $c=new conges();
 $c->perso_id=$_GET['perso_id'];
 $c->fetchCredit();
-$reliquatHeures=array_key_exists("reliquat",$c->elements)?$c->elements['reliquat']:0;
-$reliquatJours=number_format($reliquatHeures/7,2,","," ");
+$reliquatHeures=array_key_exists("reliquat", $c->elements)?$c->elements['reliquat']:0;
+$reliquatJours=number_format($reliquatHeures/7, 2, ",", " ");
 echo json_encode(array("reliquatHeures"=>$reliquatHeures,"reliquatJours"=>$reliquatJours));
-?>

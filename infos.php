@@ -27,100 +27,97 @@ require_once "class.conges.php";
 // TODO : différencier les niveau 1 et 2 si demandé par les utilisateurs du plugin
 
 $admin = false;
-for($i = 1; $i <= $config['Multisites-nombre']; $i++ ){
-  if(in_array((400+$i), $droits) or in_array((600+$i), $droits)){
-    $admin = true;
-    break;
-  }
+for ($i = 1; $i <= $config['Multisites-nombre']; $i++) {
+    if (in_array((400+$i), $droits) or in_array((600+$i), $droits)) {
+        $admin = true;
+        break;
+    }
 }
 
-if(!$admin){
-  require __DIR__.'/../../include/accessDenied.php';
+if (!$admin) {
+    require __DIR__.'/../../include/accessDenied.php';
 }
 
 echo "<h3>Informations sur les congés</h3>\n";
 
 // Initialisation des variables
-$CSRFToken=filter_input(INPUT_GET,"CSRFToken",FILTER_SANITIZE_STRING);
-$id=filter_input(INPUT_GET,"id",FILTER_SANITIZE_NUMBER_INT);
-$debut=filter_input(INPUT_GET,"debut",FILTER_CALLBACK,array("options"=>"sanitize_dateFr"));
-$fin=filter_input(INPUT_GET,"fin",FILTER_CALLBACK,array("options"=>"sanitize_dateFr"));
-$texte=filter_input(INPUT_GET,"texte",FILTER_SANITIZE_STRING);
-$suppression=filter_input(INPUT_GET,"suppression",FILTER_CALLBACK,array("options"=>"sanitize_on"));
-$validation=filter_input(INPUT_GET,"validation",FILTER_CALLBACK,array("options"=>"sanitize_on"));
+$CSRFToken=filter_input(INPUT_GET, "CSRFToken", FILTER_SANITIZE_STRING);
+$id=filter_input(INPUT_GET, "id", FILTER_SANITIZE_NUMBER_INT);
+$debut=filter_input(INPUT_GET, "debut", FILTER_CALLBACK, array("options"=>"sanitize_dateFr"));
+$fin=filter_input(INPUT_GET, "fin", FILTER_CALLBACK, array("options"=>"sanitize_dateFr"));
+$texte=filter_input(INPUT_GET, "texte", FILTER_SANITIZE_STRING);
+$suppression=filter_input(INPUT_GET, "suppression", FILTER_CALLBACK, array("options"=>"sanitize_on"));
+$validation=filter_input(INPUT_GET, "validation", FILTER_CALLBACK, array("options"=>"sanitize_on"));
 
 // Suppression
-if($suppression and $validation){
-  $db=new db();
-  $db->CSRFToken = $CSRFToken;
-  $db->delete('conges_infos', array('id'=>$id));
-  echo "<b>L'information a été supprimée</b>";
-  echo "<br/><br/><a href='index.php?page=plugins/conges/index.php'>Retour</a>\n";
-}
-elseif($suppression){
-  echo "<h4>Etes vous sûr de vouloir supprimer cette information ?</h4>\n";
-  echo "<form method='get' action='#' name='form'>\n";
-  echo "<input type='hidden' name='CSRFToken' value='$CSRFSession'/>\n";
-  echo "<input type='hidden' name='page' value='plugins/conges/infos.php'/>\n";
-  echo "<input type='hidden' name='suppression' value='1'/>\n";
-  echo "<input type='hidden' name='validation' value='1'/>\n";
-  echo "<input type='hidden' name='id' value='$id'/>\n";
-  echo "<input type='button' value='Non' onclick='history.back();' class='ui-button'/>\n";
-  echo "&nbsp;&nbsp;&nbsp;";
-  echo "<input type='submit' value='Oui' class='ui-button'/>\n";
-  echo "</form>\n";
+if ($suppression and $validation) {
+    $db=new db();
+    $db->CSRFToken = $CSRFToken;
+    $db->delete('conges_infos', array('id'=>$id));
+    echo "<b>L'information a été supprimée</b>";
+    echo "<br/><br/><a href='index.php?page=plugins/conges/index.php'>Retour</a>\n";
+} elseif ($suppression) {
+    echo "<h4>Etes vous sûr de vouloir supprimer cette information ?</h4>\n";
+    echo "<form method='get' action='#' name='form'>\n";
+    echo "<input type='hidden' name='CSRFToken' value='$CSRFSession'/>\n";
+    echo "<input type='hidden' name='page' value='plugins/conges/infos.php'/>\n";
+    echo "<input type='hidden' name='suppression' value='1'/>\n";
+    echo "<input type='hidden' name='validation' value='1'/>\n";
+    echo "<input type='hidden' name='id' value='$id'/>\n";
+    echo "<input type='button' value='Non' onclick='history.back();' class='ui-button'/>\n";
+    echo "&nbsp;&nbsp;&nbsp;";
+    echo "<input type='submit' value='Oui' class='ui-button'/>\n";
+    echo "</form>\n";
 }
 
 // Validation du formulaire
-elseif($validation){
-  echo "<b>Votre demande a été enregistrée</b>\n";
-  echo "<br/><br/><a href='index.php?page=plugins/conges/index.php'>Retour</a>\n";
-  $db=new db();
-  $db->CSRFToken = $CSRFToken;
-  if($id){
-    $db->update("conges_infos",array("debut"=>dateSQL($debut),"fin"=>dateSQL($fin),"texte"=>$texte),array("id"=>$id));
-  }
-  else{
+elseif ($validation) {
+    echo "<b>Votre demande a été enregistrée</b>\n";
+    echo "<br/><br/><a href='index.php?page=plugins/conges/index.php'>Retour</a>\n";
+    $db=new db();
     $db->CSRFToken = $CSRFToken;
-    $db->insert("conges_infos",array("debut"=>dateSQL($debut),"fin"=>dateSQL($fin),"texte"=>$texte));
-  }
+    if ($id) {
+        $db->update("conges_infos", array("debut"=>dateSQL($debut),"fin"=>dateSQL($fin),"texte"=>$texte), array("id"=>$id));
+    } else {
+        $db->CSRFToken = $CSRFToken;
+        $db->insert("conges_infos", array("debut"=>dateSQL($debut),"fin"=>dateSQL($fin),"texte"=>$texte));
+    }
 }
 // Vérification
-elseif($debut){
-  $texte=htmlentities($texte,ENT_QUOTES|ENT_IGNORE,"UTF-8");
-  $fin=$fin?$fin:$debut;
-  echo "<h4>Confirmation</h4>";
-  echo "Du $debut au $fin<br/>";
-  echo str_replace("\n","<br/>",$texte);
-  echo "<br/><br/>";
-  echo "<form method='get' action='index.php' name='form'>";
-  echo "<input type='hidden' name='page' value='plugins/conges/infos.php'/>\n";
-  echo "<input type='hidden' name='CSRFToken' value='$CSRFToken'/>\n";
-  echo "<input type='hidden' name='debut' value='$debut'/>\n";
-  echo "<input type='hidden' name='fin' value='$fin'/>\n";
-  echo "<input type='hidden' name='texte' value='$texte'/>\n";
-  echo "<input type='hidden' name='id' value='$id'/>\n";
-  echo "<input type='hidden' name='validation' value='1'/>\n";
-  echo "<input type='button' value='Annuler' onclick='history.back();' class='ui-button'/>";
-  echo "&nbsp;&nbsp;&nbsp;\n";
-  echo "<input type='submit' value='Valider' class='ui-button'/>\n";
-  echo "</form>";
+elseif ($debut) {
+    $texte=htmlentities($texte, ENT_QUOTES|ENT_IGNORE, "UTF-8");
+    $fin=$fin?$fin:$debut;
+    echo "<h4>Confirmation</h4>";
+    echo "Du $debut au $fin<br/>";
+    echo str_replace("\n", "<br/>", $texte);
+    echo "<br/><br/>";
+    echo "<form method='get' action='index.php' name='form'>";
+    echo "<input type='hidden' name='page' value='plugins/conges/infos.php'/>\n";
+    echo "<input type='hidden' name='CSRFToken' value='$CSRFToken'/>\n";
+    echo "<input type='hidden' name='debut' value='$debut'/>\n";
+    echo "<input type='hidden' name='fin' value='$fin'/>\n";
+    echo "<input type='hidden' name='texte' value='$texte'/>\n";
+    echo "<input type='hidden' name='id' value='$id'/>\n";
+    echo "<input type='hidden' name='validation' value='1'/>\n";
+    echo "<input type='button' value='Annuler' onclick='history.back();' class='ui-button'/>";
+    echo "&nbsp;&nbsp;&nbsp;\n";
+    echo "<input type='submit' value='Valider' class='ui-button'/>\n";
+    echo "</form>";
 }
 // FIN Validation du formulaire
-else{
-  if($id){
-    $db=new db();
-    $db->select("conges_infos","*","id='$id'");
-    $debut=dateFr($db->result[0]['debut']);
-    $fin=dateFr($db->result[0]['fin']);
-    $texte=$db->result[0]['texte'];
-    echo "<h4>Modifications des informations sur les congés</h4>\n";
-  }
-  else{
-    echo "<h4>Ajout d'une information</h4>\n";
-  }
+else {
+    if ($id) {
+        $db=new db();
+        $db->select("conges_infos", "*", "id='$id'");
+        $debut=dateFr($db->result[0]['debut']);
+        $fin=dateFr($db->result[0]['fin']);
+        $texte=$db->result[0]['texte'];
+        echo "<h4>Modifications des informations sur les congés</h4>\n";
+    } else {
+        echo "<h4>Ajout d'une information</h4>\n";
+    }
 
-  echo <<<EOD
+    echo <<<EOD
   <form method='get' action='index.php' name='form' onsubmit='return verif_form("debut=date1;fin=date2;texte");'>\n
   <input type='hidden' name='page' value='plugins/conges/infos.php'/>\n
   <input type='hidden' name='CSRFToken' value='$CSRFSession'/>\n
@@ -142,11 +139,11 @@ else{
   </td></tr>
   <tr><td colspan='2'>
 EOD;
-  if($id){
-    echo "<input type='button' value='Supprimer' onclick='document.location.href=\"index.php?page=plugins/conges/infos.php&amp;id=$id&amp;suppression=1\";'  class='ui-button'/>\n";
-    echo "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\n";
-  }
-  echo <<<EOD
+    if ($id) {
+        echo "<input type='button' value='Supprimer' onclick='document.location.href=\"index.php?page=plugins/conges/infos.php&amp;id=$id&amp;suppression=1\";'  class='ui-button'/>\n";
+        echo "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\n";
+    }
+    echo <<<EOD
   <input type='button' value='Annuler' onclick='document.location.href=index.php?page=plugins/conges/index.php;' class='ui-button'/>
   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
   <input type='submit' value='Valider' class='ui-button'/>
@@ -154,4 +151,3 @@ EOD;
   </form>
 EOD;
 }
-?>

@@ -16,8 +16,8 @@ Appelé en arrière plan par la fonction JS verifRecup()
 */
 
 session_start();
-ini_set('display_errors',0);
-ini_set('error_reporting',E_ERROR | E_WARNING | E_PARSE | E_NOTICE);
+ini_set('display_errors', 0);
+ini_set('error_reporting', E_ERROR | E_WARNING | E_PARSE | E_NOTICE);
 
 include "../../include/config.php";
 include "../../personnel/class.personnel.php";
@@ -27,8 +27,7 @@ $date=dateFr($_GET['date']);
 $perso_id=is_numeric($_GET['perso_id'])?$_GET['perso_id']:$_SESSION['login_id'];
 
 $db=new db();
-$db->select("recuperations",null,"`perso_id`='$perso_id' AND (`date`='$date' OR `date2`='$date')");
-if($db->result){
-  echo "Demande";
+$db->select("recuperations", null, "`perso_id`='$perso_id' AND (`date`='$date' OR `date2`='$date')");
+if ($db->result) {
+    echo "Demande";
 }
-?>

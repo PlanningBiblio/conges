@@ -18,25 +18,24 @@ Vérifie si l'agent placé dans la cellule est en congés, s'il y a un congé va
 $conge_valide=false;
 
 // On marque les congés
-foreach($GLOBALS['conges'] as $conge){
-  if($conge['perso_id']==$elem['perso_id'] and $conge['debut']<"$date {$elem['fin']}" and $conge['fin']>"$date {$elem['debut']}"){
-    // Congé validé : orange barré
-    if($conge['valide']>0){
-      $class_tmp[]="orange";
-      $class_tmp[]="striped";
-      $conge_valide=true;
-      break;  // Garder le break à cet endroit pour que les congés validées prennent le dessus sur les non-validés
+foreach ($GLOBALS['conges'] as $conge) {
+    if ($conge['perso_id']==$elem['perso_id'] and $conge['debut']<"$date {$elem['fin']}" and $conge['fin']>"$date {$elem['debut']}") {
+        // Congé validé : orange barré
+        if ($conge['valide']>0) {
+            $class_tmp[]="orange";
+            $class_tmp[]="striped";
+            $conge_valide=true;
+            break;  // Garder le break à cet endroit pour que les congés validées prennent le dessus sur les non-validés
+        }
+        // congé non-validée : orange, sauf si une absence validée existe
+        elseif ($GLOBALS['config']['Absences-non-validees'] and !$absence_valide) {
+            $class_tmp[]="orange";
+            $title = $nom_affiche.' : Congé non-valid&eacute;';
+        }
     }
-    // congé non-validée : orange, sauf si une absence validée existe
-    elseif($GLOBALS['config']['Absences-non-validees'] and !$absence_valide){
-      $class_tmp[]="orange";
-      $title = $nom_affiche.' : Congé non-valid&eacute;';
-    }
-  }
 }
 
 // Il peut y avoir des absences  et des congés validés et non validés. Si une absence ou un congé est validé, la cellule sera barrée et on n'affichera pas "Congé non-validé"
-if($conge_valide or $absence_valide){
-  $title = null;
+if ($conge_valide or $absence_valide) {
+    $title = null;
 }
-?>

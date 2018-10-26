@@ -19,16 +19,15 @@ session_start();
 
 $version="2.5.4";
 
-ini_set('display_errors',0);
+ini_set('display_errors', 0);
 
 include "../../include/config.php";
 include "class.conges.php";
 
-$id=filter_input(INPUT_GET,"id",FILTER_SANITIZE_NUMBER_INT);
-$CSRFToken=filter_input(INPUT_GET,"CSRFToken",FILTER_SANITIZE_STRING);
+$id=filter_input(INPUT_GET, "id", FILTER_SANITIZE_NUMBER_INT);
+$CSRFToken=filter_input(INPUT_GET, "CSRFToken", FILTER_SANITIZE_STRING);
 
 $c=new conges();
 $c->id=$id;
 $c->CSRFToken=$CSRFToken;
 $c->delete();
-?>

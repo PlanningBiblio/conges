@@ -17,10 +17,10 @@ Fichier permettant l'installation du plugin Congés. Ajoute les informations né
 session_start();
 
 // Sécurité
-if($_SESSION['login_id']!=1){
-  echo "<br/><br/><h3>Vous devez vous connecter au planning<br/>avec le login \"admin\" pour pouvoir installer ce plugin.</h3>\n";
-  echo "<a href='../../index.php'>Retour au planning</a>\n";
-  exit;
+if ($_SESSION['login_id']!=1) {
+    echo "<br/><br/><h3>Vous devez vous connecter au planning<br/>avec le login \"admin\" pour pouvoir installer ce plugin.</h3>\n";
+    echo "<a href='../../index.php'>Retour au planning</a>\n";
+    exit;
 }
 
 $version="2.8";
@@ -126,13 +126,14 @@ $sql[]="CREATE TABLE `{$dbprefix}conges_cet` (`id` INT(11) NOT NULL AUTO_INCREME
 
 <?php
 // Execution des requêtes
-foreach($sql as $elem){
-  $db=new db();
-  $db->query($elem);
-  if(!$db->error)
-    echo "$elem : <font style='color:green;'>OK</font><br/>\n";
-  else
-    echo "$elem : <font style='color:red;'>Erreur</font><br/>\n";
+foreach ($sql as $elem) {
+    $db=new db();
+    $db->query($elem);
+    if (!$db->error) {
+        echo "$elem : <font style='color:green;'>OK</font><br/>\n";
+    } else {
+        echo "$elem : <font style='color:red;'>Erreur</font><br/>\n";
+    }
 }
 
 echo "<br/><br/><a href='../../index.php'>Retour au planning</a>\n";

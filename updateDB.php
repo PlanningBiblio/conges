@@ -18,5 +18,4 @@ Appelé par la fonction plugins::updateDB dans le fichier /plugins/plugins.php (
 include_once "class.conges.php";
 
 $c=new conges();
-$c->updateDB($oldVersion,$version);
-?>
+$c->updateDB($oldVersion, $version);

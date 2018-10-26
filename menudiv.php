@@ -27,13 +27,11 @@ $c->information = false;
 $c->bornesExclues=true;
 $c->fetch();
 
-foreach($c->elements as $elem){
-  if($elem['valide'] > 0){
-    $tab_exclus[]=$elem['perso_id'];
-    $absents[]=$elem['perso_id'];
-  }else{
-    $absences_non_validees[] = $elem['perso_id'];
-  }
+foreach ($c->elements as $elem) {
+    if ($elem['valide'] > 0) {
+        $tab_exclus[]=$elem['perso_id'];
+        $absents[]=$elem['perso_id'];
+    } else {
+        $absences_non_validees[] = $elem['perso_id'];
+    }
 }
-
-?>

@@ -16,7 +16,7 @@ Fichier permettant la désinstallation du plugin Congés. Supprime les informati
 
 session_start();
 
-ini_set('display_errors','on');
+ini_set('display_errors', 'on');
 error_reporting(999);
 
 $confirm = filter_input(INPUT_POST, 'confirm', FILTER_SANITIZE_NUMBER_INT);
@@ -43,19 +43,19 @@ $CSRFSession = $_SESSION['oups']['CSRFToken'];
 <?php
 
 // Sécurité : compte admin seulement
-if($_SESSION['login_id']!=1){
-  echo <<<EOD
+if ($_SESSION['login_id']!=1) {
+    echo <<<EOD
   <p>
   <h3>Vous devez vous connecter au planning<br/>avec le login "admin" pour pouvoir d&eacute;sinstaller ce plugin.</h3>
   <a href='../../index.php'>Retour au planning</a>
   </p>
 EOD;
-  exit;
+    exit;
 }
 
 // Demande de confirmation
-if(!$confirm){
-  echo <<<EOD
+if (!$confirm) {
+    echo <<<EOD
   <p>
   Vous &ecirc;tes sur le point de d&eacute;sintaller le plugin cong&eacute;s.<br/>
   Voulez-vous continuer ?
@@ -68,12 +68,12 @@ if(!$confirm){
   </form>
   </p>
 EOD;
-  exit;
+    exit;
 }
 
 // Demande si transfert des congés dans la table absence
-if($confirm == 1 and !$transfer){
-  echo <<<EOD
+if ($confirm == 1 and !$transfer) {
+    echo <<<EOD
   <p>
   Voulez-vous transf&eacute;rer les cong&eacute;s enregistr&eacute;s dans la table "absence"
   </p>
@@ -87,112 +87,112 @@ if($confirm == 1 and !$transfer){
   </form>
   </p>
 EOD;
-  exit;
+    exit;
 }
 
 // Transfert des données
-if($confirm == 2 and $transfer){
+if ($confirm == 2 and $transfer) {
+    $CSRFToken = filter_input(INPUT_POST, 'CSRFToken', FILTER_SANITIZE_STRING);
 
-  $CSRFToken = filter_input(INPUT_POST, 'CSRFToken', FILTER_SANITIZE_STRING);
-
-  echo "<p><strong>Transfert des donn&eacute;es</strong></p>";
+    echo "<p><strong>Transfert des donn&eacute;es</strong></p>";
   
-  // récupération des congés
-  $db = new db();
-  $db->select2('conges',null,array('supprime'=>0, 'information'=>0));
-  $insert = array();
+    // récupération des congés
+    $db = new db();
+    $db->select2('conges', null, array('supprime'=>0, 'information'=>0));
+    $insert = array();
   
-  // Préparation des requêtes
-  $req = "INSERT INTO `{$dbprefix}absences` (`perso_id`, `debut`, `fin`, `commentaires`, `demande`, `valide`, `validation`, `valide_n1`, `validation_n1`, `motif`, `motif_autre`) 
+    // Préparation des requêtes
+    $req = "INSERT INTO `{$dbprefix}absences` (`perso_id`, `debut`, `fin`, `commentaires`, `demande`, `valide`, `validation`, `valide_n1`, `validation_n1`, `motif`, `motif_autre`) 
     VALUES (:perso_id, :debut, :fin, :commentaires, :demande, :valide, :validation, :valide_n1, :validation_n1, :motif, :motif_autre);";
-  $dbh=new dbh();
-  $dbh->CSRFToken = $CSRFToken;
-  $dbh->prepare($req);
+    $dbh=new dbh();
+    $dbh->CSRFToken = $CSRFToken;
+    $dbh->prepare($req);
 
-  echo $req."<br/>\n";
+    echo $req."<br/>\n";
   
-  if($db->result){
-    foreach($db->result as $elem){
-      $insert[] = array(':perso_id'=>$elem['perso_id'], ':debut'=>$elem['debut'], ':fin'=>$elem['fin'], ':commentaires'=>$elem['commentaires'], ':demande'=>$elem['saisie'], ':valide'=>$elem['valide'], 
+    if ($db->result) {
+        foreach ($db->result as $elem) {
+            $insert[] = array(':perso_id'=>$elem['perso_id'], ':debut'=>$elem['debut'], ':fin'=>$elem['fin'], ':commentaires'=>$elem['commentaires'], ':demande'=>$elem['saisie'], ':valide'=>$elem['valide'],
         ':validation'=>$elem['validation'], ':valide_n1'=>$elem['valide_n1'], ':validation_n1'=>$elem['validation_n1'], ':motif'=>'Cong&eacute;s Pay&eacute;s', ':motif_autre'=>'Cong&eacute;s Pay&eacute;s');
-    }
+        }
     
       
     
-    // Execution des requêtes
-    foreach($insert as $elem){
-      $dbh->execute($elem);
-      print_r($elem);
-      if(!$dbh->error){
-        echo " : <font style='color:green;'>OK</font><br/>\n";
-      }else{
-        echo " : <font style='color:red;'>Erreur</font><br/>\n";
-      }
+        // Execution des requêtes
+        foreach ($insert as $elem) {
+            $dbh->execute($elem);
+            print_r($elem);
+            if (!$dbh->error) {
+                echo " : <font style='color:green;'>OK</font><br/>\n";
+            } else {
+                echo " : <font style='color:red;'>Erreur</font><br/>\n";
+            }
+        }
     }
-  }
 }
 
 // Désintallation
-if($confirm == 2){
-  echo "<p><strong>Suppression du plugin</strong></p>";
+if ($confirm == 2) {
+    echo "<p><strong>Suppression du plugin</strong></p>";
   
-  $sql=array();
+    $sql=array();
   
-  // Droits d'accès
-  $sql[]="DELETE FROM `{$dbprefix}acces` WHERE `page` LIKE 'plugins/conges%';";
-  $sql[]="DELETE FROM `{$dbprefix}acces` WHERE `groupe_id` = '2';";
-  $sql[]="DELETE FROM `{$dbprefix}acces` WHERE `groupe_id` = '7';";
+    // Droits d'accès
+    $sql[]="DELETE FROM `{$dbprefix}acces` WHERE `page` LIKE 'plugins/conges%';";
+    $sql[]="DELETE FROM `{$dbprefix}acces` WHERE `groupe_id` = '2';";
+    $sql[]="DELETE FROM `{$dbprefix}acces` WHERE `groupe_id` = '7';";
 
-  // Suppression de la table conges
-  $sql[]="DROP TABLE `{$dbprefix}conges`;";
+    // Suppression de la table conges
+    $sql[]="DROP TABLE `{$dbprefix}conges`;";
 
-  // Suppression de la table conges_infos
-  $sql[]="DROP TABLE `{$dbprefix}conges_infos`;";
+    // Suppression de la table conges_infos
+    $sql[]="DROP TABLE `{$dbprefix}conges_infos`;";
 
-  // Suppression de la table conges_cet
-  $sql[]="DROP TABLE `{$dbprefix}conges_cet`;";
+    // Suppression de la table conges_cet
+    $sql[]="DROP TABLE `{$dbprefix}conges_cet`;";
   
-  // Suppression de la table conges_soldes
-  $sql[]="DROP TABLE `{$dbprefix}conges_soldes`;";
+    // Suppression de la table conges_soldes
+    $sql[]="DROP TABLE `{$dbprefix}conges_soldes`;";
 
-  // Suppression de la table recuperations
-  $sql[]="DROP TABLE `{$dbprefix}recuperations`;";
+    // Suppression de la table recuperations
+    $sql[]="DROP TABLE `{$dbprefix}recuperations`;";
 
-  // Suppression du menu
-  $sql[]="DELETE FROM `{$dbprefix}menu` WHERE `url` LIKE 'plugins/conges/%';";
+    // Suppression du menu
+    $sql[]="DELETE FROM `{$dbprefix}menu` WHERE `url` LIKE 'plugins/conges/%';";
 
-  // Modification de la table personnel
-  $sql[]="ALTER TABLE `{$dbprefix}personnel` DROP `conges_credit`, DROP `conges_reliquat`, DROP `conges_anticipation`, DROP `recup_samedi`;";
-  $sql[]="ALTER TABLE `{$dbprefix}personnel` DROP `conges_annuel`;";
+    // Modification de la table personnel
+    $sql[]="ALTER TABLE `{$dbprefix}personnel` DROP `conges_credit`, DROP `conges_reliquat`, DROP `conges_anticipation`, DROP `recup_samedi`;";
+    $sql[]="ALTER TABLE `{$dbprefix}personnel` DROP `conges_annuel`;";
 
-  // Suppression des tâches planifiées
-  $sql[]="DELETE FROM `{$dbprefix}cron` WHERE command LIKE 'plugins/conges/';";
+    // Suppression des tâches planifiées
+    $sql[]="DELETE FROM `{$dbprefix}cron` WHERE command LIKE 'plugins/conges/';";
 
-  // Suppression du plugin Congés dans la base
-  $sql[]="DELETE FROM `{$dbprefix}plugins` WHERE `nom`='conges';";
+    // Suppression du plugin Congés dans la base
+    $sql[]="DELETE FROM `{$dbprefix}plugins` WHERE `nom`='conges';";
 
-  // Suppression de  la config
-  $sql[]="DELETE FROM `{$dbprefix}config` WHERE `nom`='Recup-SamediSeulement';";
-  $sql[]="DELETE FROM `{$dbprefix}config` WHERE `nom`='Recup-DeuxSamedis';";
-  $sql[]="DELETE FROM `{$dbprefix}config` WHERE `nom`='Recup-DelaiTitulaire1';";
-  $sql[]="DELETE FROM `{$dbprefix}config` WHERE `nom`='Recup-DelaiTitulaire2';";
-  $sql[]="DELETE FROM `{$dbprefix}config` WHERE `nom`='Recup-DelaiContractuel1';";
-  $sql[]="DELETE FROM `{$dbprefix}config` WHERE `nom`='Recup-DelaiContractuel2';";
-  $sql[]="DELETE FROM `{$dbprefix}config` WHERE `nom`='Recup-DelaiDefaut';";
-  $sql[]="DELETE FROM `{$dbprefix}config` WHERE `nom`='Conges-Rappels';";
-  $sql[]="DELETE FROM `{$dbprefix}config` WHERE `nom`='Conges-Rappels-Jours';";
-  $sql[]="DELETE FROM `{$dbprefix}config` WHERE `nom`='Conges-Rappels-N1';";
-  $sql[]="DELETE FROM `{$dbprefix}config` WHERE `nom`='Conges-Rappels-N2';";
+    // Suppression de  la config
+    $sql[]="DELETE FROM `{$dbprefix}config` WHERE `nom`='Recup-SamediSeulement';";
+    $sql[]="DELETE FROM `{$dbprefix}config` WHERE `nom`='Recup-DeuxSamedis';";
+    $sql[]="DELETE FROM `{$dbprefix}config` WHERE `nom`='Recup-DelaiTitulaire1';";
+    $sql[]="DELETE FROM `{$dbprefix}config` WHERE `nom`='Recup-DelaiTitulaire2';";
+    $sql[]="DELETE FROM `{$dbprefix}config` WHERE `nom`='Recup-DelaiContractuel1';";
+    $sql[]="DELETE FROM `{$dbprefix}config` WHERE `nom`='Recup-DelaiContractuel2';";
+    $sql[]="DELETE FROM `{$dbprefix}config` WHERE `nom`='Recup-DelaiDefaut';";
+    $sql[]="DELETE FROM `{$dbprefix}config` WHERE `nom`='Conges-Rappels';";
+    $sql[]="DELETE FROM `{$dbprefix}config` WHERE `nom`='Conges-Rappels-Jours';";
+    $sql[]="DELETE FROM `{$dbprefix}config` WHERE `nom`='Conges-Rappels-N1';";
+    $sql[]="DELETE FROM `{$dbprefix}config` WHERE `nom`='Conges-Rappels-N2';";
 
-  // Execution des requêtes
-  foreach($sql as $elem){
-    $db=new db();
-    $db->query($elem);
-    if(!$db->error)
-      echo "$elem : <font style='color:green;'>OK</font><br/>\n";
-    else
-      echo "$elem : <font style='color:red;'>Erreur</font><br/>\n";
-  }
+    // Execution des requêtes
+    foreach ($sql as $elem) {
+        $db=new db();
+        $db->query($elem);
+        if (!$db->error) {
+            echo "$elem : <font style='color:green;'>OK</font><br/>\n";
+        } else {
+            echo "$elem : <font style='color:red;'>Erreur</font><br/>\n";
+        }
+    }
 }
 
 echo "<br/><br/><a href='../../index.php'>Retour au planning</a>\n";

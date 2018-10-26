@@ -16,8 +16,8 @@ Appelé en arrière plan par la fonction JS verifConges()
 */
 
 session_start();
-ini_set('display_errors',0);
-ini_set('error_reporting',E_ERROR | E_WARNING | E_PARSE | E_NOTICE);
+ini_set('display_errors', 0);
+ini_set('error_reporting', E_ERROR | E_WARNING | E_PARSE | E_NOTICE);
 
 $version="1.5.1";
 include "../../include/config.php";
@@ -33,10 +33,9 @@ $perso_id=$_GET['perso_id'];
 $id=$_GET['id'];
 
 $db=new db();
-$db->select("conges",null,"`id`<>'$id' AND `perso_id`='$perso_id' AND `debut` < '$fin $hre_fin' AND `fin` > '$debut $hre_debut' AND `supprime`='0' AND `information`='0' AND `valide`>='0' ","ORDER BY `debut`,`fin`");
-if(!$db->result){
-  echo "Pas de congé";
-}else{
-  echo "du ".dateFr($db->result[0]['debut'],true)." au ".dateFr($db->result[0]['fin'],true);
+$db->select("conges", null, "`id`<>'$id' AND `perso_id`='$perso_id' AND `debut` < '$fin $hre_fin' AND `fin` > '$debut $hre_debut' AND `supprime`='0' AND `information`='0' AND `valide`>='0' ", "ORDER BY `debut`,`fin`");
+if (!$db->result) {
+    echo "Pas de congé";
+} else {
+    echo "du ".dateFr($db->result[0]['debut'], true)." au ".dateFr($db->result[0]['fin'], true);
 }
-?>

@@ -23,32 +23,31 @@ require_once "personnel/class.personnel.php";
 $p=new personnel();
 $p->supprime=array(0,1);
 $p->fetch();
-if($p->elements){
-  foreach($p->elements as $elem){
-    $credits=array();
-    $credits['conges_credit'] = floatval($elem['conges_annuel']) - floatval($elem['conges_anticipation']);
-    $credits['recup_samedi'] = 0;
-    $credits['conges_anticipation'] = 0;
-    $credits['conges_reliquat'] = $elem['conges_credit'];
+if ($p->elements) {
+    foreach ($p->elements as $elem) {
+        $credits=array();
+        $credits['conges_credit'] = floatval($elem['conges_annuel']) - floatval($elem['conges_anticipation']);
+        $credits['recup_samedi'] = 0;
+        $credits['conges_anticipation'] = 0;
+        $credits['conges_reliquat'] = $elem['conges_credit'];
 
-    $c=new conges();
-    $c->perso_id=$elem['id'];
-    $c->CSRFToken = $CSRFSession;
-    $c->maj($credits,"modif",true);
-  }
+        $c=new conges();
+        $c->perso_id=$elem['id'];
+        $c->CSRFToken = $CSRFSession;
+        $c->maj($credits, "modif", true);
+    }
 }
 
 // Modifie les crédits
 $db=new db();
 $db->CSRFToken = $CSRFSession;
-$db->update("personnel","conges_reliquat=conges_credit");
+$db->update("personnel", "conges_reliquat=conges_credit");
 $db=new db();
 $db->CSRFToken = $CSRFSession;
-$db->update("personnel","recup_samedi='0.00'");
+$db->update("personnel", "recup_samedi='0.00'");
 $db=new db();
 $db->CSRFToken = $CSRFSession;
-$db->update("personnel","conges_credit=(conges_annuel-conges_anticipation)");
+$db->update("personnel", "conges_credit=(conges_annuel-conges_anticipation)");
 $db=new db();
 $db->CSRFToken = $CSRFSession;
-$db->update("personnel","conges_anticipation=0.00");
-?>
+$db->update("personnel", "conges_anticipation=0.00");

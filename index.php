@@ -35,16 +35,16 @@ require_once "class.conges.php";
 // TODO : différencier les niveau 1 et 2 si demandé par les utilisateurs du plugin
 
 $admin = false;
-for($i = 1; $i <= $config['Multisites-nombre']; $i++ ){
-  if(in_array((400+$i), $droits) or in_array((600+$i), $droits)){
-    $admin = true;
-    break;
-  }
+for ($i = 1; $i <= $config['Multisites-nombre']; $i++) {
+    if (in_array((400+$i), $droits) or in_array((600+$i), $droits)) {
+        $admin = true;
+        break;
+    }
 }
 
-if($admin){
-  echo "<li><a href='index.php?page=plugins/conges/infos.php'>Ajouter une information</a></li>\n";
-  echo "<li><a href='index.php?page=plugins/conges/credits.php'>Voir les cr&eacute;dits</a></li>\n";
+if ($admin) {
+    echo "<li><a href='index.php?page=plugins/conges/infos.php'>Ajouter une information</a></li>\n";
+    echo "<li><a href='index.php?page=plugins/conges/credits.php'>Voir les cr&eacute;dits</a></li>\n";
 }
 echo "</ul>\n";
 echo "</td>\n";
@@ -53,14 +53,14 @@ echo "<td style='color:#FF5E0E;'>\n";
 $date=date("Y-m-d");
 $db=new db();
 $db->query("SELECT * FROM `{$dbprefix}conges_infos` WHERE `fin`>='$date' ORDER BY `debut`,`fin`;");
-if($db->result){
-  echo "<b>Informations sur les congés :</b><br/><br/>\n";
-  foreach($db->result as $elem){
-    if($admin){
-      echo "<a href='index.php?page=plugins/conges/infos.php&amp;id={$elem['id']}'><span class='pl-icon pl-icon-edit' title='Modifier'></span></a>&nbsp;";
+if ($db->result) {
+    echo "<b>Informations sur les congés :</b><br/><br/>\n";
+    foreach ($db->result as $elem) {
+        if ($admin) {
+            echo "<a href='index.php?page=plugins/conges/infos.php&amp;id={$elem['id']}'><span class='pl-icon pl-icon-edit' title='Modifier'></span></a>&nbsp;";
+        }
+        echo "Du ".dateFr($elem['debut'])." au ".dateFr($elem['fin'])." : <br/>".str_replace("\n", "<br/>", $elem['texte'])."<br/><br/>\n";
     }
-    echo "Du ".dateFr($elem['debut'])." au ".dateFr($elem['fin'])." : <br/>".str_replace("\n","<br/>",$elem['texte'])."<br/><br/>\n";
-  }	
 }
 ?>
 </td></tr></table>
