@@ -1,13 +1,13 @@
 <?php
 /**
-Planning Biblio, Plugin Congés Version 2.8
+Planning Biblio, Plugin Congés Version 2.8.04
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
 @copyright 2013-2018 Jérôme Combes
 
 Fichier : plugins/conges/recuperations.php
 Création : 27 août 2013
-Dernière modification : 30 avril 2018
+Dernière modification : 31 octobre 2018
 @author Jérôme Combes <jerome@planningbiblio.fr>
 
 Description :
@@ -72,26 +72,34 @@ $c->getRecup();
 $recup=$c->elements;
 
 // Recherche des agents
-$p=new personnel();
-$p->responsablesParAgent = true;
-$p->fetch();
-$agents=$p->elements;
+if ($admin) {
+    $p=new personnel();
+    $p->responsablesParAgent = true;
+    $p->fetch();
+    $agents=$p->elements;
 
-// Filtre pour n'afficher que les agents gérés si l'option "Absences-notifications-agent-par-agent" est cochée
-if ($config['Absences-notifications-agent-par-agent'] and !$adminN2) {
-    $tmp = array();
+    // Filtre pour n'afficher que les agents gérés si l'option "Absences-notifications-agent-par-agent" est cochée
+    if ($config['Absences-notifications-agent-par-agent'] and !$adminN2) {
+        $tmp = array();
 
-    foreach ($agents as $elem) {
-        foreach ($elem['responsables'] as $resp) {
-            if ($resp['responsable'] == $_SESSION['login_id']) {
-                $tmp[$elem['id']] = $elem;
-                break;
+        foreach ($agents as $elem) {
+            foreach ($elem['responsables'] as $resp) {
+                if ($resp['responsable'] == $_SESSION['login_id']) {
+                    $tmp[$elem['id']] = $elem;
+                    break;
+                }
             }
         }
-    }
 
-    $agents = $tmp;
+        $agents = $tmp;
+    }
 }
+
+if (!array_key_exists($_SESSION['login_id'], $agents)) {
+    $agents[$_SESSION['login_id']] = array('id' => $_SESSION['login_id'], 'nom' => $_SESSION['login_nom'], 'prenom' => $_SESSION['login_prenom']);
+}
+
+usort($agents, 'cmp_nom_prenom', true);
 
 // Liste des agents à conserver :
 $perso_ids = array_keys($agents);

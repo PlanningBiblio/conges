@@ -1,13 +1,13 @@
 <?php
 /**
-Planning Biblio, Plugin Congés Version 2.8.03
+Planning Biblio, Plugin Congés Version 2.8.04
 Licence GNU/GPL (version 2 et au dela)
 Voir les fichiers README.md et LICENSE
 @copyright 2013-2018 Jérôme Combes
 
 Fichier : plugins/conges/class.conges.php
 Création : 24 juillet 2013
-Dernière modification : 12 septembre 2018
+Dernière modification : 29 octobre 2018
 @author Jérôme Combes <jerome@planningbiblio.fr>
 @author Etienne Cavalié
 
@@ -60,7 +60,7 @@ class conges
     public $supprime = true;
     public $valide=null;
 
-    public function conges()
+    public function __construct()
     {
     }
 
